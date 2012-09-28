@@ -9,36 +9,14 @@
 	    android:layout_width="fill_parent"
     	android:layout_height="wrap_content">
 	    
-	    <TextView  
-	        android:id="@+id/translation"
+	    <WebView  
+	        android:id="@+id/description"
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
-	        android:layout_marginTop="8dip"
 	        android:gravity="center"
 	        android:padding="5dip"
 	        android:includeFontPadding="false"
 	        style="@style/Text.Words" />
 	   
-		<TextView  
-	        android:id="@+id/original"
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/translation"
-	        android:gravity="center"
-	        android:padding="5dip"
-	        android:includeFontPadding="false"
-	        style="@style/Text.Words" />
-	    
-	    <TextView
-	        android:id="@+id/source"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/original"
-	        android:paddingLeft="4dip"
-	        android:includeFontPadding="false"
-	        android:ellipsize="end"
-	        android:maxLines="4"
-	        style="@style/Text.Source" />
-	    
 	</RelativeLayout>
 </ScrollView>

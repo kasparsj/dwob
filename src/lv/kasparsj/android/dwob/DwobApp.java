@@ -43,7 +43,7 @@ public class DwobApp extends Application {
 	}
 	
 	public void setDescription(String description) {
-		this.description = description;
+		this.description = description.trim().replaceAll("^<br />", "").trim();
 		String[] contents = description.split("\n<br />\n");
 		original = new ArrayList<String>();
     	translation = new ArrayList<String>();

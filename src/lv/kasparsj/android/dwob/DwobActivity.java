@@ -5,10 +5,11 @@ import java.util.Date;
 import lv.kasparsj.android.dwob.R;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
-import android.text.TextUtils;
-import android.widget.TextView;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class DwobActivity extends Activity {
 	/** Called when the activity is first created. */
@@ -28,13 +29,19 @@ public class DwobActivity extends Activity {
     	DwobApp app = ((DwobApp) getApplication());
 		setTitle(app.getTitle());
 		
-    	TextView transView = (TextView) findViewById(R.id.translation);
-        transView.setText(Html.fromHtml(TextUtils.join("\n<br />\n", app.getTranslation().toArray()).trim().replaceAll("^<br />", "").trim()));
-        
-    	TextView originalView = (TextView) findViewById(R.id.original);
-    	originalView.setText(Html.fromHtml(TextUtils.join("\n<br />\n", app.getOriginal().toArray()).trim().replaceAll("^<br />", "").trim()));
-        
-        TextView sourceView = (TextView) findViewById(R.id.source);
-        sourceView.setText(Html.fromHtml(app.getSource().trim().replaceAll("^<br />", "").trim()));
+    	WebView descrView = (WebView) findViewById(R.id.description);
+    	descrView.setWebViewClient(new WebViewClient() {  
+		    public boolean shouldOverrideUrlLoading(WebView view, String url)  {
+		    	Intent intent = new Intent("android.intent.action.VIEW");
+		    	Uri data = Uri.parse(url);
+		    	if (url.endsWith(".mp3"))
+		    		intent.setDataAndType(data, "audio/mp3");
+		    	else
+		    		intent.setData(data);
+		    	view.getContext().startActivity(intent);
+		    	return true;
+            }
+        });  
+        descrView.loadData(app.getDescription(), "text/html; charset=UTF-8", null);
     }
 }

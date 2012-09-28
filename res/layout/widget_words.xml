@@ -29,7 +29,7 @@
         android:gravity="center"
         android:padding="5dip"
         android:includeFontPadding="false"
-        android:maxLines="4"
+        android:maxLines="6"
         style="@style/Text.Words" />
     
     <!-- <TextView

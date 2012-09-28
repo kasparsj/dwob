@@ -76,8 +76,22 @@ public class DwobWidget extends AppWidgetProvider {
             String html = "Failed loading Daily Words of Buddha";
             if (translation.length > 0)
             	html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
+            //html = "1. line<br />\n2. line<br />\n3. line<br />\n4. line";
+            //html += "\n5.line<br />";
+            //html += "\n6.line";
             Spanned words = Html.fromHtml(html);
             updateViews.setTextViewText(R.id.words, words);
+            float textSize = 17;
+            String[] lines = html.split("\r\n|\r|\n");
+            switch (lines.length) {
+            	case 5:
+            		textSize = 13;
+            		break;
+            	case 6:
+            		textSize = 11;
+            		break;
+            }
+            updateViews.setFloat(R.id.words, "setTextSize", textSize);
             
             // When user clicks on widget, launch to Wiktionary definition page
             /*String definePage = res.getString(R.string.template_define_url,
