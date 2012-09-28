@@ -4,15 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 public abstract class BaseFeedParser implements FeedParser {
 
     // names of the XML tags
     static final String PUB_DATE = "pubDate";
-    static final  String DESCRIPTION = "description";
-    static final  String LINK = "link";
-    static final  String TITLE = "title";
-    static final  String ITEM = "item";
+    static final String DESCRIPTION = "description";
+    static final String LINK = "link";
+    static final String TITLE = "title";
+    static final String ITEM = "item";
+    static final int TIMEOUT = 10000;
     
     final URL feedUrl;
 
@@ -26,7 +28,10 @@ public abstract class BaseFeedParser implements FeedParser {
 
     protected InputStream getInputStream() {
         try {
-            return feedUrl.openConnection().getInputStream();
+        	URLConnection connection = feedUrl.openConnection();
+        	connection.setConnectTimeout(TIMEOUT);
+        	connection.setReadTimeout(TIMEOUT);
+            return connection.getInputStream();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
 
@@ -71,7 +72,12 @@ public class DwobWidget extends AppWidgetProvider {
 			
             // Build an update that holds the updated widget contents
             updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_words);
-            updateViews.setTextViewText(R.id.words, Html.fromHtml(TextUtils.join("\n<br />\n", ((DwobApp) context.getApplicationContext()).getTranslation().toArray()).trim().replaceAll("^<br />", "").trim()));
+            Object[] translation = ((DwobApp) context.getApplicationContext()).getTranslation().toArray();
+            String html = "Failed loading Daily Words of Buddha";
+            if (translation.length > 0)
+            	html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
+            Spanned words = Html.fromHtml(html);
+            updateViews.setTextViewText(R.id.words, words);
             
             // When user clicks on widget, launch to Wiktionary definition page
             /*String definePage = res.getString(R.string.template_define_url,
