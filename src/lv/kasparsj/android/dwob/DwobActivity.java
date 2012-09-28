@@ -42,6 +42,6 @@ public class DwobActivity extends Activity {
 		    	return true;
             }
         });  
-        descrView.loadData(app.getDescription(), "text/html; charset=UTF-8", null);
+        descrView.loadDataWithBaseURL(null, app.getDescription(), "text/html", "UTF-8", null);
     }
 }
