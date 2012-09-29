@@ -81,9 +81,17 @@ public class DwobWidget extends AppWidgetProvider {
             //html += "\n6.line";
             Spanned words = Html.fromHtml(html);
             updateViews.setTextViewText(R.id.words, words);
-            float textSize = 17;
+            float textSize = 16;
             String[] lines = html.split("\r\n|\r|\n");
-            switch (lines.length) {
+            int numLines = lines.length;
+            for (int i=0; i<lines.length; i++) {
+            	// TODO: have to test maxChars per line for textSize 13, 11
+            	if (lines[i].length() > (numLines*10)) {
+            		numLines++;
+            		break;
+            	}
+            }
+            switch (numLines) {
             	case 5:
             		textSize = 13;
             		break;
