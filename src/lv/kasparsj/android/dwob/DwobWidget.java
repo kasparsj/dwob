@@ -67,20 +67,16 @@ public class DwobWidget extends AppWidgetProvider {
     }
     
     public void onReceive(Context context, Intent intent) {
-    	if (intent.getAction().equals(LoadFeedTask.ACTION_REFRESH)) {
+    	DwobApp app = ((DwobApp) context.getApplicationContext());
+    	Object[] translation = app.getTranslation().toArray();
+    	if (intent.getAction().equals(LoadFeedTask.ACTION_REFRESH) || translation.length > 0) {
 			RemoteViews updateViews;
 			
             // Build an update that holds the updated widget contents
             updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_words);
-            Object[] translation = ((DwobApp) context.getApplicationContext()).getTranslation().toArray();
             String html = "Failed loading Daily Words of Buddha";
             if (translation.length > 0)
             	html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
-            //html = "1. line<br />\n2. line<br />\n3. line<br />\n4. line<br />";
-            //html += "\n5.line<br />";
-            //html += "\n6.line<br />";
-            //html += "\n7.line<br />";
-            //html += "\n8.line<br />";
             float textSize = 8;
             String[] lines = html.split("\r\n|\r|\n");
             int numLines = lines.length;
