@@ -34,10 +34,6 @@ import android.widget.RemoteViews;
 
 import lv.kasparsj.android.dwob.R;
 
-/**
- * Define a simple widget that shows the Wiktionary "Word of the day." To build
- * an update we spawn a background {@link Service} to perform the API queries.
- */
 public class DwobWidget extends AppWidgetProvider {
 	
 	private PendingIntent service = null;  
@@ -113,9 +109,6 @@ public class DwobWidget extends AppWidgetProvider {
             updateViews.setTextViewText(R.id.words, words);
             updateViews.setFloat(R.id.words, "setTextSize", textSize);
             
-            // When user clicks on widget, launch to Wiktionary definition page
-            /*String definePage = res.getString(R.string.template_define_url,
-                    Uri.encode(wordTitle));*/
             Intent defineIntent = new Intent(context, DwobActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, defineIntent, 0);
             updateViews.setOnClickPendingIntent(R.id.words, pendingIntent);
