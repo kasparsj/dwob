@@ -76,14 +76,20 @@ public class DwobWidget extends AppWidgetProvider {
             String html = "Failed loading Daily Words of Buddha";
             if (translation.length > 0)
             	html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
-            //html = "1. line<br />\n2. line<br />\n3. line<br />\n4. line";
+            //html = "1. line<br />\n2. line<br />\n3. line<br />\n4. line<br />";
             //html += "\n5.line<br />";
-            //html += "\n6.line";
-            Spanned words = Html.fromHtml(html);
-            updateViews.setTextViewText(R.id.words, words);
-            float textSize = 16;
+            //html += "\n6.line<br />";
+            //html += "\n7.line<br />";
+            //html += "\n8.line<br />";
+            float textSize = 8;
             String[] lines = html.split("\r\n|\r|\n");
             int numLines = lines.length;
+            if (numLines > 6 && html.indexOf("\n<br />\n") > -1) {
+            	String[] parts = html.split("\n<br />\n");
+            	html = parts[0].trim().replaceAll("<br />$", "").trim();
+            	lines = html.split("\r\n|\r|\n");
+            	numLines = lines.length;
+            }
             for (int i=0; i<lines.length; i++) {
             	// TODO: have to test maxChars per line for textSize 13, 11
             	if (lines[i].length() > (numLines*10)) {
@@ -92,13 +98,23 @@ public class DwobWidget extends AppWidgetProvider {
             	}
             }
             switch (numLines) {
+            	case 1:
+            	case 2:
+            	case 3:
+            	case 4:
+            		textSize = 16;
             	case 5:
             		textSize = 13;
             		break;
             	case 6:
             		textSize = 11;
             		break;
+            	case 7:
+            		textSize = 9;
+            		break;
             }
+            Spanned words = Html.fromHtml(html);
+            updateViews.setTextViewText(R.id.words, words);
             updateViews.setFloat(R.id.words, "setTextSize", textSize);
             
             // When user clicks on widget, launch to Wiktionary definition page
