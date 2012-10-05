@@ -26,11 +26,15 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.IBinder;
 import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Display;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
+import android.widget.TextView;
 
 import lv.kasparsj.android.dwob.R;
 
@@ -62,57 +66,83 @@ public class DwobWidget extends AppWidgetProvider {
         m.cancel(service);  
     }
     
+    private float getDefaultTextSize(int numLines) {
+        switch (numLines) {
+	    	case 1:
+	    	case 2:
+	    	case 3:
+	    	case 4:
+	    		return 16;
+	    	case 5:
+	    		return 13;
+	    	case 6:
+	    		return 11;
+	    	case 7:
+	    		return 9;
+    	}
+        return 8;
+    }
+    
+    private int countTextViewLines(TextView textView, String[] lines, float lineWidth) {
+    	int numLines = lines.length;
+    	for (int i=0; i<lines.length; i++) {
+        	if (textView.getPaint().measureText(lines[i]) > lineWidth) {
+        		numLines++;
+        	}
+        }
+    	return numLines;
+    }
+    
+    private int getLinesVisible(float textSize) {
+    	if (textSize > 13) return 4;
+    	else if (textSize > 11) return 5;
+    	else if (textSize > 9) return 6;
+    	else if (textSize > 8) return 7;
+    	return 8;
+    }
+    
     public void onReceive(Context context, Intent intent) {
     	DwobApp app = ((DwobApp) context.getApplicationContext());
     	Object[] translation = app.getTranslation().toArray();
     	if (intent.getAction().equals(LoadFeedTask.ACTION_REFRESH) || translation.length > 0) {
-			RemoteViews updateViews;
-			
-            // Build an update that holds the updated widget contents
-            updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_words);
-            String html = "Failed loading Daily Words of Buddha";
-            if (translation.length > 0)
-            	html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
-            float textSize = 8;
-            String[] lines = html.split("\r\n|\r|\n");
+			// Retrieve latest translation
+            String text = "Failed loading Daily Words of Buddha";
+            if (translation.length > 0) {
+            	String html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
+            	text = Html.fromHtml(html).toString();
+            }
+            // Detect numLines to display
+            String[] lines = text.split("\r\n|\r|\n");
             int numLines = lines.length;
-            if (numLines > 6 && html.indexOf("\n<br />\n") > -1) {
-            	String[] parts = html.split("\n<br />\n");
-            	html = parts[0].trim().replaceAll("<br />$", "").trim();
-            	lines = html.split("\r\n|\r|\n");
+            if (numLines > 6 && text.indexOf("\n\n") > -1) {
+            	String[] parts = text.split("\n\n");
+            	text = parts[0].trim()+"...";
+            	lines = text.split("\r\n|\r|\n");
             	numLines = lines.length;
             }
-            for (int i=0; i<lines.length; i++) {
-            	// TODO: have to test maxChars per line for textSize 13, 11
-            	if (lines[i].length() > (numLines*10)) {
-            		numLines++;
-            		break;
-            	}
+            // Measure text width, and alter numLines accordingly
+            TextView textView = new TextView(context);
+            textView.setTextSize(getDefaultTextSize(numLines));
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            int displayWidth = display.getWidth();
+            Resources r = context.getResources();
+            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, r.getDisplayMetrics());
+            float lineWidth = (displayWidth - padding*2);
+            while (numLines < countTextViewLines(textView, lines, lineWidth)) {
+            	textView.setTextSize((textView.getTextSize()-.5f));
+            	numLines = getLinesVisible(textView.getTextSize());
             }
-            switch (numLines) {
-            	case 1:
-            	case 2:
-            	case 3:
-            	case 4:
-            		textSize = 16;
-            	case 5:
-            		textSize = 13;
-            		break;
-            	case 6:
-            		textSize = 11;
-            		break;
-            	case 7:
-            		textSize = 9;
-            		break;
-            }
-            Spanned words = Html.fromHtml(html);
-            updateViews.setTextViewText(R.id.words, words);
-            updateViews.setFloat(R.id.words, "setTextSize", textSize);
-            
+            // Build an update that holds the updated widget contents
+            RemoteViews updateViews;
+            updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_words);
+            updateViews.setTextViewText(R.id.words, text);
+            updateViews.setFloat(R.id.words, "setTextSize", textView.getTextSize());
+            // setOnClickPendingIntent
             Intent defineIntent = new Intent(context, DwobActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, defineIntent, 0);
             updateViews.setOnClickPendingIntent(R.id.words, pendingIntent);
-			
+			// update Widget
 			ComponentName thisWidget = new ComponentName(context, DwobWidget.class);
 	        AppWidgetManager manager = AppWidgetManager.getInstance(context);
 	        manager.updateAppWidget(thisWidget, updateViews);
