@@ -29,7 +29,6 @@
     </style>
     
     <style name="Text.Words">
-        <item name="android:textSize">15sp</item>
         <item name="android:textColor">@android:color/black</item>
     </style>
     

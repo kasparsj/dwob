@@ -6,22 +6,21 @@ import java.util.List;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	
-	public static final String FEED_URL = "http://feeds.pariyatti.org/dwob";
-	public static final String LOADING_TXT = "Loading Daily Words of the Buddha";
-	public static final String ACTION_REFRESH = "lv.kasparsj.android.dwob.REFRESH";
-	
 	private Context context;
+	private Resources r;
 	private ProgressDialog dialog;
 	private DwobActivity activity;
 	
 	public LoadFeedTask(Context context, DwobActivity activity) {
 		this.context = context;
+		this.r = context.getResources();
 		this.activity = activity;
 		if (this.activity != null) {
 			dialog = new ProgressDialog(activity);
@@ -30,7 +29,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	
 	protected void onPreExecute() {
 		if (dialog != null) {
-			dialog.setMessage(LOADING_TXT);
+			dialog.setMessage(r.getString(R.string.widget_loading));
 			dialog.show();
 		}
     }
@@ -41,7 +40,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 				 activity.updateView();
 			 }
 			 else {
-				 CharSequence text = "Failed loading Daily Words of Buddha";
+				 CharSequence text = r.getString(R.string.widget_error);
 				 Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 			 }
 			 if (dialog.isShowing()) {
@@ -49,15 +48,15 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 			 }
 		 }
 		 Intent broadcastIntent = new Intent(context, DwobWidget.class);
-		 broadcastIntent.setAction(ACTION_REFRESH);
+		 broadcastIntent.setAction(r.getString(R.string.action_refresh));
 		 context.sendBroadcast(broadcastIntent);
 	 }
 	
 	protected Boolean doInBackground(final String... args) {
     	try {
             // Try querying Pariyatti API for today's word
-    		Log.i("Daily words of the Buddha", "will load feed");
-        	AndroidSaxFeedParser rssParser = new AndroidSaxFeedParser(FEED_URL);
+    		Log.i(r.getString(R.string.app_name), "will load feed");
+        	AndroidSaxFeedParser rssParser = new AndroidSaxFeedParser(r.getString(R.string.feed_url));
         	List<Message> messages = rssParser.parse();
         	DwobApp app = (DwobApp) context.getApplicationContext();
         	app.setTitle(messages.get(0).getTitle());
@@ -65,7 +64,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
         	app.setUpdated(new Date().getTime());
         	return true;
         } catch (RuntimeException e) {
-            Log.e("Daily words of the Buddha", e.getMessage(), e);
+            Log.e(r.getString(R.string.app_name), e.getMessage(), e);
             return false;
         }
 	}

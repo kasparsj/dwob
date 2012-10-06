@@ -2,8 +2,6 @@ package lv.kasparsj.android.dwob;
 
 import java.util.Date;
 
-import lv.kasparsj.android.dwob.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;

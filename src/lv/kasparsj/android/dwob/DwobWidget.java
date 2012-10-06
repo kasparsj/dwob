@@ -31,12 +31,8 @@ import android.os.IBinder;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.WindowManager;
 import android.widget.RemoteViews;
 import android.widget.TextView;
-
-import lv.kasparsj.android.dwob.R;
 
 public class DwobWidget extends AppWidgetProvider {
 	
@@ -102,11 +98,12 @@ public class DwobWidget extends AppWidgetProvider {
     }
     
     public void onReceive(Context context, Intent intent) {
+    	Resources r = context.getResources();
     	DwobApp app = ((DwobApp) context.getApplicationContext());
     	Object[] translation = app.getTranslation().toArray();
-    	if (intent.getAction().equals(LoadFeedTask.ACTION_REFRESH) || translation.length > 0) {
+    	if (intent.getAction().equals(r.getString(R.string.action_refresh)) || translation.length > 0) {
 			// Retrieve latest translation
-            String text = "Failed loading Daily Words of Buddha";
+            String text = r.getString(R.string.widget_error);
             if (translation.length > 0) {
             	String html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
             	text = Html.fromHtml(html).toString();
@@ -123,12 +120,9 @@ public class DwobWidget extends AppWidgetProvider {
             // Measure text width, and alter numLines accordingly
             TextView textView = new TextView(context);
             textView.setTextSize(getDefaultTextSize(numLines));
-            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            int displayWidth = display.getWidth();
-            Resources r = context.getResources();
-            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, r.getDisplayMetrics());
-            float lineWidth = (displayWidth - padding*2);
+            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.widget_padding), r.getDisplayMetrics());
+            float margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.widget_margin), r.getDisplayMetrics());
+            float lineWidth = (r.getDisplayMetrics().widthPixels - padding*2 - margin*2);
             while (numLines < countTextViewLines(textView, lines, lineWidth)) {
             	textView.setTextSize((textView.getTextSize()-.5f));
             	numLines = getLinesVisible(textView.getTextSize());
