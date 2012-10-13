@@ -10,8 +10,6 @@ import android.content.SharedPreferences;
 
 public class DwobApp extends Application {
 	
-	public static final long UPDATE_INTERVAL = 1000 * 60 * 60; // 1 hour
-	
 	private static final String PREFS_NAME = "DwobPrefsFile";
 	private static final Pattern AUDIO_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>Listen</a>", Pattern.CASE_INSENSITIVE);
 	private static final Pattern SOURCE_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>View P.li on Tipitaka.org</a>", Pattern.CASE_INSENSITIVE);

@@ -16,18 +16,13 @@
 
 package lv.kasparsj.android.dwob;
 
-import java.util.Calendar;
-
-import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.IBinder;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
@@ -36,30 +31,11 @@ import android.widget.TextView;
 
 public class DwobWidget extends AppWidgetProvider {
 	
-	private PendingIntent service = null;  
-	
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
-    	final AlarmManager m = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);  
-    	  
-        final Calendar TIME = Calendar.getInstance();  
-        TIME.set(Calendar.MINUTE, 5);  
-  
-        final Intent i = new Intent(context, UpdateService.class);  
-  
-        if (service == null)  
-            service = PendingIntent.getService(context, 0, i, PendingIntent.FLAG_CANCEL_CURRENT);  
-  
-        m.setRepeating(AlarmManager.RTC, TIME.getTime().getTime(), DwobApp.UPDATE_INTERVAL, service); 
-    }
-    
-    @Override  
-    public void onDisabled(Context context)  
-    {  
-        final AlarmManager m = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);  
-  
-        m.cancel(service);  
+        LoadFeedTask task = new LoadFeedTask(context, null);
+        task.execute();
     }
     
     private float getDefaultTextSize(int numLines) {
@@ -141,22 +117,7 @@ public class DwobWidget extends AppWidgetProvider {
 	        AppWidgetManager manager = AppWidgetManager.getInstance(context);
 	        manager.updateAppWidget(thisWidget, updateViews);
     	}
-    	else {
-    		super.onReceive(context, intent);
-    	}
+    	
+		super.onReceive(context, intent);
 	}
-    
-	public static class UpdateService extends Service {
-        @Override
-        public void onStart(Intent intent, int startId) {
-            LoadFeedTask task = new LoadFeedTask(this, null);
-            task.execute();
-        }
-
-        @Override
-        public IBinder onBind(Intent intent) {
-            // We don't need to bind to this service
-            return null;
-        }
-    }
 }

@@ -19,7 +19,7 @@ public class DwobActivity extends Activity {
         updateView();
         
         DwobApp app = ((DwobApp) getApplication());
-        if (new Date().getTime() - app.getUpdated() > DwobApp.UPDATE_INTERVAL)
+        if (new Date().getTime() - app.getUpdated() > R.integer.update_period)
         	new LoadFeedTask(getApplicationContext(), this).execute();
     }
     
