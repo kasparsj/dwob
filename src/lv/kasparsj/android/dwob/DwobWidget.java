@@ -1,42 +1,41 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package lv.kasparsj.android.dwob;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
 public class DwobWidget extends AppWidgetProvider {
 	
-    @Override
+    private ScreenStateReceiver screenStateReceiver = new ScreenStateReceiver();
+
+	@Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
-        LoadFeedTask task = new LoadFeedTask(context, null);
-        task.execute();
+		screenStateReceiver.runWhenOn(context, LoadFeedTask.class);
     }
+	
+	@Override
+	public void onEnabled(Context context) {
+		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+		filter.addAction(Intent.ACTION_SCREEN_ON);
+    	context.getApplicationContext().registerReceiver(this.screenStateReceiver, filter);
+	}
+	
+	public void onDisabled(Context context) {
+		context.getApplicationContext().unregisterReceiver(this.screenStateReceiver);
+	}
     
     private float getDefaultTextSize(int numLines) {
         switch (numLines) {
@@ -120,4 +119,49 @@ public class DwobWidget extends AppWidgetProvider {
     	
 		super.onReceive(context, intent);
 	}
+    
+    public class ScreenStateReceiver extends BroadcastReceiver {
+		private boolean screenOff = false;
+		private boolean pendingUpdate = false;
+		private Class<?> pendingTask;
+		private Object[] pendingTaskParams;
+    	public void onReceive(Context context, Intent intent) {
+    		if (intent.getAction() == Intent.ACTION_SCREEN_ON) {
+    			screenOff = false;
+    		}
+    		else {
+    			screenOff = true;
+    			if (pendingUpdate) {
+    				pendingUpdate = false;
+    				run(context);
+    			}
+    		}
+    	}
+    	public void runWhenOn(Context context, Class<?> task, Object[] params) {
+    		pendingTask = task;
+    		pendingTaskParams = params;
+    		if (!screenOff) {
+    			run(context);
+    		}
+    		else {
+    			Log.i("test", "scheduling update");
+    			pendingUpdate = true;
+    		}
+    	}
+    	public void runWhenOn(Context context, Class<?> task) {
+    		runWhenOn(context, task, new Object[1]);
+    	}
+    	private void run(Context context) {
+    		Log.i("test", "running update");
+    		try {
+    			Object task = pendingTask.getConstructors()[0].newInstance(context, null);
+    			pendingTask.getMethod("execute", new Class[] { Object[].class }).invoke(task, pendingTaskParams);
+    			pendingTask = null;
+    			pendingTaskParams = null;
+    		} catch (Exception e) {
+    			Resources r = context.getResources();
+    			Log.e(r.getString(R.string.app_name), e.getMessage(), e);
+    		}
+    	}
+    }
 }

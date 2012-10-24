@@ -19,13 +19,13 @@ public class DwobApp extends Application {
 	private List<String> translation;
 	private String source;
 	private String audio;
-	private long updated;
+	private long updated; // last time updated
 	
 	public void onCreate() {
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		setTitle(settings.getString("title", ""));
 		setDescription(settings.getString("description", ""));
-		setUpdated(settings.getLong("updated", 0));
+		this.updated = settings.getLong("updated", 0);
 	}
 	
 	public String getTitle() {
@@ -41,7 +41,7 @@ public class DwobApp extends Application {
 	}
 	
 	public void setDescription(String description) {
-		this.description = description.trim().replaceAll("^<br />", "").trim();
+		this.description = description;
 		String[] contents = description.split("\n<br />\n");
 		original = new ArrayList<String>();
     	translation = new ArrayList<String>();
