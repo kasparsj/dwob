@@ -15,11 +15,11 @@
 -->
 
 <resources>
-    <string name="app_name">Daily words of Buddha</string>
+    <string name="app_name">Daily Words of Buddha</string>
 
-    <string name="widget_name">Daily words of Buddha</string>
+    <string name="widget_name">Daily Words of Buddha</string>
 
-    <string name="widget_loading">Loading daily words of Buddha</string>
+    <string name="widget_loading">Loading Daily Words of Buddha</string>
     <string name="widget_error">Failed loading Daily Words of Buddha</string>
     
     <string name="feed_url">http://feeds.pariyatti.org/dwob</string>
