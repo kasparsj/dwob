@@ -15,7 +15,7 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="lv.kasparsj.android.dwob"
+    package="org.pariyatti.dwob"
     android:versionCode="1"
     android:versionName="1.0">
     
@@ -24,10 +24,11 @@
 
     <uses-sdk android:minSdkVersion="3" />
 
-    <application android:icon="@drawable/app_icon" android:label="@string/app_name" android:name="lv.kasparsj.android.dwob.DwobApp">
+    <application android:icon="@drawable/app_icon" android:label="@string/app_name" android:name="org.pariyatti.dwob.DwobApp">
         
-        <activity android:name="lv.kasparsj.android.dwob.DwobActivity"
-                  android:label="@string/app_name">
+        <activity android:name="org.pariyatti.dwob.DwobActivity"
+                  android:label="@string/app_name"
+                  android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -43,14 +44,14 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
         </receiver>
         
-        <receiver android:name=".NetworkStateReceiver">
+        <receiver android:name="org.pariyatti.dwob.NetworkStateReceiver">
 		   <intent-filter>
 		      <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 		   </intent-filter>
 		</receiver>
         
         <!-- Service to perform web API queries -->        
-        <service android:name="lv.kasparsj.android.dwob.DwobWidget$UpdateService" />
+        <service android:name="org.pariyatti.dwob.DwobWidget$UpdateService" />
         
     </application>
        

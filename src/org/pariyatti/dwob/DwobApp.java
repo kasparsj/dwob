@@ -1,12 +1,16 @@
-package lv.kasparsj.android.dwob;
+package org.pariyatti.dwob;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 
 public class DwobApp extends Application {
 	
@@ -20,12 +24,21 @@ public class DwobApp extends Application {
 	private String source;
 	private String audio;
 	private long updated; // last time updated
+	private boolean loading = false;
 	
 	public void onCreate() {
+		// load saved data
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 		setTitle(settings.getString("title", ""));
 		setDescription(settings.getString("description", ""));
 		this.updated = settings.getLong("updated", 0);
+		
+		// fire network state change with current info
+		Intent intent = new Intent(getApplicationContext(), null);
+		intent.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
+		ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+		intent.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, manager.getActiveNetworkInfo());
+		sendBroadcast(intent);
 	}
 	
 	public String getTitle() {
@@ -84,13 +97,33 @@ public class DwobApp extends Application {
 		return updated;
 	}
 	
-	public void setUpdated(long updated) {
-		this.updated = updated;
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("title", title);
-		editor.putString("description", description);
-		editor.putLong("updated", updated);
+	public SharedPreferences getSharedPreferences() {
+		return getSharedPreferences(PREFS_NAME, 0);
+	}
+	
+	public boolean isLoading() {
+		return loading;
+	}
+	
+	public void setLoading(boolean isLoading) {
+		SharedPreferences.Editor editor = getSharedPreferences().edit();
+		editor.putBoolean("loading", isLoading);
 		editor.commit();
+	}
+	
+	public void setLoading(boolean isLoading, boolean success) {
+		if (success) {
+			updated = new Date().getTime();
+			SharedPreferences.Editor editor = getSharedPreferences().edit();
+			editor.putString("title", title);
+			editor.putString("description", description);
+			editor.putLong("updated", updated);
+			editor.putBoolean("loading", isLoading);
+			editor.putBoolean("success", success);
+			editor.commit();
+		}
+		else {
+			setLoading(isLoading);
+		}
 	}
 }

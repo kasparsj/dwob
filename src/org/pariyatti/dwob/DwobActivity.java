@@ -1,26 +1,52 @@
-package lv.kasparsj.android.dwob;
-
-import java.util.Date;
+package org.pariyatti.dwob;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
-public class DwobActivity extends Activity {
+public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
+	private ProgressDialog dialog;
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        updateView();
+        dialog = new ProgressDialog(this);
         
-        DwobApp app = ((DwobApp) getApplication());
-        if (new Date().getTime() - app.getUpdated() > R.integer.update_period)
-        	new LoadFeedTask(getApplicationContext(), this).execute();
+        SharedPreferences prefs = ((DwobApp) getApplication()).getSharedPreferences();
+        prefs.registerOnSharedPreferenceChangeListener(this);
+    }
+    
+    public void onResume() {
+    	updateView();
+    }
+    
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    	if (key == "loading") {
+    		if (prefs.getBoolean("loading", false)) {
+    			dialog.setMessage(getString(R.string.widget_loading));
+    			dialog.show();
+    		}
+    		else {
+				 if (prefs.getBoolean("success", false)) {
+					 updateView();
+				 }
+				 else {
+					 CharSequence text = getString(R.string.widget_error);
+					 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+				 }
+				 if (dialog.isShowing()) {
+					 dialog.dismiss();
+				 }
+    		}
+    	}
     }
     
     public void updateView() {

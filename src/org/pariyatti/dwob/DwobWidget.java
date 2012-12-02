@@ -1,9 +1,8 @@
-package lv.kasparsj.android.dwob;
+package org.pariyatti.dwob;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,17 +22,19 @@ public class DwobWidget extends AppWidgetProvider {
 	@Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
-		screenStateReceiver.runWhenOn(context, LoadFeedTask.class);
+		screenStateReceiver.scheduleTask(context, LoadFeedTask.class);
     }
 	
 	@Override
 	public void onEnabled(Context context) {
+		Log.i("test", "Enabled");
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 		filter.addAction(Intent.ACTION_SCREEN_ON);
     	context.getApplicationContext().registerReceiver(this.screenStateReceiver, filter);
 	}
 	
 	public void onDisabled(Context context) {
+		Log.i("test", "Disabled");
 		context.getApplicationContext().unregisterReceiver(this.screenStateReceiver);
 	}
     
@@ -119,49 +120,4 @@ public class DwobWidget extends AppWidgetProvider {
     	
 		super.onReceive(context, intent);
 	}
-    
-    public class ScreenStateReceiver extends BroadcastReceiver {
-		private boolean screenOff = false;
-		private boolean pendingUpdate = false;
-		private Class<?> pendingTask;
-		private Object[] pendingTaskParams;
-    	public void onReceive(Context context, Intent intent) {
-    		if (intent.getAction() == Intent.ACTION_SCREEN_ON) {
-    			screenOff = false;
-    		}
-    		else {
-    			screenOff = true;
-    			if (pendingUpdate) {
-    				pendingUpdate = false;
-    				run(context);
-    			}
-    		}
-    	}
-    	public void runWhenOn(Context context, Class<?> task, Object[] params) {
-    		pendingTask = task;
-    		pendingTaskParams = params;
-    		if (!screenOff) {
-    			run(context);
-    		}
-    		else {
-    			Log.i("test", "scheduling update");
-    			pendingUpdate = true;
-    		}
-    	}
-    	public void runWhenOn(Context context, Class<?> task) {
-    		runWhenOn(context, task, new Object[1]);
-    	}
-    	private void run(Context context) {
-    		Log.i("test", "running update");
-    		try {
-    			Object task = pendingTask.getConstructors()[0].newInstance(context, null);
-    			pendingTask.getMethod("execute", new Class[] { Object[].class }).invoke(task, pendingTaskParams);
-    			pendingTask = null;
-    			pendingTaskParams = null;
-    		} catch (Exception e) {
-    			Resources r = context.getResources();
-    			Log.e(r.getString(R.string.app_name), e.getMessage(), e);
-    		}
-    	}
-    }
 }

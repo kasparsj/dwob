@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package org.pariyatti.dwob;
 
 import java.io.IOException;
 import java.io.InputStream;
