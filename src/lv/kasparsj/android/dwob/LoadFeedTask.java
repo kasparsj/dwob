@@ -1,4 +1,6 @@
-package org.pariyatti.dwob;
+package lv.kasparsj.android.dwob;
+
+import lv.kasparsj.android.dwob.R;
 
 import java.util.List;
 

@@ -1,4 +1,6 @@
-package org.pariyatti.dwob;
+package lv.kasparsj.android.dwob;
+
+import lv.kasparsj.android.dwob.R;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,13 +16,13 @@ public class ScreenStateReceiver extends BroadcastReceiver {
     	public void onReceive(Context context, Intent intent) {
     		if (intent.getAction() == Intent.ACTION_SCREEN_ON) {
     			screenOff = false;
-    		}
-    		else {
-    			screenOff = true;
     			if (pendingUpdate) {
     				pendingUpdate = false;
     				run(context);
     			}
+    		}
+    		else {
+    			screenOff = true;
     		}
     	}
     	public void scheduleTask(Context context, Class<?> task, Object[] params) {
@@ -38,9 +40,9 @@ public class ScreenStateReceiver extends BroadcastReceiver {
     		scheduleTask(context, task, new Object[1]);
     	}
     	private void run(Context context) {
-    		Log.i("test", "running update");
+    		Log.i("test", "ScreenStateReceiver::run");
     		try {
-    			Object task = pendingTask.getConstructors()[0].newInstance(context, null);
+    			Object task = pendingTask.getConstructors()[0].newInstance(context);
     			pendingTask.getMethod("execute", new Class[] { Object[].class }).invoke(task, pendingTaskParams);
     			pendingTask = null;
     			pendingTaskParams = null;

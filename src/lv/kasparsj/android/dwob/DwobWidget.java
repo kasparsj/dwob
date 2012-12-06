@@ -1,4 +1,6 @@
-package org.pariyatti.dwob;
+package lv.kasparsj.android.dwob;
+
+import lv.kasparsj.android.dwob.R;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -27,15 +29,19 @@ public class DwobWidget extends AppWidgetProvider {
 	
 	@Override
 	public void onEnabled(Context context) {
-		Log.i("test", "Enabled");
+		Log.i("test", "DwobWidget::onEnabled");
 		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 		filter.addAction(Intent.ACTION_SCREEN_ON);
     	context.getApplicationContext().registerReceiver(this.screenStateReceiver, filter);
 	}
 	
 	public void onDisabled(Context context) {
-		Log.i("test", "Disabled");
-		context.getApplicationContext().unregisterReceiver(this.screenStateReceiver);
+		Log.i("test", "DwobWidget::onDisabled");
+		try {
+			context.getApplicationContext().unregisterReceiver(this.screenStateReceiver);
+		} catch (RuntimeException e) {
+			// do nothing
+		}
 	}
     
     private float getDefaultTextSize(int numLines) {

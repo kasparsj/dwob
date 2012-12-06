@@ -1,4 +1,6 @@
-package org.pariyatti.dwob;
+package lv.kasparsj.android.dwob;
+
+import lv.kasparsj.android.dwob.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -6,12 +8,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private ProgressDialog dialog;
+	private Boolean isShowing = false;
+	private Boolean isLoading = false;
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,16 +30,24 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     }
     
     public void onResume() {
+    	super.onResume();
+    	isShowing = true;
+   		showOrHideDialog();
     	updateView();
+    	((DwobApp) getApplication()).update();
+    }
+    
+    public void onPause() {
+    	super.onPause();
+    	isShowing = false;
     }
     
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+    	Log.i("test", "DwobActivity::onSharedPreferenceChanged");
     	if (key == "loading") {
-    		if (prefs.getBoolean("loading", false)) {
-    			dialog.setMessage(getString(R.string.widget_loading));
-    			dialog.show();
-    		}
-    		else {
+    		isLoading = prefs.getBoolean("loading", false);
+    		showOrHideDialog();
+    		if (!isLoading) {
 				 if (prefs.getBoolean("success", false)) {
 					 updateView();
 				 }
@@ -42,14 +55,22 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 					 CharSequence text = getString(R.string.widget_error);
 					 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
 				 }
-				 if (dialog.isShowing()) {
-					 dialog.dismiss();
-				 }
     		}
     	}
     }
     
+    public void showOrHideDialog() {
+    	if (isLoading && isShowing) {
+    		dialog.setMessage(getString(R.string.widget_loading));
+    		dialog.show();
+    	}
+    	else if (dialog.isShowing()) {
+			dialog.dismiss();
+		}
+    }
+    
     public void updateView() {
+    	Log.i("test", "DwobActivity::updateView");
     	DwobApp app = ((DwobApp) getApplication());
 		setTitle(app.getTitle());
 		

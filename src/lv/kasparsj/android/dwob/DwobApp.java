@@ -1,4 +1,6 @@
-package org.pariyatti.dwob;
+package lv.kasparsj.android.dwob;
+
+import lv.kasparsj.android.dwob.R;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,10 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 
 public class DwobApp extends Application {
 	
@@ -32,13 +31,6 @@ public class DwobApp extends Application {
 		setTitle(settings.getString("title", ""));
 		setDescription(settings.getString("description", ""));
 		this.updated = settings.getLong("updated", 0);
-		
-		// fire network state change with current info
-		Intent intent = new Intent(getApplicationContext(), null);
-		intent.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		ConnectivityManager manager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-		intent.putExtra(ConnectivityManager.EXTRA_NETWORK_INFO, manager.getActiveNetworkInfo());
-		sendBroadcast(intent);
 	}
 	
 	public String getTitle() {
@@ -125,5 +117,10 @@ public class DwobApp extends Application {
 		else {
 			setLoading(isLoading);
 		}
+	}
+	
+	public void update() {
+		if (new Date().getTime() - updated > R.integer.update_period)
+        	new LoadFeedTask(getApplicationContext()).execute();
 	}
 }

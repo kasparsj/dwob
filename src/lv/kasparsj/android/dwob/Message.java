@@ -1,4 +1,4 @@
-package org.pariyatti.dwob;
+package lv.kasparsj.android.dwob;
 
 import java.net.MalformedURLException;
 import java.net.URL;
