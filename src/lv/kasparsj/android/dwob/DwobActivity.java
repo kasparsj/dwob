@@ -14,9 +14,11 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
+	
 	private ProgressDialog dialog;
 	private Boolean isShowing = false;
 	private Boolean isLoading = false;
+	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
