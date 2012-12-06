@@ -47,7 +47,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     	if (key == "loading") {
     		isLoading = prefs.getBoolean("loading", false);
     		showOrHideDialog();
-    		if (!isLoading) {
+    		if (isShowing && !isLoading) {
 				 if (prefs.getBoolean("success", false)) {
 					 updateView();
 				 }
