@@ -28,7 +28,7 @@ public class DwobApp extends Application {
 	public void onCreate() {
 		// load saved data
 		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		setTitle(settings.getString("title", ""));
+		setTitle(settings.getString("title", getString(R.string.app_name)));
 		setDescription(settings.getString("description", ""));
 		this.updated = settings.getLong("updated", 0);
 	}

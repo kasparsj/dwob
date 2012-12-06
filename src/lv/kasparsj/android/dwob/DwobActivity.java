@@ -40,8 +40,8 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     }
     
     public void onPause() {
-    	super.onPause();
     	isShowing = false;
+    	super.onPause();
     }
     
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
@@ -54,6 +54,11 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 					 updateView();
 				 }
 				 else {
+					 DwobApp app = ((DwobApp) getApplication());
+					 if (app.getDescription().length() == 0) {
+						 WebView descrView = (WebView) findViewById(R.id.description);
+						 descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
+					 }
 					 CharSequence text = getString(R.string.widget_error);
 					 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
 				 }
@@ -62,13 +67,15 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     }
     
     public void showOrHideDialog() {
-    	if (isLoading && isShowing) {
-    		dialog.setMessage(getString(R.string.widget_loading));
-    		dialog.show();
+    	if (isShowing) {
+	    	if (isLoading) {
+	    		dialog.setMessage(getString(R.string.widget_loading));
+	    		dialog.show();
+	    	}
+	    	else if (dialog.isShowing()) {
+				dialog.dismiss();
+			}
     	}
-    	else if (dialog.isShowing()) {
-			dialog.dismiss();
-		}
     }
     
     public void updateView() {

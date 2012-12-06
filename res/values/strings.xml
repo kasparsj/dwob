@@ -16,14 +16,10 @@
 
 <resources>
     <string name="app_name">Daily Words of Buddha</string>
-
+    <string name="activity_error">Failed loading Daily Words of Buddha</string>
     <string name="widget_name">Daily Words of Buddha</string>
-
     <string name="widget_loading">Loading Daily Words of Buddha&#8230;</string>
     <string name="widget_error">Failed loading Daily Words of Buddha</string>
-    
     <string name="feed_url">http://feeds.pariyatti.org/dwob</string>
-    
     <string name="action_refresh">lv.kasparsj.android.dwob.REFRESH</string>
-    
 </resources>

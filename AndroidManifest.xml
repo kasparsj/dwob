@@ -44,7 +44,7 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
         </receiver>
         
-        <receiver android:name="lv.kasparsj.android.dwob.NetworkStateReceiver">
+        <receiver android:name="lv.kasparsj.android.dwob.DwobUpdateReceiver">
 		   <intent-filter>
 		      <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 		   </intent-filter>

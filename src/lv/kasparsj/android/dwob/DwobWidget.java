@@ -5,6 +5,7 @@ import lv.kasparsj.android.dwob.R;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -20,25 +21,36 @@ import android.widget.TextView;
 public class DwobWidget extends AppWidgetProvider {
 	
     private ScreenStateReceiver screenStateReceiver = new ScreenStateReceiver();
+    private DwobUpdateReceiver screenUpdateReceiver = new DwobUpdateReceiver();
 
 	@Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
-		screenStateReceiver.scheduleTask(context, LoadFeedTask.class);
+		if (screenStateReceiver.screenOff) {
+			screenUpdateReceiver.needsUpdate = true;
+		}
     }
 	
 	@Override
 	public void onEnabled(Context context) {
 		Log.i("test", "DwobWidget::onEnabled");
-		IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
-		filter.addAction(Intent.ACTION_SCREEN_ON);
-    	context.getApplicationContext().registerReceiver(this.screenStateReceiver, filter);
+		IntentFilter stateFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+		stateFilter.addAction(Intent.ACTION_SCREEN_ON);
+    	context.getApplicationContext().registerReceiver(this.screenStateReceiver, stateFilter);
+    	
+		IntentFilter updateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+    	context.getApplicationContext().registerReceiver(screenUpdateReceiver, updateFilter);
 	}
 	
 	public void onDisabled(Context context) {
 		Log.i("test", "DwobWidget::onDisabled");
 		try {
-			context.getApplicationContext().unregisterReceiver(this.screenStateReceiver);
+			context.getApplicationContext().unregisterReceiver(screenStateReceiver);
+		} catch (RuntimeException e) {
+			// do nothing
+		}
+		try {
+			context.getApplicationContext().unregisterReceiver(screenUpdateReceiver);
 		} catch (RuntimeException e) {
 			// do nothing
 		}
@@ -126,4 +138,16 @@ public class DwobWidget extends AppWidgetProvider {
     	
 		super.onReceive(context, intent);
 	}
+    
+    public class ScreenStateReceiver extends BroadcastReceiver {
+    	public boolean screenOff = false;
+    	public void onReceive(Context context, Intent intent) {
+    		if (intent.getAction() == Intent.ACTION_SCREEN_ON) {
+    			screenOff = false;
+    		}
+    		else {
+    			screenOff = true;
+    		}
+    	}
+    }
 }
