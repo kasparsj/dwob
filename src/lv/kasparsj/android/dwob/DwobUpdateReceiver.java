@@ -9,7 +9,7 @@ import android.util.Log;
 
 public class DwobUpdateReceiver extends BroadcastReceiver {
 	
-	public Boolean needsUpdate = false;
+	public Boolean pendingUpdate = false;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -17,11 +17,11 @@ public class DwobUpdateReceiver extends BroadcastReceiver {
 		if (intent.getAction() == ConnectivityManager.CONNECTIVITY_ACTION && intent.getExtras() != null) {
     		NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
     		if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
-    			needsUpdate = true;
+    			pendingUpdate = true;
     		}
     	}
-    	if (needsUpdate) {
-    		needsUpdate = false;
+    	if (pendingUpdate) {
+    		pendingUpdate = false;
     		((DwobApp) context.getApplicationContext()).update();
     	}
 	}

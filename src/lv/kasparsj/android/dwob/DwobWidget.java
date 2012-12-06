@@ -26,8 +26,13 @@ public class DwobWidget extends AppWidgetProvider {
 	@Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager,
             int[] appWidgetIds) {
+		Log.i("test", "DwobWidget::onUpdate");
+		// don't update if screen is off
 		if (screenStateReceiver.screenOff) {
-			screenUpdateReceiver.needsUpdate = true;
+			screenUpdateReceiver.pendingUpdate = true;
+		}
+		else {
+			((DwobApp) context.getApplicationContext()).update();
 		}
     }
 	
