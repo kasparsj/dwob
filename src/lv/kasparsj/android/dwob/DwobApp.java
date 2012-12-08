@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class DwobApp extends Application {
 	
@@ -85,8 +86,8 @@ public class DwobApp extends Application {
 		return source;
 	}
 	
-	public long getUpdated() {
-		return updated;
+	public boolean isOutdated() {
+		return new Date().getTime() - updated >= getResources().getInteger(R.integer.update_period);
 	}
 	
 	public SharedPreferences getSharedPreferences() {
@@ -120,7 +121,7 @@ public class DwobApp extends Application {
 	}
 	
 	public void update() {
-		if (new Date().getTime() - updated > R.integer.update_period)
-        	new LoadFeedTask(getApplicationContext()).execute();
+		Log.i("test", "DwobApp::update");
+    	new LoadFeedTask(getApplicationContext()).execute();
 	}
 }

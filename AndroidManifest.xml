@@ -39,7 +39,9 @@
         <receiver android:name=".DwobWidget" android:label="@string/widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="lv.kasparsj.android.dwob.ACTION_REFRESH" />
+                <!-- Attention: does not work if using strings from values -->
+               	<action android:name="lv.kasparsj.android.dwob.UPDATE" />
+               	<action android:name="lv.kasparsj.android.dwob.REFRESH" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
         </receiver>

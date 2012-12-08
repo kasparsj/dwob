@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
+	private DwobApp app;
 	private ProgressDialog dialog;
 	private Boolean isShowing = false;
 	private Boolean isLoading = false;
@@ -25,9 +26,10 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        app = (DwobApp) getApplication();
         dialog = new ProgressDialog(this);
         
-        SharedPreferences prefs = ((DwobApp) getApplication()).getSharedPreferences();
+        SharedPreferences prefs = app.getSharedPreferences();
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
     
@@ -36,7 +38,8 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     	isShowing = true;
    		showOrHideDialog();
     	updateView();
-    	((DwobApp) getApplication()).update();
+    	if (app.isOutdated())
+    		app.update();
     }
     
     public void onPause() {
@@ -54,7 +57,6 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 					 updateView();
 				 }
 				 else {
-					 DwobApp app = ((DwobApp) getApplication());
 					 if (app.getDescription().length() == 0) {
 						 WebView descrView = (WebView) findViewById(R.id.description);
 						 descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
@@ -80,7 +82,6 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     
     public void updateView() {
     	Log.i("test", "DwobActivity::updateView");
-    	DwobApp app = ((DwobApp) getApplication());
 		setTitle(app.getTitle());
 		
     	WebView descrView = (WebView) findViewById(R.id.description);

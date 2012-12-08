@@ -1,11 +1,13 @@
 package lv.kasparsj.android.dwob;
 
+import java.util.Calendar;
+
 import lv.kasparsj.android.dwob.R;
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,33 +24,38 @@ public class DwobWidget extends AppWidgetProvider {
 	
     private ScreenStateReceiver screenStateReceiver = new ScreenStateReceiver();
     private DwobUpdateReceiver screenUpdateReceiver = new DwobUpdateReceiver();
-
-	@Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-            int[] appWidgetIds) {
-		Log.i("test", "DwobWidget::onUpdate");
-		// don't update if screen is off
-		if (screenStateReceiver.screenOff) {
-			screenUpdateReceiver.pendingUpdate = true;
-		}
-		else {
-			((DwobApp) context.getApplicationContext()).update();
-		}
-    }
+	
+	private PendingIntent createUpdateIntent(Context context) {
+		Resources r = context.getResources();
+	    Intent intent = new Intent(r.getString(R.string.action_update));
+	    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+	    return pendingIntent;
+	}
 	
 	@Override
 	public void onEnabled(Context context) {
 		Log.i("test", "DwobWidget::onEnabled");
+		
 		IntentFilter stateFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 		stateFilter.addAction(Intent.ACTION_SCREEN_ON);
-    	context.getApplicationContext().registerReceiver(this.screenStateReceiver, stateFilter);
+    	context.getApplicationContext().registerReceiver(screenStateReceiver, stateFilter);
     	
 		IntentFilter updateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
     	context.getApplicationContext().registerReceiver(screenUpdateReceiver, updateFilter);
+		
+    	Resources r = context.getResources();
+		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), r.getInteger(R.integer.update_period), createUpdateIntent(context));
 	}
 	
 	public void onDisabled(Context context) {
 		Log.i("test", "DwobWidget::onDisabled");
+		
+		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(createUpdateIntent(context));
+        
 		try {
 			context.getApplicationContext().unregisterReceiver(screenStateReceiver);
 		} catch (RuntimeException e) {
@@ -97,8 +104,20 @@ public class DwobWidget extends AppWidgetProvider {
     }
     
     public void onReceive(Context context, Intent intent) {
-    	Resources r = context.getResources();
+    	Log.i("test", "DwobWidget::onReceive ("+intent.getAction()+")");
+    	
     	DwobApp app = ((DwobApp) context.getApplicationContext());
+    	Resources r = context.getResources();
+    	if (intent.getAction().equals(r.getString(R.string.action_update)) && app.isOutdated()) {
+    		// don't update if screen is off
+    		if (ScreenStateReceiver.screenOff) {
+    			DwobUpdateReceiver.pendingUpdate = true;
+    		}
+    		else {
+    			app.update();
+    		}
+    	}
+    	
     	Object[] translation = app.getTranslation().toArray();
     	if (intent.getAction().equals(r.getString(R.string.action_refresh)) || translation.length > 0) {
 			// Retrieve latest translation
@@ -143,16 +162,4 @@ public class DwobWidget extends AppWidgetProvider {
     	
 		super.onReceive(context, intent);
 	}
-    
-    public class ScreenStateReceiver extends BroadcastReceiver {
-    	public boolean screenOff = false;
-    	public void onReceive(Context context, Intent intent) {
-    		if (intent.getAction() == Intent.ACTION_SCREEN_ON) {
-    			screenOff = false;
-    		}
-    		else {
-    			screenOff = true;
-    		}
-    	}
-    }
 }
