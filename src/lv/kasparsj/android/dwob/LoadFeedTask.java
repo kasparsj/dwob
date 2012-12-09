@@ -35,11 +35,11 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(final String... args) {
     	try {
             // Try querying Pariyatti API for today's word
-        	AndroidSaxFeedParser rssParser = new AndroidSaxFeedParser(r.getString(R.string.feed_url));
+    		DwobApp app = (DwobApp) context.getApplicationContext();
+        	AndroidSaxFeedParser rssParser = new AndroidSaxFeedParser(app.getFeedUrl());
         	List<Message> messages = rssParser.parse();
         	String title = messages.get(0).getTitle();
         	String description = messages.get(0).getDescription().trim().replaceAll("^<br />", "").trim();
-        	DwobApp app = (DwobApp) context.getApplicationContext();
         	// Update if changed
         	if (app.getTitle() != title || app.getDescription() != description) {
         		app.setTitle(title);

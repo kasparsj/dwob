@@ -17,6 +17,7 @@ public class DwobApp extends Application {
 	private static final String PREFS_NAME = "DwobPrefsFile";
 	private static final Pattern AUDIO_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>Listen</a>", Pattern.CASE_INSENSITIVE);
 	private static final Pattern SOURCE_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>View P.li on Tipitaka.org</a>", Pattern.CASE_INSENSITIVE);
+	private String feed_url;
 	private String title;
 	private String description;
 	private List<String> original;
@@ -28,10 +29,23 @@ public class DwobApp extends Application {
 	
 	public void onCreate() {
 		// load saved data
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+		SharedPreferences settings = getSharedPreferences();
+		feed_url = settings.getString("feed_url", getString(R.string.english_feed_url));
 		setTitle(settings.getString("title", getString(R.string.app_name)));
 		setDescription(settings.getString("description", ""));
-		this.updated = settings.getLong("updated", 0);
+		updated = settings.getLong("updated", 0);
+	}
+	
+	public String getFeedUrl() {
+		return feed_url;
+	}
+	
+	public void setFeedUrl(String url) {
+		feed_url = url;
+		update();
+		SharedPreferences.Editor editor = getSharedPreferences().edit();
+		editor.putString("feed_url", feed_url);
+		editor.commit();
 	}
 	
 	public String getTitle() {

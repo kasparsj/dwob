@@ -2,7 +2,7 @@
 
 <resources>
     <!-- for production: -->
-    <!-- <integer name="update_period">3600000</integer> -->
+    <integer name="update_period">3600000</integer>
     <!-- for testing: -->
-    <integer name="update_period">10000</integer>
+    <!-- <integer name="update_period">10000</integer> -->
 </resources>

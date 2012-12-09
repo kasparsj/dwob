@@ -3,12 +3,18 @@ package lv.kasparsj.android.dwob;
 import lv.kasparsj.android.dwob.R;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -16,7 +22,9 @@ import android.widget.Toast;
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
 	private DwobApp app;
-	private ProgressDialog dialog;
+	private ProgressDialog progressDialog;
+	private HelpDialog helpDialog;
+	private boolean recreateOptionsMenu = true;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -26,7 +34,6 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
         setContentView(R.layout.main);
         
         app = (DwobApp) getApplication();
-        dialog = new ProgressDialog(this);
     }
     
     public void onResume() {
@@ -47,17 +54,27 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     	prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
     
+    public void onStop() {
+    	super.onStop();
+    	
+    	if (progressDialog != null)
+    		progressDialog.cancel();
+    	if (helpDialog != null)
+    		helpDialog.cancel();
+    }
+    
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
     	Log.i("test", "DwobActivity::onSharedPreferenceChanged ("+key+(key.equals("loading") ? "="+prefs.getBoolean(key, false) : "")+")");
     	if (key == "loading") {
     		if (prefs.getBoolean("loading", false)) {
-        		dialog.setMessage(getString(R.string.widget_loading));
-        		dialog.setCancelable(false);
-        		dialog.show();
+    			progressDialog = new ProgressDialog(this);
+    			progressDialog.setMessage(getString(R.string.widget_loading));
+    			progressDialog.setCancelable(false);
+    			progressDialog.show();
     		}
     		else {
-    	    	if (dialog.isShowing()) {
-    				dialog.dismiss();
+    	    	if (progressDialog != null) {
+    	    		progressDialog.cancel();
     	    	}
 				if (prefs.getBoolean("success", false)) {
 					updateView();
@@ -92,5 +109,55 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
             }
         });  
         descrView.loadDataWithBaseURL(null, app.getDescription(), "text/html", "UTF-8", null);
+    }
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+    	if (recreateOptionsMenu) {
+    		menu.clear();
+	        MenuInflater inflater = getMenuInflater();
+	        if (app.getFeedUrl().equals(getString(R.string.english_feed_url)))
+	        	inflater.inflate(R.menu.english_menu, menu);
+	        else
+	        	inflater.inflate(R.menu.spanish_menu, menu);
+    	}
+        return super.onPrepareOptionsMenu(menu);
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.english:
+                app.setFeedUrl(getString(R.string.english_feed_url));
+                recreateOptionsMenu = true;
+                return true;
+            case R.id.spanish:
+            	app.setFeedUrl(getString(R.string.spanish_feed_url));
+            	recreateOptionsMenu = true;
+            	return true;
+            case R.id.help:
+            	helpDialog = new HelpDialog(this);
+            	helpDialog.setTitle(getString(R.string.help));
+            	helpDialog.setMessage(getString(R.string.help_msg));
+            	helpDialog.setIcon(android.R.drawable.ic_menu_help);
+            	helpDialog.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+    
+    public class HelpDialog extends AlertDialog {
+    	
+    	public HelpDialog(Context context) {
+    		super(context);
+    	}
+    	
+    	@Override
+    	public boolean dispatchTouchEvent(MotionEvent ev) {
+    		dismiss();
+    	    return super.dispatchTouchEvent(ev);
+    	}
     }
 }
