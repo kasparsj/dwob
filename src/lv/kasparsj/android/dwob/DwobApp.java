@@ -15,8 +15,8 @@ import android.util.Log;
 public class DwobApp extends Application {
 	
 	private static final String PREFS_NAME = "DwobPrefsFile";
-	private static final Pattern AUDIO_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>Listen</a>", Pattern.CASE_INSENSITIVE);
-	private static final Pattern SOURCE_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>View P.li on Tipitaka.org</a>", Pattern.CASE_INSENSITIVE);
+	private static Pattern AUDIO_PATTERN;
+	private static Pattern SOURCE_PATTERN;
 	private String feed_url;
 	private String title;
 	private String description;
@@ -30,10 +30,22 @@ public class DwobApp extends Application {
 	public void onCreate() {
 		// load saved data
 		SharedPreferences settings = getSharedPreferences();
-		feed_url = settings.getString("feed_url", getString(R.string.english_feed_url));
+		feed_url = settings.getString("feed_url", getString(R.string.feed_url));
+		compileParsePatterns();
 		setTitle(settings.getString("title", getString(R.string.app_name)));
 		setDescription(settings.getString("description", ""));
 		updated = settings.getLong("updated", 0);
+	}
+	
+	private void compileParsePatterns() {
+		if (feed_url.equals(getString(R.string.feed_url_en))) {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_en), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
+		}
+		else {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_es), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_es), Pattern.CASE_INSENSITIVE);
+		}
 	}
 	
 	public String getFeedUrl() {
@@ -42,6 +54,7 @@ public class DwobApp extends Application {
 	
 	public void setFeedUrl(String url) {
 		feed_url = url;
+		compileParsePatterns();
 		update();
 		SharedPreferences.Editor editor = getSharedPreferences().edit();
 		editor.putString("feed_url", feed_url);

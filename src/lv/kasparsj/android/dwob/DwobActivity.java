@@ -116,7 +116,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     	if (recreateOptionsMenu) {
     		menu.clear();
 	        MenuInflater inflater = getMenuInflater();
-	        if (app.getFeedUrl().equals(getString(R.string.english_feed_url)))
+	        if (app.getFeedUrl().equals(getString(R.string.feed_url_en)))
 	        	inflater.inflate(R.menu.english_menu, menu);
 	        else
 	        	inflater.inflate(R.menu.spanish_menu, menu);
@@ -129,11 +129,11 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.english:
-                app.setFeedUrl(getString(R.string.english_feed_url));
+                app.setFeedUrl(getString(R.string.feed_url_en));
                 recreateOptionsMenu = true;
                 return true;
             case R.id.spanish:
-            	app.setFeedUrl(getString(R.string.spanish_feed_url));
+            	app.setFeedUrl(getString(R.string.feed_url_es));
             	recreateOptionsMenu = true;
             	return true;
             case R.id.help:
