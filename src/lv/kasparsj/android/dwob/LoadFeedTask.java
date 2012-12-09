@@ -21,6 +21,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	}
 	
 	protected void onPreExecute() {
+		Log.i("test", "LoadFeedTask::onPreExecute");
 		((DwobApp) context.getApplicationContext()).setLoading(true);
     }
 	

@@ -17,66 +17,60 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 	
 	private DwobApp app;
 	private ProgressDialog dialog;
-	private Boolean isShowing = false;
-	private Boolean isLoading = false;
 	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	Log.i("test", "DwobActivity::onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
         app = (DwobApp) getApplication();
         dialog = new ProgressDialog(this);
-        
-        SharedPreferences prefs = app.getSharedPreferences();
-        prefs.registerOnSharedPreferenceChangeListener(this);
     }
     
     public void onResume() {
     	super.onResume();
-    	isShowing = true;
-   		showOrHideDialog();
+    	
+        SharedPreferences prefs = app.getSharedPreferences();
+        prefs.registerOnSharedPreferenceChangeListener(this);
+    	
     	updateView();
     	if (app.isOutdated())
     		app.update();
     }
     
     public void onPause() {
-    	isShowing = false;
     	super.onPause();
+    	
+    	SharedPreferences prefs = app.getSharedPreferences();
+    	prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
     
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-    	Log.i("test", "DwobActivity::onSharedPreferenceChanged");
+    	Log.i("test", "DwobActivity::onSharedPreferenceChanged ("+key+(key.equals("loading") ? "="+prefs.getBoolean(key, false) : "")+")");
     	if (key == "loading") {
-    		isLoading = prefs.getBoolean("loading", false);
-    		showOrHideDialog();
-    		if (isShowing && !isLoading) {
-				 if (prefs.getBoolean("success", false)) {
-					 updateView();
-				 }
-				 else {
-					 if (app.getDescription().length() == 0) {
-						 WebView descrView = (WebView) findViewById(R.id.description);
-						 descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
-					 }
-					 CharSequence text = getString(R.string.widget_error);
-					 Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
-				 }
+    		if (prefs.getBoolean("loading", false)) {
+        		dialog.setMessage(getString(R.string.widget_loading));
+        		dialog.setCancelable(false);
+        		dialog.show();
     		}
-    	}
-    }
-    
-    public void showOrHideDialog() {
-    	if (isShowing) {
-	    	if (isLoading) {
-	    		dialog.setMessage(getString(R.string.widget_loading));
-	    		dialog.show();
-	    	}
-	    	else if (dialog.isShowing()) {
-				dialog.dismiss();
-			}
+    		else {
+    	    	if (dialog.isShowing()) {
+    				dialog.dismiss();
+    	    	}
+				if (prefs.getBoolean("success", false)) {
+					updateView();
+				}
+				else {
+					if (app.getDescription().length() == 0) {
+						WebView descrView = (WebView) findViewById(R.id.description);
+						descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
+					}
+					CharSequence text = getString(R.string.widget_error);
+					Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+				}
+    		}
     	}
     }
     
