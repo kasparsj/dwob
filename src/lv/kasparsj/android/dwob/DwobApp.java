@@ -1,31 +1,64 @@
 package lv.kasparsj.android.dwob;
 
+import lv.kasparsj.android.dwob.R;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class DwobApp extends Application {
 	
 	private static final String PREFS_NAME = "DwobPrefsFile";
-	private static final Pattern AUDIO_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>Listen</a>", Pattern.CASE_INSENSITIVE);
-	private static final Pattern SOURCE_PATTERN = Pattern.compile("<a[^>]* href=\"([^\"]+)\"[^>]*>View P.li on Tipitaka.org</a>", Pattern.CASE_INSENSITIVE);
+	private static Pattern AUDIO_PATTERN;
+	private static Pattern SOURCE_PATTERN;
+	private String feed_url;
 	private String title;
 	private String description;
 	private List<String> original;
 	private List<String> translation;
 	private String source;
 	private String audio;
-	private long updated;
+	private long updated; // last time updated
+	private boolean loading = false;
 	
 	public void onCreate() {
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		setTitle(settings.getString("title", ""));
+		// load saved data
+		SharedPreferences settings = getSharedPreferences();
+		feed_url = settings.getString("feed_url", getString(R.string.feed_url));
+		compileParsePatterns();
+		setTitle(settings.getString("title", getString(R.string.app_name)));
 		setDescription(settings.getString("description", ""));
-		setUpdated(settings.getLong("updated", 0));
+		updated = settings.getLong("updated", 0);
+	}
+	
+	private void compileParsePatterns() {
+		if (feed_url.equals(getString(R.string.feed_url_en))) {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_en), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
+		}
+		else {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_es), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_es), Pattern.CASE_INSENSITIVE);
+		}
+	}
+	
+	public String getFeedUrl() {
+		return feed_url;
+	}
+	
+	public void setFeedUrl(String url) {
+		feed_url = url;
+		compileParsePatterns();
+		update();
+		SharedPreferences.Editor editor = getSharedPreferences().edit();
+		editor.putString("feed_url", feed_url);
+		editor.commit();
 	}
 	
 	public String getTitle() {
@@ -41,7 +74,7 @@ public class DwobApp extends Application {
 	}
 	
 	public void setDescription(String description) {
-		this.description = description.trim().replaceAll("^<br />", "").trim();
+		this.description = description;
 		String[] contents = description.split("\n<br />\n");
 		original = new ArrayList<String>();
     	translation = new ArrayList<String>();
@@ -80,17 +113,42 @@ public class DwobApp extends Application {
 		return source;
 	}
 	
-	public long getUpdated() {
-		return updated;
+	public boolean isOutdated() {
+		return new Date().getTime() - updated >= getResources().getInteger(R.integer.update_period);
 	}
 	
-	public void setUpdated(long updated) {
-		this.updated = updated;
-		SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("title", title);
-		editor.putString("description", description);
-		editor.putLong("updated", updated);
+	public SharedPreferences getSharedPreferences() {
+		return getSharedPreferences(PREFS_NAME, 0);
+	}
+	
+	public boolean isLoading() {
+		return loading;
+	}
+	
+	public void setLoading(boolean isLoading) {
+		SharedPreferences.Editor editor = getSharedPreferences().edit();
+		editor.putBoolean("loading", isLoading);
 		editor.commit();
+	}
+	
+	public void setLoading(boolean isLoading, boolean success) {
+		if (success) {
+			updated = new Date().getTime();
+			SharedPreferences.Editor editor = getSharedPreferences().edit();
+			editor.putString("title", title);
+			editor.putString("description", description);
+			editor.putLong("updated", updated);
+			editor.putBoolean("loading", isLoading);
+			editor.putBoolean("success", success);
+			editor.commit();
+		}
+		else {
+			setLoading(isLoading);
+		}
+	}
+	
+	public void update() {
+		Log.i("test", "DwobApp::update");
+    	new LoadFeedTask(getApplicationContext()).execute();
 	}
 }

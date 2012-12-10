@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <resources>
+    <!-- for production: -->
     <integer name="update_period">3600000</integer>
+    <!-- for testing: -->
+    <!-- <integer name="update_period">10000</integer> -->
 </resources>

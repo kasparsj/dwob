@@ -20,12 +20,15 @@
     android:versionName="1.0">
     
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-sdk android:minSdkVersion="3" />
 
     <application android:icon="@drawable/app_icon" android:label="@string/app_name" android:name="lv.kasparsj.android.dwob.DwobApp">
         
         <activity android:name="lv.kasparsj.android.dwob.DwobActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -36,13 +39,18 @@
         <receiver android:name=".DwobWidget" android:label="@string/widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="lv.kasparsj.android.dwob.ACTION_REFRESH" />
+                <!-- Attention: does not work if using strings from values -->
+               	<action android:name="lv.kasparsj.android.dwob.UPDATE" />
+               	<action android:name="lv.kasparsj.android.dwob.REFRESH" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
         </receiver>
         
-        <!-- Service to perform web API queries -->        
-        <service android:name="lv.kasparsj.android.dwob.DwobWidget$UpdateService" />
+        <receiver android:name="lv.kasparsj.android.dwob.DwobUpdateReceiver">
+		   <intent-filter>
+		      <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+		   </intent-filter>
+		</receiver>
         
     </application>
        

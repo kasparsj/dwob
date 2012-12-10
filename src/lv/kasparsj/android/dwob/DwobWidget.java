@@ -1,42 +1,72 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package lv.kasparsj.android.dwob;
 
+import java.util.Calendar;
+
+import lv.kasparsj.android.dwob.R;
+
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
 public class DwobWidget extends AppWidgetProvider {
 	
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-            int[] appWidgetIds) {
-        LoadFeedTask task = new LoadFeedTask(context, null);
-        task.execute();
-    }
+    private ScreenStateReceiver screenStateReceiver = new ScreenStateReceiver();
+    private DwobUpdateReceiver screenUpdateReceiver = new DwobUpdateReceiver();
+	
+	private PendingIntent createUpdateIntent(Context context) {
+		Resources r = context.getResources();
+	    Intent intent = new Intent(r.getString(R.string.action_update));
+	    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+	    return pendingIntent;
+	}
+	
+	@Override
+	public void onEnabled(Context context) {
+		Log.i("test", "DwobWidget::onEnabled");
+		
+		IntentFilter stateFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+		stateFilter.addAction(Intent.ACTION_SCREEN_ON);
+    	context.getApplicationContext().registerReceiver(screenStateReceiver, stateFilter);
+    	
+		IntentFilter updateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+    	context.getApplicationContext().registerReceiver(screenUpdateReceiver, updateFilter);
+		
+    	Resources r = context.getResources();
+		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), r.getInteger(R.integer.update_period), createUpdateIntent(context));
+	}
+	
+	public void onDisabled(Context context) {
+		Log.i("test", "DwobWidget::onDisabled");
+		
+		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(createUpdateIntent(context));
+        
+		try {
+			context.getApplicationContext().unregisterReceiver(screenStateReceiver);
+		} catch (RuntimeException e) {
+			// do nothing
+		}
+		try {
+			context.getApplicationContext().unregisterReceiver(screenUpdateReceiver);
+		} catch (RuntimeException e) {
+			// do nothing
+		}
+	}
     
     private float getDefaultTextSize(int numLines) {
         switch (numLines) {
@@ -74,8 +104,20 @@ public class DwobWidget extends AppWidgetProvider {
     }
     
     public void onReceive(Context context, Intent intent) {
-    	Resources r = context.getResources();
+    	Log.i("test", "DwobWidget::onReceive ("+intent.getAction()+")");
+    	
     	DwobApp app = ((DwobApp) context.getApplicationContext());
+    	Resources r = context.getResources();
+    	if (intent.getAction().equals(r.getString(R.string.action_update)) && app.isOutdated()) {
+    		// don't update if screen is off
+    		if (ScreenStateReceiver.screenOff) {
+    			DwobUpdateReceiver.pendingUpdate = true;
+    		}
+    		else {
+    			app.update();
+    		}
+    	}
+    	
     	Object[] translation = app.getTranslation().toArray();
     	if (intent.getAction().equals(r.getString(R.string.action_refresh)) || translation.length > 0) {
 			// Retrieve latest translation
