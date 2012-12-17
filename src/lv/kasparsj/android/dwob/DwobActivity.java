@@ -34,6 +34,9 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
         setContentView(R.layout.main);
         
         app = (DwobApp) getApplication();
+        if (app.showHelpOnStart()) {
+        	showHelp();
+        }
     }
     
     public void onResume() {
@@ -67,10 +70,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     	Log.i("test", "DwobActivity::onSharedPreferenceChanged ("+key+(key.equals("loading") ? "="+prefs.getBoolean(key, false) : "")+")");
     	if (key == "loading") {
     		if (prefs.getBoolean("loading", false)) {
-    			progressDialog = new ProgressDialog(this);
-    			progressDialog.setMessage(getString(R.string.widget_loading));
-    			progressDialog.setCancelable(false);
-    			progressDialog.show();
+    			showProgress();
     		}
     		else {
     	    	if (progressDialog != null) {
@@ -96,6 +96,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 		setTitle(app.getTitle());
 		
     	WebView descrView = (WebView) findViewById(R.id.description);
+    	descrView.getSettings().setDefaultTextEncodingName("utf-8");
     	descrView.setWebViewClient(new WebViewClient() {  
 		    public boolean shouldOverrideUrlLoading(WebView view, String url)  {
 		    	Intent intent = new Intent("android.intent.action.VIEW");
@@ -107,8 +108,10 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 		    	view.getContext().startActivity(intent);
 		    	return true;
             }
-        });  
-        descrView.loadDataWithBaseURL(null, app.getDescription(), "text/html", "UTF-8", null);
+        });
+    	String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
+    	String htmlData = "<html>" + head + "<body>" + app.getDescription() + "</body></html>";
+    	descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
     }
     
     @Override
@@ -137,21 +140,47 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
             	recreateOptionsMenu = true;
             	return true;
             case R.id.help:
-            	helpDialog = new HelpDialog(this);
-            	helpDialog.setTitle(getString(R.string.help));
-            	helpDialog.setMessage(getString(R.string.help_msg));
-            	helpDialog.setIcon(android.R.drawable.ic_menu_help);
-            	helpDialog.show();
+            	showHelp();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
     
+    public void showProgress() {
+    	boolean restoreHelp = false;
+    	if (helpDialog.isShowing()) {
+    		helpDialog.cancel();
+    		restoreHelp = true;
+    	}
+    	progressDialog = new ProgressDialog(this);
+		progressDialog.setMessage(getString(R.string.widget_loading));
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+		if (restoreHelp)
+			showHelp();
+    }
+    
+    public void showHelp() {
+    	helpDialog = new HelpDialog(this);
+    	helpDialog.setTitle(getString(R.string.help));
+    	helpDialog.setMessage(getString(R.string.help_msg));
+    	helpDialog.setIcon(android.R.drawable.ic_menu_help);
+    	helpDialog.show();
+    }
+    
     public class HelpDialog extends AlertDialog {
     	
     	public HelpDialog(Context context) {
     		super(context);
+    	}
+    	
+    	@Override
+    	public void dismiss() {
+    		DwobApp app = (DwobApp) getContext().getApplicationContext();
+    		if (app.showHelpOnStart())
+    			app.dismissHelpOnStart();
+    		super.dismiss();
     	}
     	
     	@Override

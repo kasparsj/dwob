@@ -26,6 +26,7 @@ public class DwobApp extends Application {
 	private String audio;
 	private long updated; // last time updated
 	private boolean loading = false;
+	private boolean helpOnStart;
 	
 	public void onCreate() {
 		// load saved data
@@ -35,6 +36,7 @@ public class DwobApp extends Application {
 		setTitle(settings.getString("title", getString(R.string.app_name)));
 		setDescription(settings.getString("description", ""));
 		updated = settings.getLong("updated", 0);
+		helpOnStart = settings.getBoolean("helpOnStart", true);
 	}
 	
 	private void compileParsePatterns() {
@@ -150,5 +152,16 @@ public class DwobApp extends Application {
 	public void update() {
 		Log.i("test", "DwobApp::update");
     	new LoadFeedTask(getApplicationContext()).execute();
+	}
+	
+	public boolean showHelpOnStart() {
+		return helpOnStart;
+	}
+	
+	public void dismissHelpOnStart() {
+		helpOnStart = false;
+		SharedPreferences.Editor editor = getSharedPreferences().edit();
+		editor.putBoolean("helpOnStart", false);
+		editor.commit();
 	}
 }
