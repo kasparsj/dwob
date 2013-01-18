@@ -149,7 +149,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     
     public void showProgress() {
     	boolean restoreHelp = false;
-    	if (helpDialog.isShowing()) {
+    	if (helpDialog != null && helpDialog.isShowing()) {
     		helpDialog.cancel();
     		restoreHelp = true;
     	}
