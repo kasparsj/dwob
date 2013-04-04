@@ -40,13 +40,21 @@ public class DwobApp extends Application {
 	}
 	
 	private void compileParsePatterns() {
-		if (feed_url.equals(getString(R.string.feed_url_en))) {
-			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_en), Pattern.CASE_INSENSITIVE);
-			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
-		}
-		else {
+		if (feed_url.equals(getString(R.string.feed_url_es))) {
 			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_es), Pattern.CASE_INSENSITIVE);
 			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_es), Pattern.CASE_INSENSITIVE);
+		}
+		else if (feed_url.equals(getString(R.string.feed_url_pt))) {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_pt), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_pt), Pattern.CASE_INSENSITIVE);
+		}
+		else if (feed_url.equals(getString(R.string.feed_url_it))) {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_it), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_it), Pattern.CASE_INSENSITIVE);
+		}
+		else {
+			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_en), Pattern.CASE_INSENSITIVE);
+			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
 		}
 	}
 	

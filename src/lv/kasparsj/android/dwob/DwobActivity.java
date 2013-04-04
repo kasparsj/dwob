@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SubMenu;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -116,13 +117,20 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-    	if (recreateOptionsMenu) {
+    	if (recreateOptionsMenu) { 
     		menu.clear();
 	        MenuInflater inflater = getMenuInflater();
-	        if (app.getFeedUrl().equals(getString(R.string.feed_url_en)))
-	        	inflater.inflate(R.menu.english_menu, menu);
+	        inflater.inflate(R.menu.menu, menu);
+	        MenuItem changeLang = menu.findItem(R.id.change_lang);
+	        SubMenu langMenu = changeLang.getSubMenu();
+	        if (app.getFeedUrl().equals(getString(R.string.feed_url_es)))
+	        	langMenu.findItem(R.id.spanish).setChecked(true);
+	        else if (app.getFeedUrl().equals(getString(R.string.feed_url_pt)))
+	        	langMenu.findItem(R.id.portuguese).setChecked(true);
+	        else if (app.getFeedUrl().equals(getString(R.string.feed_url_it)))
+	        	langMenu.findItem(R.id.italian).setChecked(true);
 	        else
-	        	inflater.inflate(R.menu.spanish_menu, menu);
+	        	langMenu.findItem(R.id.english).setChecked(true);
     	}
         return super.onPrepareOptionsMenu(menu);
     }
@@ -137,6 +145,14 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
                 return true;
             case R.id.spanish:
             	app.setFeedUrl(getString(R.string.feed_url_es));
+            	recreateOptionsMenu = true;
+            	return true;
+            case R.id.portuguese:
+            	app.setFeedUrl(getString(R.string.feed_url_pt));
+            	recreateOptionsMenu = true;
+            	return true;
+            case R.id.italian:
+            	app.setFeedUrl(getString(R.string.feed_url_it));
             	recreateOptionsMenu = true;
             	return true;
             case R.id.help:
