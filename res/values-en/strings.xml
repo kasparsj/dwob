@@ -8,5 +8,5 @@
     <string name="widget_error">Failed loading Daily Words of Buddha</string>
     <string name="change_language">Change language</string>
     <string name="help">Help</string>
-    <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select your preferred widget from the popup.</string>
+    <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select Widgets and then Daily Words of Buddha.</string>
 </resources>

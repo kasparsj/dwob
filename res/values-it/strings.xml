@@ -2,11 +2,11 @@
 <resources>
     <string name="app_name">Parole quotidiane del Buddha</string>
     <string name="feed_url">http://feeds.pariyatti.org/dwob-italian</string>
-    <string name="activity_error">Le parole di carico non riuscite giornaliere di Buddha</string>
+    <string name="activity_error">Impossibile caricare Parole quotidiane del Buddha</string>
     <string name="widget_name">Parole quotidiane del Buddha</string>
-    <string name="widget_loading">Caricamento Le parole del giorno di Buddha&#8230;</string>
-    <string name="widget_error">Le parole di carico non riuscite giornaliere di Buddha</string>
+    <string name="widget_loading">Caricamento in corso Parole quotidiane del Buddha&#8230;</string>
+    <string name="widget_error">Impossibile caricare Parole quotidiane del Buddha</string>
     <string name="change_language">Cambia la lingua</string>
     <string name="help">Aiuto</string>
-    <string name="help_msg">Per installare il widget: una volta installata questa applicazione, toccare e tenere premuto sulla schermata principale, quindi selezionare il widget di preferita dal menu a comparsa.</string>
+    <string name="help_msg">Per installare il widget: una volta installata questa applicazione, toccare e tenere premuto sulla schermata principale, quindi selezionare Widgets e poi Parole quotidiane del Buddha.</string>
 </resources>

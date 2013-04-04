@@ -2,11 +2,11 @@
 <resources>
     <string name="app_name">As Palavras Diárias do Buda</string>
     <string name="feed_url">http://feeds.pariyatti.org/dwob-portugeuse</string>
-    <string name="activity_error">Falha Palavras carga diária de Buda</string>
+    <string name="activity_error">Falha carregar As Palavras Diárias do Buda</string>
     <string name="widget_name">As Palavras Diárias do Buda</string>
-    <string name="widget_loading">Carregando Palavras Diárias de Buda&#8230;</string>
-    <string name="widget_error">Falha Palavras carga diária de Buda</string>
+    <string name="widget_loading">Carregar Palavras Diárias de Buda&#8230;</string>
+    <string name="widget_error">Falha carregar As Palavras Diárias do Buda</string>
     <string name="change_language">Mudar o idioma</string>
     <string name="help">Ajudar</string>
-    <string name="help_msg">Para instalar o widget: uma vez que você instalar esta aplicação, toque e segure na tela inicial, selecione o seu widget preferido do pop-up.</string>
+    <string name="help_msg">Para instalar o widget: uma vez que você instalar esta aplicação, toque e segure na tela inicial, selecione Widgets e depois As Palavras Diárias do Buda.</string>
 </resources>
