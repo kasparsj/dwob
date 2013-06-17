@@ -1,22 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
-    android:layout_width="fill_parent"
+<WebView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/description"
+    android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
-    android:focusable="true"
-    android:background="#eee">
-	<RelativeLayout
-	    android:layout_width="fill_parent"
-    	android:layout_height="wrap_content">
-	    
-	    <WebView  
-	        android:id="@+id/description"
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-	        android:gravity="center"
-	        android:padding="5dip"
-	        android:includeFontPadding="false"
-	        style="@style/Text.Words" />
-	   
-	</RelativeLayout>
-</ScrollView>
+    android:gravity="center"
+    android:padding="5dip"
+    android:includeFontPadding="false"
+    style="@style/Text.Words" />
