@@ -95,7 +95,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     public void updateView() {
     	Log.i("test", "DwobActivity::updateView");
 		setTitle(app.getTitle());
-		
+
     	WebView descrView = (WebView) findViewById(R.id.description);
     	descrView.getSettings().setBuiltInZoomControls(true);
     	descrView.getSettings().setSupportZoom(true);
@@ -164,7 +164,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
                 return super.onOptionsItemSelected(item);
         }
     }
-    
+
     public void showProgress() {
     	boolean restoreHelp = false;
     	if (helpDialog != null && helpDialog.isShowing()) {
