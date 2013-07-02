@@ -20,8 +20,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
 	private DwobApp app;

@@ -45,7 +45,6 @@ public class DwobWidget extends AppWidgetProvider {
 		IntentFilter updateFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
     	context.getApplicationContext().registerReceiver(screenUpdateReceiver, updateFilter);
 		
-    	Resources r = context.getResources();
 		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
