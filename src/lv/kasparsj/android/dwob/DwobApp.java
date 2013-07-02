@@ -1,10 +1,10 @@
 package lv.kasparsj.android.dwob;
 
-import lv.kasparsj.android.dwob.R;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,8 +15,10 @@ import android.util.Log;
 public class DwobApp extends Application {
 	
 	private static final String PREFS_NAME = "DwobPrefsFile";
+    private static final int DAY_IN_MILLISECONDS = 24*60*60*1000;
 	private static Pattern AUDIO_PATTERN;
 	private static Pattern SOURCE_PATTERN;
+    private String language;
 	private String feed_url;
 	private String title;
 	private String description;
@@ -24,39 +26,61 @@ public class DwobApp extends Application {
 	private List<String> translation;
 	private String source;
 	private String audio;
-	private long updated; // last time updated
+	private long pubDate; // last time updated
 	private boolean loading = false;
 	private boolean helpOnStart;
 	
 	public void onCreate() {
 		// load saved data
 		SharedPreferences settings = getSharedPreferences();
-		feed_url = settings.getString("feed_url", getString(R.string.feed_url));
-		compileParsePatterns();
+        setLanguage(settings.getString("language", DwobLanguage.EN));
 		setTitle(settings.getString("title", getString(R.string.app_name)));
 		setDescription(settings.getString("description", ""));
-		updated = settings.getLong("updated", 0);
+		pubDate = settings.getLong("pubDate", 0);
 		helpOnStart = settings.getBoolean("helpOnStart", true);
 	}
-	
-	private void compileParsePatterns() {
-		if (feed_url.equals(getString(R.string.feed_url_es))) {
-			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_es), Pattern.CASE_INSENSITIVE);
-			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_es), Pattern.CASE_INSENSITIVE);
-		}
-		else if (feed_url.equals(getString(R.string.feed_url_pt))) {
-			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_pt), Pattern.CASE_INSENSITIVE);
-			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_pt), Pattern.CASE_INSENSITIVE);
-		}
-		else if (feed_url.equals(getString(R.string.feed_url_it))) {
-			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_it), Pattern.CASE_INSENSITIVE);
-			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_it), Pattern.CASE_INSENSITIVE);
-		}
-		else {
-			AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_en), Pattern.CASE_INSENSITIVE);
-			SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
-		}
-	}
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+        Message.DATE_PARSER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", new Locale(language));
+        if (language.equals(DwobLanguage.ES)) {
+            AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_es), Pattern.CASE_INSENSITIVE);
+            SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_es), Pattern.CASE_INSENSITIVE);
+            setFeedUrl(getString(R.string.feed_url_es));
+        }
+        else if (language.equals(DwobLanguage.PT)) {
+            AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_pt), Pattern.CASE_INSENSITIVE);
+            SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_pt), Pattern.CASE_INSENSITIVE);
+            setFeedUrl(getString(R.string.feed_url_pt));
+        }
+        else if (language.equals(DwobLanguage.IT)) {
+            AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_it), Pattern.CASE_INSENSITIVE);
+            SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_it), Pattern.CASE_INSENSITIVE);
+            setFeedUrl(getString(R.string.feed_url_it));
+        }
+        else if (language.equals(DwobLanguage.ZH)) {
+            AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_zh), Pattern.CASE_INSENSITIVE);
+            SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_zh), Pattern.CASE_INSENSITIVE);
+            setFeedUrl(getString(R.string.feed_url_zh));
+        }
+        else if (language.equals(DwobLanguage.FR)) {
+            AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_fr), Pattern.CASE_INSENSITIVE);
+            SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_fr), Pattern.CASE_INSENSITIVE);
+            setFeedUrl(getString(R.string.feed_url_fr));
+        }
+        else { // en
+            AUDIO_PATTERN = Pattern.compile(getString(R.string.audio_pattern_en), Pattern.CASE_INSENSITIVE);
+            SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
+            setFeedUrl(getString(R.string.feed_url_en));
+        }
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putString("language", language);
+        editor.commit();
+    }
 	
 	public String getFeedUrl() {
 		return feed_url;
@@ -64,11 +88,7 @@ public class DwobApp extends Application {
 	
 	public void setFeedUrl(String url) {
 		feed_url = url;
-		compileParsePatterns();
 		update();
-		SharedPreferences.Editor editor = getSharedPreferences().edit();
-		editor.putString("feed_url", feed_url);
-		editor.commit();
 	}
 	
 	public String getTitle() {
@@ -110,6 +130,14 @@ public class DwobApp extends Application {
     		}
     	}
 	}
+
+    public long getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(long date) {
+        this.pubDate = date;
+    }
 	
 	public List<String> getOriginal() {
 		return original;
@@ -124,7 +152,7 @@ public class DwobApp extends Application {
 	}
 	
 	public boolean isOutdated() {
-		return new Date().getTime() - updated >= getResources().getInteger(R.integer.update_period);
+		return new Date().getTime() - pubDate >= DAY_IN_MILLISECONDS;
 	}
 	
 	public SharedPreferences getSharedPreferences() {
@@ -143,11 +171,10 @@ public class DwobApp extends Application {
 	
 	public void setLoading(boolean isLoading, boolean success) {
 		if (success) {
-			updated = new Date().getTime();
 			SharedPreferences.Editor editor = getSharedPreferences().edit();
 			editor.putString("title", title);
 			editor.putString("description", description);
-			editor.putLong("updated", updated);
+			editor.putLong("pubDate", pubDate);
 			editor.putBoolean("loading", isLoading);
 			editor.putBoolean("success", success);
 			editor.commit();

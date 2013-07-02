@@ -20,6 +20,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import java.util.Locale;
+
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
 	private DwobApp app;
@@ -123,12 +125,16 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 	        inflater.inflate(R.menu.menu, menu);
 	        MenuItem changeLang = menu.findItem(R.id.change_lang);
 	        SubMenu langMenu = changeLang.getSubMenu();
-	        if (app.getFeedUrl().equals(getString(R.string.feed_url_es)))
+	        if (app.getLanguage().equals(DwobLanguage.ES))
 	        	langMenu.findItem(R.id.spanish).setChecked(true);
-	        else if (app.getFeedUrl().equals(getString(R.string.feed_url_pt)))
+	        else if (app.getLanguage().equals(DwobLanguage.PT))
 	        	langMenu.findItem(R.id.portuguese).setChecked(true);
-	        else if (app.getFeedUrl().equals(getString(R.string.feed_url_it)))
+	        else if (app.getLanguage().equals(DwobLanguage.IT))
 	        	langMenu.findItem(R.id.italian).setChecked(true);
+            else if (app.getLanguage().equals(DwobLanguage.ZH))
+                langMenu.findItem(R.id.chinese).setChecked(true);
+            else if (app.getLanguage().equals(DwobLanguage.FR))
+                langMenu.findItem(R.id.french).setChecked(true);
 	        else
 	        	langMenu.findItem(R.id.english).setChecked(true);
     	}
@@ -140,21 +146,29 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.english:
-                app.setFeedUrl(getString(R.string.feed_url_en));
+                app.setLanguage(DwobLanguage.EN);
                 recreateOptionsMenu = true;
                 return true;
             case R.id.spanish:
-            	app.setFeedUrl(getString(R.string.feed_url_es));
+                app.setLanguage(DwobLanguage.ES);
             	recreateOptionsMenu = true;
             	return true;
             case R.id.portuguese:
-            	app.setFeedUrl(getString(R.string.feed_url_pt));
+                app.setLanguage(DwobLanguage.PT);
             	recreateOptionsMenu = true;
             	return true;
             case R.id.italian:
-            	app.setFeedUrl(getString(R.string.feed_url_it));
+            	app.setLanguage(DwobLanguage.IT);
             	recreateOptionsMenu = true;
             	return true;
+            case R.id.chinese:
+                app.setLanguage(DwobLanguage.ZH);
+                recreateOptionsMenu = true;
+                return true;
+            case R.id.french:
+                app.setLanguage(DwobLanguage.FR);
+                recreateOptionsMenu = true;
+                return true;
             case R.id.help:
             	showHelp();
                 return true;

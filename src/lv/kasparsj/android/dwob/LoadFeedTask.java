@@ -40,10 +40,12 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
         	List<Message> messages = rssParser.parse();
         	String title = messages.get(0).getTitle();
         	String description = messages.get(0).getDescription().trim().replaceAll("^<br />", "").trim();
+            long date = messages.get(0).getDate().getTime();
         	// Update if changed
-        	if (app.getTitle() != title || app.getDescription() != description) {
+        	if (app.getTitle() != title || app.getDescription() != description || app.getPubDate() != date) {
         		app.setTitle(title);
         		app.setDescription(description);
+                app.setPubDate(date);
         	}
         	return true;
         } catch (RuntimeException e) {

@@ -7,12 +7,16 @@
               <group android:checkableBehavior="single">
 	              <item android:id="@+id/english"
 	                  android:title="@string/english" />
+                  <item android:id="@+id/french"
+                        android:title="@string/french" />
 	              <item android:id="@+id/italian"
 	                  android:title="@string/italian" />
 	              <item android:id="@+id/portuguese"
 	                  android:title="@string/portuguese" />
 	              <item android:id="@+id/spanish"
 	                  android:title="@string/spanish" />
+                  <item android:id="@+id/chinese"
+                        android:title="@string/chinese" />
               </group>
           </menu>
     </item>

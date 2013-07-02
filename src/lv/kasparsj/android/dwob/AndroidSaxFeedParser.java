@@ -36,21 +36,18 @@ public class AndroidSaxFeedParser extends BaseFeedParser {
                 currentMessage.setLink(body);
             }
         });
-        item.getChild(DESCRIPTION).setEndTextElementListener(new 
-EndTextElementListener(){
+        item.getChild(DESCRIPTION).setEndTextElementListener(new EndTextElementListener(){
             public void end(String body) {
                 currentMessage.setDescription(body);
             }
         });
-        // does not work with spanish dates, and we do not need it anyway
-        //item.getChild(PUB_DATE).setEndTextElementListener(new EndTextElementListener(){
-        //    public void end(String body) {
-        //        currentMessage.setDate(body);
-        //    }
-        //});
+        item.getChild(PUB_DATE).setEndTextElementListener(new EndTextElementListener(){
+            public void end(String body) {
+                currentMessage.setDate(body);
+            }
+        });
         try {
-            Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, 
-root.getContentHandler());
+            Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, root.getContentHandler());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

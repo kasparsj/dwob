@@ -4,11 +4,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
+import android.util.Log;
+
 public class Message implements Comparable<Message>{
-	static SimpleDateFormat FORMATTER = 
-		new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+	public static SimpleDateFormat DATE_PARSER;
+    private static String TIME_PARSER = "HH:mm:ss Z";
+    private static String DATE_FORMAT = "dd/MM/yyyy";
 	private String title;
 	private URL link;
 	private String description;
@@ -42,20 +46,32 @@ public class Message implements Comparable<Message>{
 		this.description = description.trim();
 	}
 
-	public String getDate() {
-		return FORMATTER.format(this.date);
+	public Date getDate() {
+		return this.date;
 	}
 
 	public void setDate(String date) {
-		// pad the date if necessary
+        date = date.trim();
 		while (!date.endsWith("00")){
 			date += "0";
 		}
-		try {
-			this.date = FORMATTER.parse(date.trim());
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            this.date = DATE_PARSER.parse(date);
+        }
+        catch (ParseException e) {
+            try {
+                String[] parts = date.split(" ");
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.DATE, -1);
+                String datepart = new SimpleDateFormat(DATE_FORMAT).format(cal.getTime());
+                String timepart = parts[parts.length-2]+" "+parts[parts.length-1];
+                this.date = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_PARSER).parse(datepart+" "+timepart);
+            }
+            catch (ParseException ex) {
+                Log.w(Message.class.toString(), "could not parse date: "+date);
+                this.date = new Date();
+            }
+        }
 	}
 	
 	public Message copy(){
@@ -89,8 +105,7 @@ public class Message implements Comparable<Message>{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((date == null) ? 0 : date.hashCode());
-		result = prime * result
-				+ ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + ((link == null) ? 0 : link.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
