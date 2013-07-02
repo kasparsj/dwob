@@ -15,7 +15,7 @@ import android.util.Log;
 public class DwobApp extends Application {
 	
 	private static final String PREFS_NAME = "DwobPrefsFile";
-    private static final int DAY_IN_MILLISECONDS = 24*60*60*1000;
+    private static final int DAY_IN_MILLIS = 24*60*60*1000;
 	private static Pattern AUDIO_PATTERN;
 	private static Pattern SOURCE_PATTERN;
     private String language;
@@ -152,7 +152,7 @@ public class DwobApp extends Application {
 	}
 	
 	public boolean isOutdated() {
-		return new Date().getTime() - pubDate >= DAY_IN_MILLISECONDS;
+		return new Date().getTime() - pubDate >= DAY_IN_MILLIS;
 	}
 	
 	public SharedPreferences getSharedPreferences() {

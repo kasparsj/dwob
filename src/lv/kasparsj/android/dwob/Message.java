@@ -11,6 +11,7 @@ import android.util.Log;
 
 public class Message implements Comparable<Message>{
 	public static SimpleDateFormat DATE_PARSER;
+	private static final int DAY_IN_MILLIS = 24*60*60*1000;
     private static String TIME_PARSER = "HH:mm:ss Z";
     private static String DATE_FORMAT = "dd/MM/yyyy";
 	private String title;
@@ -61,17 +62,24 @@ public class Message implements Comparable<Message>{
         catch (ParseException e) {
             try {
                 String[] parts = date.split(" ");
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.DATE, -1);
-                String datepart = new SimpleDateFormat(DATE_FORMAT).format(cal.getTime());
+                String datepart = new SimpleDateFormat(DATE_FORMAT).format(new Date());
                 String timepart = parts[parts.length-2]+" "+parts[parts.length-1];
                 this.date = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_PARSER).parse(datepart+" "+timepart);
+                Calendar cal = Calendar.getInstance();
+                if (this.date.after(cal.getTime())) {
+                	long diff = this.date.getTime() - cal.getTimeInMillis();
+                	int days = (int) Math.ceil(diff / DAY_IN_MILLIS);
+                	cal.setTime(this.date);
+                	cal.add(Calendar.DATE, -days);
+                	this.date = cal.getTime();
+                }
             }
             catch (ParseException ex) {
                 Log.w(Message.class.toString(), "could not parse date: "+date);
                 this.date = new Date();
             }
         }
+        Log.i("test", this.date.toString());
 	}
 	
 	public Message copy(){

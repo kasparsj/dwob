@@ -22,7 +22,7 @@ import android.widget.TextView;
 
 public class DwobWidget extends AppWidgetProvider {
 
-    private static final int HOUR_IN_MILLISECONDS = 60*60*1000;
+    private static final int HOUR_IN_MILLIS = 60*60*1000;
 	
     private ScreenStateReceiver screenStateReceiver = new ScreenStateReceiver();
     private DwobUpdateReceiver screenUpdateReceiver = new DwobUpdateReceiver();
@@ -48,7 +48,7 @@ public class DwobWidget extends AppWidgetProvider {
 		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), HOUR_IN_MILLISECONDS, createUpdateIntent(context));
+        alarmManager.setRepeating(AlarmManager.RTC, calendar.getTimeInMillis(), HOUR_IN_MILLIS, createUpdateIntent(context));
 	}
 	
 	public void onDisabled(Context context) {
