@@ -9,8 +9,7 @@
 
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="11" />
     
-    <supports-screens android:resizeable="true"
-                      android:smallScreens="true"
+    <supports-screens android:smallScreens="true"
                       android:normalScreens="true"
                       android:largeScreens="true"
                       android:xlargeScreens="true"
