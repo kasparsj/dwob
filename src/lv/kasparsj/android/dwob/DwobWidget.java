@@ -138,12 +138,12 @@ public class DwobWidget extends AppWidgetProvider {
             }
             // Measure text width, and alter numLines accordingly
             TextView textView = new TextView(context);
-            textView.setTextSize(getDefaultTextSize(numLines));
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDefaultTextSize(numLines));
             float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.widget_padding), r.getDisplayMetrics());
             float margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.widget_margin), r.getDisplayMetrics());
             float lineWidth = (r.getDisplayMetrics().widthPixels - padding*2 - margin*2);
             while (numLines < countTextViewLines(textView, lines, lineWidth)) {
-            	textView.setTextSize((textView.getTextSize()-.5f));
+            	textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (textView.getTextSize()-.5f));
             	numLines = getLinesVisible(textView.getTextSize());
             }
             // Build an update that holds the updated widget contents
