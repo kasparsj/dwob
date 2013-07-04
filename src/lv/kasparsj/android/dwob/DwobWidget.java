@@ -86,10 +86,10 @@ public class DwobWidget extends AppWidgetProvider {
         return 8;
     }
     
-    private int countTextViewLines(TextView textView, String[] lines, float lineWidth) {
+    private int countTextViewLines(TextView textView, String[] lines, float lineWidth, float density) {
     	int numLines = lines.length;
     	for (int i=0; i<lines.length; i++) {
-        	if (textView.getPaint().measureText(lines[i]) > lineWidth) {
+        	if (textView.getPaint().measureText(lines[i]) * density > lineWidth) {
         		numLines++;
         	}
         }
@@ -139,10 +139,11 @@ public class DwobWidget extends AppWidgetProvider {
             // Measure text width, and alter numLines accordingly
             TextView textView = new TextView(context);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDefaultTextSize(numLines));
-            float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.widget_padding), r.getDisplayMetrics());
-            float margin = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, r.getDimension(R.dimen.widget_margin), r.getDisplayMetrics());
-            float lineWidth = (r.getDisplayMetrics().widthPixels - padding*2 - margin*2);
-            while (numLines < countTextViewLines(textView, lines, lineWidth)) {
+            float width = 80 * r.getDisplayMetrics().density * 4;
+            float padding = r.getDimension(R.dimen.widget_padding);
+            float margin = r.getDimension(R.dimen.widget_margin);
+            float lineWidth = (width - padding*2 - margin*2);
+            while (numLines < countTextViewLines(textView, lines, lineWidth, r.getDisplayMetrics().density)) {
             	textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (textView.getTextSize()-.5f));
             	numLines = getLinesVisible(textView.getTextSize());
             }
