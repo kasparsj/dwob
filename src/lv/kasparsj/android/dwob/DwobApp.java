@@ -45,6 +45,7 @@ public class DwobApp extends Application {
     }
 
     public void setLanguage(String language) {
+    	boolean doUpdate = (this.language != null && this.language != language);
         this.language = language;
         Message.DATE_PARSER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", new Locale(language));
         if (language.equals(DwobLanguage.ES)) {
@@ -77,9 +78,12 @@ public class DwobApp extends Application {
             SOURCE_PATTERN = Pattern.compile(getString(R.string.source_pattern_en), Pattern.CASE_INSENSITIVE);
             setFeedUrl(getString(R.string.feed_url_en));
         }
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.putString("language", language);
-        editor.commit();
+        if (doUpdate) {
+        	update();
+        	SharedPreferences.Editor editor = getSharedPreferences().edit();
+        	editor.putString("language", language);
+        	editor.commit();
+        }
     }
 	
 	public String getFeedUrl() {
@@ -88,7 +92,6 @@ public class DwobApp extends Application {
 	
 	public void setFeedUrl(String url) {
 		feed_url = url;
-		update();
 	}
 	
 	public String getTitle() {
