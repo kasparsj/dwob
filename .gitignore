@@ -1,7 +1,5 @@
-bin
-gen
-my-release-key.keystore
-Dwob.apk
-/nbandroid/
-.idea
-out
+.gradle
+/my-release-key.keystore
+/.idea/workspace.xml
+.DS_Store
+app/build
