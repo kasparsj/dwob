@@ -1,7 +1,5 @@
 package lv.kasparsj.android.dwob;
 
-import lv.kasparsj.android.dwob.R;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -19,6 +17,8 @@ import android.view.SubMenu;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import lv.kasparsj.android.util.OneLog;
 
 public class DwobActivity extends Activity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	
@@ -81,7 +81,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
 					updateView();
 				}
 				else {
-					if (app.getDescription().length() == 0) {
+					if (app.getTitle().length() == 0) {
 						WebView descrView = (WebView) findViewById(R.id.description);
 						descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
 					}
@@ -93,7 +93,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
     }
     
     public void updateView() {
-    	Log.i("test", "DwobActivity::updateView");
+    	OneLog.i("DwobActivity::updateView");
 		setTitle(app.getTitle());
 
     	WebView descrView = (WebView) findViewById(R.id.description);
@@ -113,7 +113,7 @@ public class DwobActivity extends Activity implements SharedPreferences.OnShared
             }
         });
     	String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
-    	String htmlData = "<html>" + head + "<body>" + app.getDescription() + "</body></html>";
+    	String htmlData = "<html>" + head + "<body>" + app.getHtml() + "</body></html>";
     	descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
     }
     

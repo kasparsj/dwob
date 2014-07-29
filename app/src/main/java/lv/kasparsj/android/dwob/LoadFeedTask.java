@@ -1,14 +1,15 @@
 package lv.kasparsj.android.dwob;
 
-import lv.kasparsj.android.dwob.R;
-
-import java.util.List;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import java.util.List;
+
+import lv.kasparsj.android.feed.SaxFeedParser;
+import lv.kasparsj.android.util.OneLog;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	
@@ -21,7 +22,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	}
 	
 	protected void onPreExecute() {
-		Log.i("test", "LoadFeedTask::onPreExecute");
+		OneLog.i("LoadFeedTask::onPreExecute");
 		((DwobApp) context.getApplicationContext()).setLoading(true);
     }
 	
@@ -36,15 +37,16 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
     	try {
             // Try querying Pariyatti API for today's word
     		DwobApp app = (DwobApp) context.getApplicationContext();
-        	AndroidSaxFeedParser rssParser = new AndroidSaxFeedParser(app.getFeedUrl());
-        	List<Message> messages = rssParser.parse();
-        	String title = messages.get(0).getTitle();
-        	String description = messages.get(0).getDescription().trim().replaceAll("^<br />", "").trim();
-            long date = messages.get(0).getDate().getTime();
-        	// Update if changed
-        	if (app.getTitle() != title || app.getDescription() != description || app.getPubDate() != date) {
-        		app.setTitle(title);
-        		app.setDescription(description);
+        	SaxFeedParser rssParser = new DwobFeedParser(app.getFeedUrl());
+        	List<DwobFeedItem> feedItems = rssParser.parse(DwobFeedItem.class);
+            // todo: now 7 items
+            DwobFeedItem feedItem = feedItems.get(0);
+        	long date = feedItem.getDate().getTime();
+            String translated = feedItem.getTranslated();
+        	if (app.getPubDate() != date || app.getTranslated() != translated) {
+                app.setTitle(feedItem.getDate().toLocaleString());
+                app.setTranslated(translated);
+                app.setPali(feedItem.getPali());
                 app.setPubDate(date);
         	}
         	return true;

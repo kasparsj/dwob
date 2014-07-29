@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.feed;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,8 @@ import java.net.URLConnection;
 public abstract class BaseFeedParser implements FeedParser {
 
     // names of the XML tags
+    static final String RSS = "rss";
+    static final String CHANNEL = "channel";
     static final String PUB_DATE = "pubDate";
     static final String DESCRIPTION = "description";
     static final String LINK = "link";

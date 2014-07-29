@@ -1,8 +1,5 @@
 package lv.kasparsj.android.dwob;
 
-/**
- * Created by kasparsj on 6/12/13.
- */
 public class DwobLanguage {
     public static final String EN = "en";
     public static final String ES = "es";

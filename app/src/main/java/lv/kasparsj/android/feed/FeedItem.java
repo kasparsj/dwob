@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.feed;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -9,11 +9,11 @@ import java.util.Date;
 
 import android.util.Log;
 
-public class Message implements Comparable<Message>{
+public class FeedItem implements Comparable<FeedItem>{
 	public static SimpleDateFormat DATE_PARSER;
 	private static final int DAY_IN_MILLIS = 24*60*60*1000;
-    private static String TIME_PARSER = "HH:mm:ss Z";
     private static String DATE_FORMAT = "dd/MM/yyyy";
+    private static String TIME_FORMAT = "HH:mm:ss Z";
 	private String title;
 	private URL link;
 	private String description;
@@ -64,7 +64,7 @@ public class Message implements Comparable<Message>{
                 String[] parts = date.split(" ");
                 String datepart = new SimpleDateFormat(DATE_FORMAT).format(new Date());
                 String timepart = parts[parts.length-2]+" "+parts[parts.length-1];
-                this.date = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_PARSER).parse(datepart+" "+timepart);
+                this.date = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_FORMAT).parse(datepart+" "+timepart);
                 Calendar cal = Calendar.getInstance();
                 if (this.date.after(cal.getTime())) {
                 	long diff = this.date.getTime() - cal.getTimeInMillis();
@@ -75,21 +75,30 @@ public class Message implements Comparable<Message>{
                 }
             }
             catch (ParseException ex) {
-                Log.w(Message.class.toString(), "could not parse date: "+date);
+                Log.w(FeedItem.class.toString(), "could not parse date: "+date);
                 this.date = new Date();
             }
         }
         Log.i("test", this.date.toString());
 	}
 	
-	public Message copy(){
-		Message copy = new Message();
-		copy.title = title;
-		copy.link = link;
-		copy.description = description;
-		copy.date = date;
-		return copy;
+	protected <T extends FeedItem> T copy(Class<T> clazz){
+        try {
+            T copy = clazz.newInstance();
+            copy.title = title;
+            copy.link = link;
+            copy.description = description;
+            copy.date = date;
+            return copy;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 	}
+
+    public FeedItem copy() {
+        return copy(FeedItem.class);
+    }
 	
 	@Override
 	public String toString() {
@@ -127,7 +136,7 @@ public class Message implements Comparable<Message>{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Message other = (Message) obj;
+		FeedItem other = (FeedItem) obj;
 		if (date == null) {
 			if (other.date != null)
 				return false;
@@ -151,7 +160,7 @@ public class Message implements Comparable<Message>{
 		return true;
 	}
 
-	public int compareTo(Message another) {
+	public int compareTo(FeedItem another) {
 		if (another == null) return 1;
 		// sort descending, most recent first
 		return another.date.compareTo(date);

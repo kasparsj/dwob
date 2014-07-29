@@ -2,8 +2,6 @@ package lv.kasparsj.android.dwob;
 
 import java.util.Calendar;
 
-import lv.kasparsj.android.dwob.R;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -14,11 +12,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+
+import lv.kasparsj.android.util.OneLog;
 
 public class DwobWidget extends AppWidgetProvider {
 
@@ -36,7 +35,7 @@ public class DwobWidget extends AppWidgetProvider {
 	
 	@Override
 	public void onEnabled(Context context) {
-		Log.i("test", "DwobWidget::onEnabled");
+		OneLog.i("DwobWidget::onEnabled");
 		
 		IntentFilter stateFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 		stateFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -52,7 +51,7 @@ public class DwobWidget extends AppWidgetProvider {
 	}
 	
 	public void onDisabled(Context context) {
-		Log.i("test", "DwobWidget::onDisabled");
+		OneLog.i("DwobWidget::onDisabled");
 		
 		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(createUpdateIntent(context));
@@ -105,7 +104,7 @@ public class DwobWidget extends AppWidgetProvider {
     }
     
     public void onReceive(Context context, Intent intent) {
-    	Log.i("test", "DwobWidget::onReceive ("+intent.getAction()+")");
+    	OneLog.i("DwobWidget::onReceive ("+intent.getAction()+")");
     	
     	DwobApp app = ((DwobApp) context.getApplicationContext());
     	Resources r = context.getResources();
@@ -119,13 +118,12 @@ public class DwobWidget extends AppWidgetProvider {
     		}
     	}
     	
-    	Object[] translation = app.getTranslation().toArray();
-    	if (intent.getAction().equals(r.getString(R.string.action_refresh)) || translation.length > 0) {
+    	String translation = app.getTranslated();
+    	if (intent.getAction().equals(r.getString(R.string.action_refresh)) || translation.length() > 0) {
 			// Retrieve latest translation
             String text = r.getString(R.string.widget_error);
-            if (translation.length > 0) {
-            	String html = TextUtils.join("\n<br />\n", translation).trim().replaceAll("^<br />", "").trim();
-            	text = Html.fromHtml(html).toString();
+            if (translation.length() > 0) {
+                text = translation.trim();
             }
             // Detect numLines to display
             String[] lines = text.split("\r\n|\r|\n");

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Daily Words of Buddha</string>
-    <string name="feed_url">http://feeds.pariyatti.org/dwob</string>
+    <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_english.rss</string>
     <string name="activity_error">Failed loading Daily Words of Buddha</string>
     <string name="widget_name">Daily Words of Buddha</string>
     <string name="widget_loading">Loading Daily Words of Buddha&#8230;</string>
