@@ -11,8 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.TextView;
@@ -106,7 +104,7 @@ public class DwobWidget extends AppWidgetProvider {
     public void onReceive(Context context, Intent intent) {
     	OneLog.i("DwobWidget::onReceive ("+intent.getAction()+")");
     	
-    	DwobApp app = ((DwobApp) context.getApplicationContext());
+    	App app = ((App) context.getApplicationContext());
     	Resources r = context.getResources();
     	if (intent.getAction().equals(r.getString(R.string.action_update)) && app.isOutdated()) {
     		// don't update if screen is off
@@ -151,7 +149,7 @@ public class DwobWidget extends AppWidgetProvider {
             updateViews.setTextViewText(R.id.words, text);
             updateViews.setFloat(R.id.words, "setTextSize", textView.getTextSize());
             // setOnClickPendingIntent
-            Intent defineIntent = new Intent(context, DwobActivity.class);
+            Intent defineIntent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, defineIntent, 0);
             updateViews.setOnClickPendingIntent(R.id.words, pendingIntent);
 			// update Widget

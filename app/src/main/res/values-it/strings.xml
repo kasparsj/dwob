@@ -9,4 +9,5 @@
     <string name="change_language">Cambia la lingua</string>
     <string name="help">Aiuto</string>
     <string name="help_msg">Per installare il widget: una volta installata questa applicazione, toccare e tenere premuto sulla schermata principale, quindi selezionare Widgets e poi Parole quotidiane del Buddha.</string>
+    <string name="tab_dwob">Parole quotidiane del Buddha</string>
 </resources>

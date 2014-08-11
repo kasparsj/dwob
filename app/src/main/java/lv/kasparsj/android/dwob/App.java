@@ -12,7 +12,7 @@ import android.util.Log;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.util.OneLog;
 
-public class DwobApp extends Application {
+public class App extends Application {
 	
 	private static final String PREFS_NAME = "DwobPrefsFile";
     private static final int DAY_IN_MILLIS = 24*60*60*1000;
@@ -157,7 +157,7 @@ public class DwobApp extends Application {
 	}
 	
 	public void update() {
-		OneLog.i("DwobApp::update");
+		OneLog.i("App::update");
     	new LoadFeedTask(getApplicationContext()).execute();
 	}
 	

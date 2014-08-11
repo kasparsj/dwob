@@ -9,4 +9,7 @@
     <string name="change_language">Change language</string>
     <string name="help">Help</string>
     <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select Widgets and then Daily Words of Buddha.</string>
+    <string name="tab_dwob">Daily Words of Buddha</string>
+    <string name="tab_pali">Pali Word a Day</string>
+    <string name="tab_goenka">Dhamma Verses of S.N. Goenka</string>
 </resources>

@@ -9,4 +9,5 @@
     <string name="change_language">改變語言</string>
     <string name="help">說明</string>
     <string name="help_msg">如何安裝插件widget：安裝此app後，軽按住首頁，然後選擇Widgets，然後是「佛陀每日法語」</string>
+    <string name="tab_dwob">佛陀每日法語</string>
 </resources>

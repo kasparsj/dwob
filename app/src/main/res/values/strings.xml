@@ -35,4 +35,7 @@
     <string name="source_pattern_fr"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Voir la version pāli sur Tipitaka.org</a>]]></string>
     <string name="action_update">lv.kasparsj.android.dwob.UPDATE</string>
     <string name="action_refresh">lv.kasparsj.android.dwob.REFRESH</string>
+    <string name="tab_dwob">Daily Words of Buddha</string>
+    <string name="tab_pali">Pali Word a Day</string>
+    <string name="tab_goenka">Dhamma Verses of S.N. Goenka</string>
 </resources>

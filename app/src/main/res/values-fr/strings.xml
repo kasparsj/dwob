@@ -9,4 +9,5 @@
     <string name="change_language">Changer de langue</string>
     <string name="help">Aide</string>
     <string name="help_msg">Pour installer le widget: une fois que vous installez cette application, appuyez et maintenez sur l\'écran d\'accueil, puis sélectionnez votre gadget préféré dans le menu contextuel.</string>
+    <string name="tab_dwob">Les paroles du Bouddha au quotidien</string>
 </resources>

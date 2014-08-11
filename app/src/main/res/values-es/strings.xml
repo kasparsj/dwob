@@ -9,4 +9,5 @@
     <string name="change_language">Cambiar el idioma</string>
     <string name="help">Ayuda</string>
     <string name="help_msg">Para instalar el widget: una vez instalada esta aplicación, pulse y mantenga en la pantalla de inicio, seleccione Widgets y luego Palabras del Buda para cada día.</string>
+    <string name="tab_dwob">Palabras del Buda para cada día</string>
 </resources>

@@ -23,11 +23,11 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	
 	protected void onPreExecute() {
 		OneLog.i("LoadFeedTask::onPreExecute");
-		((DwobApp) context.getApplicationContext()).setLoading(true);
+		((App) context.getApplicationContext()).setLoading(true);
     }
 	
 	protected void onPostExecute(final Boolean success) {
-		((DwobApp) context.getApplicationContext()).setLoading(false, success);
+		((App) context.getApplicationContext()).setLoading(false, success);
 		Intent broadcastIntent = new Intent(context, DwobWidget.class);
 		broadcastIntent.setAction(r.getString(R.string.action_refresh));
 		context.sendBroadcast(broadcastIntent);
@@ -36,7 +36,8 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	protected Boolean doInBackground(final String... args) {
     	try {
             // Try querying Pariyatti API for today's word
-    		DwobApp app = (DwobApp) context.getApplicationContext();
+    		App app = (App) context.getApplicationContext();
+            OneLog.i("Will load from: "+app.getFeedUrl());
         	SaxFeedParser rssParser = new DwobFeedParser(app.getFeedUrl());
         	List<DwobFeedItem> feedItems = rssParser.parse(DwobFeedItem.class);
             // todo: now 7 items

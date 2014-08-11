@@ -2,4 +2,5 @@
 /my-release-key.keystore
 /.idea/workspace.xml
 .DS_Store
+build
 app/build

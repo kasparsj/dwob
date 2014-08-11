@@ -9,4 +9,5 @@
     <string name="change_language">Mudar o idioma</string>
     <string name="help">Ajudar</string>
     <string name="help_msg">Para instalar o widget: uma vez que você instalar esta aplicação, toque e segure na tela inicial, selecione Widgets e depois As Palavras Diárias do Buda.</string>
+    <string name="tab_dwob">As Palavras Diárias do Buda</string>
 </resources>
