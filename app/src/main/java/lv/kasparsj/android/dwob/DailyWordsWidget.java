@@ -17,12 +17,12 @@ import android.widget.TextView;
 
 import lv.kasparsj.android.util.OneLog;
 
-public class DwobWidget extends AppWidgetProvider {
+public class DailyWordsWidget extends AppWidgetProvider {
 
     private static final int HOUR_IN_MILLIS = 60*60*1000;
 	
     private ScreenStateReceiver screenStateReceiver = new ScreenStateReceiver();
-    private DwobUpdateReceiver screenUpdateReceiver = new DwobUpdateReceiver();
+    private DailyWordsUpdateReceiver screenUpdateReceiver = new DailyWordsUpdateReceiver();
 	
 	private PendingIntent createUpdateIntent(Context context) {
 		Resources r = context.getResources();
@@ -33,7 +33,7 @@ public class DwobWidget extends AppWidgetProvider {
 	
 	@Override
 	public void onEnabled(Context context) {
-		OneLog.i("DwobWidget::onEnabled");
+		OneLog.i("DailyWordsWidget::onEnabled");
 		
 		IntentFilter stateFilter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
 		stateFilter.addAction(Intent.ACTION_SCREEN_ON);
@@ -49,7 +49,7 @@ public class DwobWidget extends AppWidgetProvider {
 	}
 	
 	public void onDisabled(Context context) {
-		OneLog.i("DwobWidget::onDisabled");
+		OneLog.i("DailyWordsWidget::onDisabled");
 		
 		AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(createUpdateIntent(context));
@@ -102,21 +102,21 @@ public class DwobWidget extends AppWidgetProvider {
     }
     
     public void onReceive(Context context, Intent intent) {
-    	OneLog.i("DwobWidget::onReceive ("+intent.getAction()+")");
+    	OneLog.i("DailyWordsWidget::onReceive ("+intent.getAction()+")");
     	
-    	App app = ((App) context.getApplicationContext());
+    	DailyWords dailyWords = DailyWords.getInstance();
     	Resources r = context.getResources();
-    	if (intent.getAction().equals(r.getString(R.string.action_update)) && app.isOutdated()) {
+    	if (intent.getAction().equals(r.getString(R.string.action_update)) && dailyWords.isOutdated()) {
     		// don't update if screen is off
     		if (ScreenStateReceiver.screenOff) {
-    			DwobUpdateReceiver.pendingUpdate = true;
+    			DailyWordsUpdateReceiver.pendingUpdate = true;
     		}
     		else {
-    			app.update();
+				dailyWords.update();
     		}
     	}
     	
-    	String translation = app.getTranslated();
+    	String translation = dailyWords.getTranslated();
     	if (intent.getAction().equals(r.getString(R.string.action_refresh)) || translation.length() > 0) {
 			// Retrieve latest translation
             String text = r.getString(R.string.widget_error);
@@ -153,7 +153,7 @@ public class DwobWidget extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, defineIntent, 0);
             updateViews.setOnClickPendingIntent(R.id.words, pendingIntent);
 			// update Widget
-			ComponentName thisWidget = new ComponentName(context, DwobWidget.class);
+			ComponentName thisWidget = new ComponentName(context, DailyWordsWidget.class);
 	        AppWidgetManager manager = AppWidgetManager.getInstance(context);
 	        manager.updateAppWidget(thisWidget, updateViews);
     	}

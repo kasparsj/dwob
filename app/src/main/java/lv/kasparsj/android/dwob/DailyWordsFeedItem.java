@@ -2,7 +2,7 @@ package lv.kasparsj.android.dwob;
 
 import lv.kasparsj.android.feed.FeedItem;
 
-public class DwobFeedItem extends FeedItem
+public class DailyWordsFeedItem extends FeedItem
 {
     private String translator;
     private String listenLink;
@@ -69,8 +69,8 @@ public class DwobFeedItem extends FeedItem
     }
 
     @Override
-    public DwobFeedItem copy() {
-        DwobFeedItem copy = copy(DwobFeedItem.class);
+    public DailyWordsFeedItem copy() {
+        DailyWordsFeedItem copy = copy(DailyWordsFeedItem.class);
         copy.translator = translator;
         copy.listenLink = listenLink;
         copy.bookLink = bookLink;

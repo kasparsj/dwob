@@ -22,14 +22,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import lv.kasparsj.android.util.OneLog;
-
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     ViewPager viewPager;
     AppFragmentsPagerAdapter appFragmentsPagerAdapter;
 
 	private App app;
+    private DailyWords dailyWords;
+    private PaliWord paliWord;
+    private DhammaVerses dhammaVerses;
 	private ProgressDialog progressDialog;
 	private HelpDialog helpDialog;
 	private boolean recreateOptionsMenu = true;
@@ -78,6 +79,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         app = (App) getApplication();
+        dailyWords = DailyWords.getInstance();
+        paliWord = PaliWord.getInstance();
+        dhammaVerses = DhammaVerses.getInstance();
+
         if (app.showHelpOnStart()) {
         	showHelp();
         }
@@ -89,8 +94,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         SharedPreferences prefs = app.getSharedPreferences();
         prefs.registerOnSharedPreferenceChangeListener(this);
     	
-    	if (app.isOutdated()) {
-            app.update();
+    	if (dailyWords.isOutdated()) {
+            dailyWords.update();
         }
     }
     
@@ -205,7 +210,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     appFragmentsPagerAdapter.updateView();
                 }
                 else {
-                    if (app.getTitle().length() == 0) {
+                    if (dailyWords.getTitle().length() == 0) {
                         WebView descrView = (WebView) findViewById(R.id.description);
                         descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
                     }
@@ -234,9 +239,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public static class AppFragmentsPagerAdapter extends FragmentPagerAdapter {
 
         private Context context;
-        private AppFragment dwobFragment;
-        private AppFragment paliFragment;
-        private AppFragment goenkaFragment;
+        private AppFragment dailyWordsFragment;
+        private AppFragment paliWordFragment;
+        private AppFragment dhammaVersesFragment;
 
         public AppFragmentsPagerAdapter(Context context, FragmentManager fm) {
             super(fm);
@@ -247,14 +252,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    dwobFragment = new DwobFragment();
-                    return dwobFragment;
+                    dailyWordsFragment = new DailyWordsFragment();
+                    return dailyWordsFragment;
                 case 1:
-                    paliFragment = new PaliFragment();
-                    return paliFragment;
+                    paliWordFragment = new PaliWordFragment();
+                    return paliWordFragment;
                 case 2:
-                    goenkaFragment = new GoenkaFragment();
-                    return goenkaFragment;
+                    dhammaVersesFragment = new DhammaVersesFragment();
+                    return dhammaVersesFragment;
                 default:
                     throw new RuntimeException("Invalid tab requested");
             }
@@ -280,15 +285,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         public void updateView() {
-            if (dwobFragment != null) {
-                dwobFragment.updateView();
+            if (dailyWordsFragment != null) {
+                dailyWordsFragment.updateView();
             }
         }
     }
 
-    public static class DwobFragment extends AppFragment {
+    public static class DailyWordsFragment extends AppFragment {
 
-        public DwobFragment() {
+        public DailyWordsFragment() {
             super(R.layout.fragment_dwob);
         }
 
@@ -310,16 +315,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return true;
                 }
             });
-            App app = (App) getActivity().getApplication();
             String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
-            String htmlData = "<html>" + head + "<body>" + app.getHtml() + "</body></html>";
+            String htmlData = "<html>" + head + "<body>" + DailyWords.getInstance().getHtml() + "</body></html>";
             descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
         }
     }
 
-    public static class PaliFragment extends AppFragment {
+    public static class PaliWordFragment extends AppFragment {
 
-        public PaliFragment() {
+        public PaliWordFragment() {
             super(R.layout.fragment_pali);
         }
 
@@ -329,9 +333,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public static class GoenkaFragment extends AppFragment {
+    public static class DhammaVersesFragment extends AppFragment {
 
-        public GoenkaFragment() {
+        public DhammaVersesFragment() {
             super(R.layout.fragment_goenka);
         }
 
