@@ -1,19 +1,11 @@
 package lv.kasparsj.android.dwob;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-public class DhammaVerses {
+public class DhammaVerses extends BaseModel {
 
     private static DhammaVerses instance;
 
-    private Context context;
-    private SharedPreferences settings;
-
-    public DhammaVerses(App applicationContext) {
-        context = applicationContext;
-        settings = applicationContext.getSharedPreferences();
-        load();
+    private DhammaVerses(App applicationContext) {
+        super(applicationContext);
     }
 
     public static DhammaVerses getInstance() {
@@ -23,6 +15,13 @@ public class DhammaVerses {
         return instance;
     }
 
-    private void load() {
+    @Override
+    protected String getSaveNS() {
+        return "dhammaVerses.";
+    }
+
+    @Override
+    public void update() {
+        new LoadDhammaVersesTask(context).execute();
     }
 }

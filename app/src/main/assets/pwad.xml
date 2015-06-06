@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" media="screen" href="/~d/styles/rss2full.xsl"?><?xml-stylesheet type="text/css" media="screen" href="http://feeds.pariyatti.org/~d/styles/itemcontent.css"?><rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:feedburner="http://rssnamespace.org/feedburner/ext/1.0" version="2.0">
+            <channel> 
+            <title>Pāli Word a Day</title>
+            <link>http://pariyatti.org/FreeResources/DailyWords/P%C4%81li/tabid/210/Default.aspx</link>
+            <description>Pāli Word a Day is a free service of Pariyatti, available by email, XML-RSS, and on the Web via our website, http://pariyatti.org</description>
+            <image>
+                <title>Pāli Word a Day</title>
+                <url>http://host.pariyatti.org/podcasts/images/200x200.jpg</url>                
+                <link>http://pariyatti.org/FreeResources/DailyWords/P%C4%81li/tabid/210/Default.aspx</link>
+            </image>
+            <atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="self" type="application/rss+xml" href="http://feeds.pariyatti.org/pwad" /><feedburner:info uri="pwad" /><atom10:link xmlns:atom10="http://www.w3.org/2005/Atom" rel="hub" href="http://pubsubhubbub.appspot.com/" />
+            <item>
+                <title>Pāli Word a Day for June 06, 2015</title>                
+                <link>http://feeds.pariyatti.org/~r/pwad/~3/68GlYBL6UFM/Default.aspx</link>
+                <description>&lt;br /&gt;
+dullabho — rare, difficult attainment&lt;br /&gt;
+&lt;br /&gt;
+ &lt;br /&gt;
+                Pariyatti is a non-profit organization supported by purchases and contributions.&lt;br /&gt;
+                &lt;a href="https://store.pariyatti.org/donate.html"&gt;https://store.pariyatti.org/donate.html&lt;/a&gt;&lt;br /&gt;
+                --&lt;br /&gt;
+                Our monthly e-newsletter includes specials from time to time.&lt;br /&gt; 
+                You can subscribe at: &lt;a href="http://www.pariyatti.org/ResourcesProjects/News/tabid/125/Default.aspx"&gt;www.pariyatti.org/ResourcesProjects/News/tabid/125/Default.aspx&lt;/a&gt;&lt;img src="http://feeds.feedburner.com/~r/pwad/~4/68GlYBL6UFM" height="1" width="1" alt=""/&gt;</description>
+                <pubDate>Fri, 05 Jun 2015 22:03:03 PDT</pubDate>                
+                <guid isPermaLink="false">http://pariyatti.org/FreeResources/DailyWords/P%C4%81li/tabid/210/Default.aspx?1433566983</guid>
+            <feedburner:origLink>http://pariyatti.org/FreeResources/DailyWords/P%C4%81li/tabid/210/Default.aspx?1433566983</feedburner:origLink>
+            </item>
+            </channel>
+            </rss>

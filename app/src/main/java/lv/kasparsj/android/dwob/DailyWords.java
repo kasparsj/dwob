@@ -1,28 +1,19 @@
 package lv.kasparsj.android.dwob;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
-import java.util.Date;
-
-public class DailyWords {
+public class DailyWords extends BaseModel {
 
     private static DailyWords instance = null;
-
-    private Context context;
-    private SharedPreferences settings;
 
     private String title;
     private String translated;
     private String pali;
     private String source;
     private String audio;
-    private long pubDate; // last time updated
 
-    public DailyWords(App applicationContext) {
-        context = applicationContext;
-        settings = applicationContext.getSharedPreferences();
-        load(applicationContext.getString(R.string.app_name));
+    private DailyWords(App applicationContext) {
+        super(applicationContext);
     }
 
     public static DailyWords getInstance() {
@@ -32,12 +23,17 @@ public class DailyWords {
         return instance;
     }
 
-    private void load(String defaultTitle) {
-        setTitle(settings.getString("title", defaultTitle));
-//		setDescription(settings.getString("description", ""));
-        setTranslated(settings.getString("translated", ""));
-        setPali(settings.getString("pali", ""));
-        pubDate = settings.getLong("pubDate", 0);
+    protected void load() {
+        String ns = getSaveNS();
+        setTitle(settings.getString(ns+"title", context.getString(R.string.app_name)));
+        setTranslated(settings.getString(ns+"translated", ""));
+        setPali(settings.getString(ns+"pali", ""));
+        pubDate = settings.getLong(ns+"pubDate", 0);
+    }
+
+    @Override
+    protected String getSaveNS() {
+        return "";
     }
 
     public String getTitle() {
@@ -50,14 +46,6 @@ public class DailyWords {
 
     public String getHtml() {
         return (translated + "\n\n" + pali).replaceAll("\n", "<br>");
-    }
-
-    public long getPubDate() {
-        return pubDate;
-    }
-
-    public void setPubDate(long date) {
-        this.pubDate = date;
     }
 
     public String getPali() {
@@ -80,33 +68,24 @@ public class DailyWords {
         return source;
     }
 
-    public boolean isOutdated() {
-        return new Date().getTime() - pubDate >= App.DAY_IN_MILLIS;
-    }
-
-    public void setLoading(boolean isLoading) {
+    protected void save(boolean isLoading) {
+        String ns = getSaveNS();
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("loading", isLoading);
+        editor.putString(ns+"title", title);
+        editor.putString(ns+"translated", translated);
+        editor.putString(ns+"pali", pali);
+        editor.putLong(ns+"pubDate", pubDate);
+        editor.putBoolean(ns+"loading", isLoading);
+        editor.putBoolean(ns+"success", true);
         editor.commit();
-    }
-
-    public void setLoading(boolean isLoading, boolean success) {
-        if (success) {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putString("title", title);
-            editor.putString("translated", translated);
-            editor.putString("pali", pali);
-            editor.putLong("pubDate", pubDate);
-            editor.putBoolean("loading", isLoading);
-            editor.putBoolean("success", success);
-            editor.commit();
-        }
-        else {
-            setLoading(isLoading);
-        }
     }
 
     public void update() {
         new LoadDailyWordsTask(context).execute();
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return title.length() > 0;
     }
 }

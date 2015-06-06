@@ -1,19 +1,11 @@
 package lv.kasparsj.android.dwob;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-
-public class PaliWord {
+public class PaliWord extends BaseModel {
 
     private static PaliWord instance;
 
-    private Context context;
-    private SharedPreferences settings;
-
-    public PaliWord(App applicationContext) {
-        context = applicationContext;
-        settings = applicationContext.getSharedPreferences();
-        load();
+    private PaliWord(App applicationContext) {
+        super(applicationContext);
     }
 
     public static PaliWord getInstance() {
@@ -23,6 +15,13 @@ public class PaliWord {
         return instance;
     }
 
-    private void load() {
+    @Override
+    protected String getSaveNS() {
+        return "paliWord.";
+    }
+
+    @Override
+    public void update() {
+        new LoadPaliWordTask(context).execute();
     }
 }

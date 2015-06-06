@@ -25,7 +25,7 @@ public class LoadDailyWordsTask extends AsyncTask<String, Void, Boolean> {
 	
 	protected void onPreExecute() {
 		OneLog.i("LoadDailyWordsTask::onPreExecute");
-        DailyWords.getInstance().setLoading(true);
+        dailyWords.setLoading(true);
     }
 	
 	protected void onPostExecute(final Boolean success) {

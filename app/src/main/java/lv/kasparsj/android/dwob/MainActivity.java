@@ -22,16 +22,15 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SharedPreferences.OnSharedPreferenceChangeListener {
+import lv.kasparsj.android.util.OneLog;
+
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     ViewPager viewPager;
     AppFragmentsPagerAdapter appFragmentsPagerAdapter;
 
-	private App app;
-    private DailyWords dailyWords;
-    private PaliWord paliWord;
-    private DhammaVerses dhammaVerses;
-	private ProgressDialog progressDialog;
+	static private App app;
+    private ProgressDialog progressDialog;
 	private HelpDialog helpDialog;
 	private boolean recreateOptionsMenu = true;
 	
@@ -79,40 +78,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
 
         app = (App) getApplication();
-        dailyWords = DailyWords.getInstance();
-        paliWord = PaliWord.getInstance();
-        dhammaVerses = DhammaVerses.getInstance();
-
         if (app.showHelpOnStart()) {
         	showHelp();
         }
     }
     
-    public void onResume() {
-    	super.onResume();
-    	
-        SharedPreferences prefs = app.getSharedPreferences();
-        prefs.registerOnSharedPreferenceChangeListener(this);
-    	
-    	if (dailyWords.isOutdated()) {
-            dailyWords.update();
-        }
-    }
-    
-    public void onPause() {
-    	super.onPause();
-    	
-    	SharedPreferences prefs = app.getSharedPreferences();
-    	prefs.unregisterOnSharedPreferenceChangeListener(this);
-    }
-    
     public void onStop() {
     	super.onStop();
-    	
-    	if (progressDialog != null)
-    		progressDialog.cancel();
-    	if (helpDialog != null)
-    		helpDialog.cancel();
+
+        if (progressDialog != null) {
+            progressDialog.cancel();
+        }
+    	if (helpDialog != null) {
+            helpDialog.cancel();
+        }
     }
     
     @Override
@@ -185,10 +164,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 		progressDialog.setMessage(getString(R.string.widget_loading));
 		progressDialog.setCancelable(false);
 		progressDialog.show();
-		if (restoreHelp)
-			showHelp();
+		if (restoreHelp) {
+            showHelp();
+        }
     }
-    
+
+    public void closeProgress() {
+        if (progressDialog != null) {
+            progressDialog.cancel();
+        }
+    }
+
     public void showHelp() {
     	helpDialog = new HelpDialog(this);
     	helpDialog.setTitle(getString(R.string.help));
@@ -197,28 +183,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     	helpDialog.show();
     }
 
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key == "loading") {
-            if (prefs.getBoolean("loading", false)) {
-                showProgress();
-            }
-            else {
-                if (progressDialog != null) {
-                    progressDialog.cancel();
-                }
-                if (prefs.getBoolean("success", false)) {
-                    appFragmentsPagerAdapter.updateView();
-                }
-                else {
-                    if (dailyWords.getTitle().length() == 0) {
-                        WebView descrView = (WebView) findViewById(R.id.description);
-                        descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
-                    }
-                    CharSequence text = getString(R.string.widget_error);
-                    Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
-                }
-            }
-        }
+    public void closeHelp() {
+        helpDialog.cancel();
     }
 
     @Override
@@ -283,18 +249,54 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     throw new RuntimeException("Invalid tab requested");
             }
         }
-
-        public void updateView() {
-            if (dailyWordsFragment != null) {
-                dailyWordsFragment.updateView();
-            }
-        }
     }
 
-    public static class DailyWordsFragment extends AppFragment {
+    abstract public static class BaseFragment extends AppFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        public DailyWordsFragment() {
-            super(R.layout.fragment_dwob);
+        protected BaseModel model;
+
+        public BaseFragment(int layout_id) {
+            super(layout_id);
+        }
+
+        public void onResume() {
+            super.onResume();
+
+            SharedPreferences prefs = app.getSharedPreferences();
+            prefs.registerOnSharedPreferenceChangeListener(this);
+
+            if (model.isOutdated()) {
+                model.update();
+            }
+        }
+
+        public void onPause() {
+            super.onPause();
+
+            SharedPreferences prefs = app.getSharedPreferences();
+            prefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if (key.equals(model.getNSKey("loading"))) {
+                if (prefs.getBoolean(model.getNSKey("loading"), false)) {
+                    ((MainActivity) getActivity()).showProgress();
+                }
+                else {
+                    ((MainActivity) getActivity()).closeProgress();
+                    if (prefs.getBoolean(model.getNSKey("success"), false)) {
+                        updateView();
+                    }
+                    else {
+                        if (!model.isLoaded()) {
+                            WebView descrView = (WebView) getView().findViewById(R.id.description);
+                            descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
+                        }
+                        CharSequence text = getString(R.string.widget_error);
+                        Toast.makeText(app, text, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
         }
 
         @Override
@@ -316,32 +318,32 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
             });
             String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
-            String htmlData = "<html>" + head + "<body>" + DailyWords.getInstance().getHtml() + "</body></html>";
+            String htmlData = "<html>" + head + "<body>" + model.getHtml() + "</body></html>";
             descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
         }
     }
 
-    public static class PaliWordFragment extends AppFragment {
+    public static class DailyWordsFragment extends BaseFragment {
 
-        public PaliWordFragment() {
-            super(R.layout.fragment_pali);
-        }
-
-        @Override
-        public void updateView() {
-
+        public DailyWordsFragment() {
+            super(R.layout.fragment_dwob);
+            model = DailyWords.getInstance();
         }
     }
 
-    public static class DhammaVersesFragment extends AppFragment {
+    public static class PaliWordFragment extends BaseFragment {
+
+        public PaliWordFragment() {
+            super(R.layout.fragment_pali_word);
+            model = PaliWord.getInstance();
+        }
+    }
+
+    public static class DhammaVersesFragment extends BaseFragment {
 
         public DhammaVersesFragment() {
-            super(R.layout.fragment_goenka);
-        }
-
-        @Override
-        public void updateView() {
-
+            super(R.layout.fragment_dhamma_verses);
+            model = DhammaVerses.getInstance();
         }
     }
 
