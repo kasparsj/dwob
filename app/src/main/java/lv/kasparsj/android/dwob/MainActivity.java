@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -22,6 +23,13 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Vector;
+
 import lv.kasparsj.android.util.OneLog;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -31,6 +39,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
 	static private App app;
     private ProgressDialog progressDialog;
+    private ArrayList<String> progressStack = new ArrayList<String>();
 	private HelpDialog helpDialog;
 	private boolean recreateOptionsMenu = true;
 	
@@ -154,23 +163,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public void showProgress() {
-    	boolean restoreHelp = false;
-    	if (helpDialog != null && helpDialog.isShowing()) {
-    		helpDialog.cancel();
-    		restoreHelp = true;
-    	}
-    	progressDialog = new ProgressDialog(this);
-		progressDialog.setMessage(getString(R.string.widget_loading));
-		progressDialog.setCancelable(false);
-		progressDialog.show();
-		if (restoreHelp) {
-            showHelp();
+    public void pushProgress(String target) {
+        if (progressDialog != null) {
+            boolean restoreHelp = false;
+            if (helpDialog != null && helpDialog.isShowing()) {
+                helpDialog.cancel();
+                restoreHelp = true;
+            }
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.widget_loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            if (restoreHelp) {
+                showHelp();
+            }
         }
+        progressStack.add(target);
     }
 
-    public void closeProgress() {
-        if (progressDialog != null) {
+    public void popProgress(String target) {
+        progressStack.remove(progressStack.indexOf(target));
+        if (progressDialog != null && progressStack.isEmpty()) {
             progressDialog.cancel();
         }
     }
@@ -280,10 +293,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
             if (key.equals(model.getNSKey("loading"))) {
                 if (prefs.getBoolean(model.getNSKey("loading"), false)) {
-                    ((MainActivity) getActivity()).showProgress();
+                    ((MainActivity) getActivity()).pushProgress(this.getClass().getName());
                 }
                 else {
-                    ((MainActivity) getActivity()).closeProgress();
+                    ((MainActivity) getActivity()).popProgress(this.getClass().getName());
                     if (prefs.getBoolean(model.getNSKey("success"), false)) {
                         updateView();
                     }

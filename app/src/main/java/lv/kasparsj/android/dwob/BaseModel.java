@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.Date;
+import java.util.List;
+
+import lv.kasparsj.android.feed.FeedItem;
 
 abstract public class BaseModel {
 
@@ -82,6 +85,16 @@ abstract public class BaseModel {
     }
 
     abstract public void update();
+
+    public void update(List<? extends FeedItem> feedItems) {
+        FeedItem feedItem = feedItems.get(0);
+        long date = feedItem.getDate().getTime();
+        String description = feedItem.getDescription();
+        if (getPubDate() != date || getDescription() != description) {
+            setDescription(description);
+            setPubDate(date);
+        }
+    }
 
     public boolean isLoaded() {
         return description.length() > 0;

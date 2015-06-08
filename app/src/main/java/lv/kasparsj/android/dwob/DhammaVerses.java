@@ -22,6 +22,11 @@ public class DhammaVerses extends BaseModel {
 
     @Override
     public void update() {
-        new LoadDhammaVersesTask(context).execute();
+        App app = (App) context.getApplicationContext();
+        update(app.getDhammaVersesUrl());
+    }
+
+    private void update(String feedUrl) {
+        new LoadFeedTask(context, this, new DhammaVersesFeedParser(feedUrl)).execute();
     }
 }

@@ -22,6 +22,11 @@ public class PaliWord extends BaseModel {
 
     @Override
     public void update() {
-        new LoadPaliWordTask(context).execute();
+        App app = (App) context.getApplicationContext();
+        update(app.getPaliWordUrl());
+    }
+
+    private void update(String feedUrl) {
+        new LoadFeedTask(context, this, new PaliWordFeedParser(feedUrl)).execute();
     }
 }

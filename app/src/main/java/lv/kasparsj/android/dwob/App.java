@@ -85,16 +85,6 @@ public class App extends Application {
 		return getSharedPreferences(PREFS_NAME, 0);
 	}
 	
-	public void updatePaliWord() {
-		OneLog.i("App::updatePaliWord");
-		new LoadPaliWordTask(getApplicationContext()).execute();
-	}
-
-	public void updateDhammaVerses() {
-		OneLog.i("App::updateDhammaVerses");
-		new LoadDhammaVersesTask(getApplicationContext()).execute();
-	}
-	
 	public boolean showHelpOnStart() {
 		return helpOnStart;
 	}

@@ -2,6 +2,10 @@ package lv.kasparsj.android.dwob;
 
 import android.content.SharedPreferences;
 
+import java.util.List;
+
+import lv.kasparsj.android.feed.FeedItem;
+
 public class DailyWords extends BaseModel {
 
     private static DailyWords instance = null;
@@ -80,8 +84,28 @@ public class DailyWords extends BaseModel {
         editor.commit();
     }
 
+    @Override
     public void update() {
-        new LoadDailyWordsTask(context).execute();
+        App app = (App) context.getApplicationContext();
+        update(app.getDailyWordsUrl());
+    }
+
+    private void update(String feedUrl) {
+        new LoadFeedTask(context, this, new DailyWordsFeedParser(feedUrl), DailyWordsWidget.class).execute();
+    }
+
+    @Override
+    public void update(List<? extends FeedItem> feedItems) {
+        // todo: now 7 items
+        DailyWordsFeedItem feedItem = (DailyWordsFeedItem) feedItems.get(0);
+        long date = feedItem.getDate().getTime();
+        String translated = feedItem.getTranslated();
+        if (getPubDate() != date || getTranslated() != translated) {
+            setTitle(feedItem.getDate().toLocaleString());
+            setTranslated(translated);
+            setPali(feedItem.getPali());
+            setPubDate(date);
+        }
     }
 
     @Override
