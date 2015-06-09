@@ -12,44 +12,43 @@ import lv.kasparsj.android.feed.SaxFeedParser;
 import lv.kasparsj.android.util.OneLog;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
-	
+
 	private Context context;
 	private Resources r;
+    private BaseModel model;
+    private SaxFeedParser feedParser;
+    private Class widgetClass;
 	
-	public LoadFeedTask(Context context) {
+	public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser, Class widgetClass) {
 		this.context = context;
 		this.r = context.getResources();
+        this.model = model;
+        this.feedParser = feedParser;
+        this.widgetClass = widgetClass;
 	}
+
+    public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser) {
+        this(context, model, feedParser, null);
+    }
 	
 	protected void onPreExecute() {
 		OneLog.i("LoadFeedTask::onPreExecute");
-		((App) context.getApplicationContext()).setLoading(true);
+        model.setLoading(true);
     }
 	
 	protected void onPostExecute(final Boolean success) {
-		((App) context.getApplicationContext()).setLoading(false, success);
-		Intent broadcastIntent = new Intent(context, DwobWidget.class);
-		broadcastIntent.setAction(r.getString(R.string.action_refresh));
-		context.sendBroadcast(broadcastIntent);
+        model.setLoading(false, success);
+        if (widgetClass != null) {
+            Intent broadcastIntent = new Intent(context, widgetClass);
+            broadcastIntent.setAction(r.getString(R.string.action_refresh));
+            context.sendBroadcast(broadcastIntent);
+        }
 	}
 	
 	protected Boolean doInBackground(final String... args) {
     	try {
-            // Try querying Pariyatti API for today's word
-    		App app = (App) context.getApplicationContext();
-            OneLog.i("Will load from: "+app.getFeedUrl());
-        	SaxFeedParser rssParser = new DwobFeedParser(app.getFeedUrl());
-        	List<DwobFeedItem> feedItems = rssParser.parse(DwobFeedItem.class);
-            // todo: now 7 items
-            DwobFeedItem feedItem = feedItems.get(0);
-        	long date = feedItem.getDate().getTime();
-            String translated = feedItem.getTranslated();
-        	if (app.getPubDate() != date || app.getTranslated() != translated) {
-                app.setTitle(feedItem.getDate().toLocaleString());
-                app.setTranslated(translated);
-                app.setPali(feedItem.getPali());
-                app.setPubDate(date);
-        	}
+        	List<DailyWordsFeedItem> feedItems = feedParser.parse();
+			model.update(feedItems);
         	return true;
         } catch (RuntimeException e) {
             Log.e(r.getString(R.string.app_name), e.getMessage(), e);

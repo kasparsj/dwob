@@ -29,7 +29,7 @@
         </activity>
         
         <!-- Broadcast Receiver that will process AppWidget updates -->
-        <receiver android:name=".DwobWidget" android:label="@string/widget_name">
+        <receiver android:name=".DailyWordsWidget" android:label="@string/widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <!-- Attention: does not work if using strings from values -->
@@ -39,7 +39,7 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
         </receiver>
         
-        <receiver android:name=".DwobUpdateReceiver">
+        <receiver android:name=".DailyWordsUpdateReceiver">
 		   <intent-filter>
 		      <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 		   </intent-filter>

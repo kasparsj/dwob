@@ -11,7 +11,9 @@ import android.util.Xml;
 
 import org.xml.sax.ContentHandler;
 
-public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
+import lv.kasparsj.android.dwob.DailyWordsFeedItem;
+
+abstract public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
 
     protected List<T> feedItems;
     protected T currentFeedItem;
@@ -35,6 +37,8 @@ public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
         }
         return feedItems;
     }
+
+    abstract public List<T> parse();
 
     protected ContentHandler getContentHandler() {
         RootElement root = new RootElement(RSS);

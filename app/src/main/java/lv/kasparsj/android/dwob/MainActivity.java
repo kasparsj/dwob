@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -22,15 +23,23 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Vector;
+
 import lv.kasparsj.android.util.OneLog;
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     ViewPager viewPager;
     AppFragmentsPagerAdapter appFragmentsPagerAdapter;
 
-	private App app;
-	private ProgressDialog progressDialog;
+	static private App app;
+    private ProgressDialog progressDialog;
+    private ArrayList<String> progressStack = new ArrayList<String>();
 	private HelpDialog helpDialog;
 	private boolean recreateOptionsMenu = true;
 	
@@ -83,31 +92,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
     
-    public void onResume() {
-    	super.onResume();
-    	
-        SharedPreferences prefs = app.getSharedPreferences();
-        prefs.registerOnSharedPreferenceChangeListener(this);
-    	
-    	if (app.isOutdated()) {
-            app.update();
-        }
-    }
-    
-    public void onPause() {
-    	super.onPause();
-    	
-    	SharedPreferences prefs = app.getSharedPreferences();
-    	prefs.unregisterOnSharedPreferenceChangeListener(this);
-    }
-    
     public void onStop() {
     	super.onStop();
-    	
-    	if (progressDialog != null)
-    		progressDialog.cancel();
-    	if (helpDialog != null)
-    		helpDialog.cancel();
+
+        if (progressDialog != null) {
+            progressDialog.cancel();
+        }
+    	if (helpDialog != null) {
+            helpDialog.cancel();
+        }
     }
     
     @Override
@@ -170,20 +163,31 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     }
 
-    public void showProgress() {
-    	boolean restoreHelp = false;
-    	if (helpDialog != null && helpDialog.isShowing()) {
-    		helpDialog.cancel();
-    		restoreHelp = true;
-    	}
-    	progressDialog = new ProgressDialog(this);
-		progressDialog.setMessage(getString(R.string.widget_loading));
-		progressDialog.setCancelable(false);
-		progressDialog.show();
-		if (restoreHelp)
-			showHelp();
+    public void pushProgress(String target) {
+        if (progressDialog != null) {
+            boolean restoreHelp = false;
+            if (helpDialog != null && helpDialog.isShowing()) {
+                helpDialog.cancel();
+                restoreHelp = true;
+            }
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.widget_loading));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            if (restoreHelp) {
+                showHelp();
+            }
+        }
+        progressStack.add(target);
     }
-    
+
+    public void popProgress(String target) {
+        progressStack.remove(progressStack.indexOf(target));
+        if (progressDialog != null && progressStack.isEmpty()) {
+            progressDialog.cancel();
+        }
+    }
+
     public void showHelp() {
     	helpDialog = new HelpDialog(this);
     	helpDialog.setTitle(getString(R.string.help));
@@ -192,28 +196,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     	helpDialog.show();
     }
 
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key == "loading") {
-            if (prefs.getBoolean("loading", false)) {
-                showProgress();
-            }
-            else {
-                if (progressDialog != null) {
-                    progressDialog.cancel();
-                }
-                if (prefs.getBoolean("success", false)) {
-                    appFragmentsPagerAdapter.updateView();
-                }
-                else {
-                    if (app.getTitle().length() == 0) {
-                        WebView descrView = (WebView) findViewById(R.id.description);
-                        descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
-                    }
-                    CharSequence text = getString(R.string.widget_error);
-                    Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
-                }
-            }
-        }
+    public void closeHelp() {
+        helpDialog.cancel();
     }
 
     @Override
@@ -234,9 +218,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public static class AppFragmentsPagerAdapter extends FragmentPagerAdapter {
 
         private Context context;
-        private AppFragment dwobFragment;
-        private AppFragment paliFragment;
-        private AppFragment goenkaFragment;
+        private AppFragment dailyWordsFragment;
+        private AppFragment paliWordFragment;
+        private AppFragment dhammaVersesFragment;
 
         public AppFragmentsPagerAdapter(Context context, FragmentManager fm) {
             super(fm);
@@ -247,14 +231,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public Fragment getItem(int i) {
             switch (i) {
                 case 0:
-                    dwobFragment = new DwobFragment();
-                    return dwobFragment;
+                    dailyWordsFragment = new DailyWordsFragment();
+                    return dailyWordsFragment;
                 case 1:
-                    paliFragment = new PaliFragment();
-                    return paliFragment;
+                    paliWordFragment = new PaliWordFragment();
+                    return paliWordFragment;
                 case 2:
-                    goenkaFragment = new GoenkaFragment();
-                    return goenkaFragment;
+                    dhammaVersesFragment = new DhammaVersesFragment();
+                    return dhammaVersesFragment;
                 default:
                     throw new RuntimeException("Invalid tab requested");
             }
@@ -278,18 +262,54 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     throw new RuntimeException("Invalid tab requested");
             }
         }
-
-        public void updateView() {
-            if (dwobFragment != null) {
-                dwobFragment.updateView();
-            }
-        }
     }
 
-    public static class DwobFragment extends AppFragment {
+    abstract public static class BaseFragment extends AppFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        public DwobFragment() {
-            super(R.layout.fragment_dwob);
+        protected BaseModel model;
+
+        public BaseFragment(int layout_id) {
+            super(layout_id);
+        }
+
+        public void onResume() {
+            super.onResume();
+
+            SharedPreferences prefs = app.getSharedPreferences();
+            prefs.registerOnSharedPreferenceChangeListener(this);
+
+            if (model.isOutdated()) {
+                model.update();
+            }
+        }
+
+        public void onPause() {
+            super.onPause();
+
+            SharedPreferences prefs = app.getSharedPreferences();
+            prefs.unregisterOnSharedPreferenceChangeListener(this);
+        }
+
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            if (key.equals(model.getNSKey("loading"))) {
+                if (prefs.getBoolean(model.getNSKey("loading"), false)) {
+                    ((MainActivity) getActivity()).pushProgress(this.getClass().getName());
+                }
+                else {
+                    ((MainActivity) getActivity()).popProgress(this.getClass().getName());
+                    if (prefs.getBoolean(model.getNSKey("success"), false)) {
+                        updateView();
+                    }
+                    else {
+                        if (!model.isLoaded()) {
+                            WebView descrView = (WebView) getView().findViewById(R.id.description);
+                            descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
+                        }
+                        CharSequence text = getString(R.string.widget_error);
+                        Toast.makeText(app, text, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
         }
 
         @Override
@@ -310,34 +330,33 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return true;
                 }
             });
-            App app = (App) getActivity().getApplication();
             String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
-            String htmlData = "<html>" + head + "<body>" + app.getHtml() + "</body></html>";
+            String htmlData = "<html>" + head + "<body>" + model.getHtml() + "</body></html>";
             descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
         }
     }
 
-    public static class PaliFragment extends AppFragment {
+    public static class DailyWordsFragment extends BaseFragment {
 
-        public PaliFragment() {
-            super(R.layout.fragment_pali);
-        }
-
-        @Override
-        public void updateView() {
-
+        public DailyWordsFragment() {
+            super(R.layout.fragment_dwob);
+            model = DailyWords.getInstance();
         }
     }
 
-    public static class GoenkaFragment extends AppFragment {
+    public static class PaliWordFragment extends BaseFragment {
 
-        public GoenkaFragment() {
-            super(R.layout.fragment_goenka);
+        public PaliWordFragment() {
+            super(R.layout.fragment_pali_word);
+            model = PaliWord.getInstance();
         }
+    }
 
-        @Override
-        public void updateView() {
+    public static class DhammaVersesFragment extends BaseFragment {
 
+        public DhammaVersesFragment() {
+            super(R.layout.fragment_dhamma_verses);
+            model = DhammaVerses.getInstance();
         }
     }
 

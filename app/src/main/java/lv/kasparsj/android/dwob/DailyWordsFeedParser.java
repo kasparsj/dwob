@@ -3,9 +3,11 @@ package lv.kasparsj.android.dwob;
 import android.sax.Element;
 import android.sax.EndTextElementListener;
 
+import java.util.List;
+
 import lv.kasparsj.android.feed.SaxFeedParser;
 
-public class DwobFeedParser extends SaxFeedParser<DwobFeedItem>
+public class DailyWordsFeedParser extends SaxFeedParser<DailyWordsFeedItem>
 {
     static final String DWOB = "dwob";
     static final String TRANSLATOR = "translator";
@@ -16,8 +18,13 @@ public class DwobFeedParser extends SaxFeedParser<DwobFeedItem>
     static final String SOURCE = "source";
     static final String TRANSLATED = "translated";
 
-    public DwobFeedParser(String feedUrl) {
+    public DailyWordsFeedParser(String feedUrl) {
         super(feedUrl);
+    }
+
+    @Override
+    public List<DailyWordsFeedItem> parse() {
+        return parse(DailyWordsFeedItem.class);
     }
 
     @Override

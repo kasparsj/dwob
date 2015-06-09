@@ -3,40 +3,31 @@ package lv.kasparsj.android.dwob;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import android.app.Application;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.util.OneLog;
 
 public class App extends Application {
 	
-	private static final String PREFS_NAME = "DwobPrefsFile";
-    private static final int DAY_IN_MILLIS = 24*60*60*1000;
+	public static final String PREFS_NAME = "DwobPrefsFile";
+    public static final int DAY_IN_MILLIS = 24*60*60*1000;
+    public static App applicationContext;
+
     private String language;
-	private String feed_url;
+	private String daily_words_url;
 	private boolean loading = false;
 	private boolean helpOnStart;
-    private long pubDate; // last time updated
 
-    private String title;
-    private String translated;
-    private String pali;
-    private String source;
-    private String audio;
-	
 	public void onCreate() {
+        super.onCreate();
+        App.applicationContext = this;
+
 		// load saved data
-		SharedPreferences settings = getSharedPreferences();
+        SharedPreferences settings = getSharedPreferences();
         setLanguage(settings.getString("language", DwobLanguage.EN));
-		setTitle(settings.getString("title", getString(R.string.app_name)));
-//		setDescription(settings.getString("description", ""));
-        setTranslated(settings.getString("translated", ""));
-        setPali(settings.getString("pali", ""));
-		pubDate = settings.getLong("pubDate", 0);
 		helpOnStart = settings.getBoolean("helpOnStart", true);
 	}
 
@@ -49,116 +40,49 @@ public class App extends Application {
         this.language = language;
         FeedItem.DATE_PARSER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", new Locale(language));
         if (language.equals(DwobLanguage.ES)) {
-            setFeedUrl(getString(R.string.feed_url_es));
+            setDailyWordsUrl(getString(R.string.daily_words_url_es));
         }
         else if (language.equals(DwobLanguage.PT)) {
-            setFeedUrl(getString(R.string.feed_url_pt));
+            setDailyWordsUrl(getString(R.string.daily_words_url_pt));
         }
         else if (language.equals(DwobLanguage.IT)) {
-            setFeedUrl(getString(R.string.feed_url_it));
+            setDailyWordsUrl(getString(R.string.daily_words_url_it));
         }
         else if (language.equals(DwobLanguage.ZH)) {
-            setFeedUrl(getString(R.string.feed_url_zh));
+            setDailyWordsUrl(getString(R.string.daily_words_url_zh));
         }
         else if (language.equals(DwobLanguage.FR)) {
-            setFeedUrl(getString(R.string.feed_url_fr));
+            setDailyWordsUrl(getString(R.string.daily_words_url_fr));
         }
         else { // en
-            setFeedUrl(getString(R.string.feed_url_en));
+            setDailyWordsUrl(getString(R.string.daily_words_url_en));
         }
         if (doUpdate) {
-        	update();
+        	DailyWords.getInstance().update();
         	SharedPreferences.Editor editor = getSharedPreferences().edit();
         	editor.putString("language", language);
         	editor.commit();
         }
     }
 	
-	public String getFeedUrl() {
-		return feed_url;
+	public String getDailyWordsUrl() {
+		return daily_words_url;
 	}
 	
-	public void setFeedUrl(String url) {
-		feed_url = url;
-	}
-	
-	public String getTitle() {
-		return title;
-	}
-	
-	public void setTitle(String title) {
-		this.title = title;
-	}
-	
-	public String getHtml() {
-        return (translated + "\n\n" + pali).replaceAll("\n", "<br>");
-	}
-	
-    public long getPubDate() {
-        return pubDate;
-    }
-
-    public void setPubDate(long date) {
-        this.pubDate = date;
-    }
-	
-	public String getPali() {
-		return pali;
+	public void setDailyWordsUrl(String url) {
+		daily_words_url = url;
 	}
 
-    public void setPali(String value) {
-        pali = value;
-    }
-	
-	public String getTranslated() {
-		return translated;
+	public String getPaliWordUrl() {
+        return getString(R.string.pali_word_url);
 	}
 
-    public void setTranslated(String value) {
-        translated = value;
+    public String getDhammaVersesUrl() {
+        return getString(R.string.dhamma_verses_url);
     }
-	
-	public String getSource() {
-		return source;
-	}
-	
-	public boolean isOutdated() {
-		return new Date().getTime() - pubDate >= DAY_IN_MILLIS;
-	}
 	
 	public SharedPreferences getSharedPreferences() {
 		return getSharedPreferences(PREFS_NAME, 0);
-	}
-	
-	public boolean isLoading() {
-		return loading;
-	}
-	
-	public void setLoading(boolean isLoading) {
-		SharedPreferences.Editor editor = getSharedPreferences().edit();
-		editor.putBoolean("loading", isLoading);
-		editor.commit();
-	}
-	
-	public void setLoading(boolean isLoading, boolean success) {
-		if (success) {
-			SharedPreferences.Editor editor = getSharedPreferences().edit();
-			editor.putString("title", title);
-            editor.putString("translated", translated);
-            editor.putString("pali", pali);
-			editor.putLong("pubDate", pubDate);
-			editor.putBoolean("loading", isLoading);
-			editor.putBoolean("success", success);
-			editor.commit();
-		}
-		else {
-			setLoading(isLoading);
-		}
-	}
-	
-	public void update() {
-		OneLog.i("App::update");
-    	new LoadFeedTask(getApplicationContext()).execute();
 	}
 	
 	public boolean showHelpOnStart() {

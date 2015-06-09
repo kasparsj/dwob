@@ -7,23 +7,23 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-public class DwobUpdateReceiver extends BroadcastReceiver {
+public class DailyWordsUpdateReceiver extends BroadcastReceiver {
 	
 	public static boolean pendingUpdate = false;
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("test", "DwobUpdateReceiver::onReceive ("+intent.getAction()+")");
-		App app = ((App) context.getApplicationContext());
+		Log.i("test", "DailyWordsUpdateReceiver::onReceive ("+intent.getAction()+")");
+		DailyWords dailyWords = DailyWords.getInstance();
 		if (intent.getAction() == ConnectivityManager.CONNECTIVITY_ACTION && intent.getExtras() != null) {
     		NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
     		if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
-    			pendingUpdate = app.isOutdated();
+    			pendingUpdate = dailyWords.isOutdated();
     		}
     	}
     	if (pendingUpdate) {
     		pendingUpdate = false;
-    		app.update();
+			dailyWords.update();
     	}
 	}
 
