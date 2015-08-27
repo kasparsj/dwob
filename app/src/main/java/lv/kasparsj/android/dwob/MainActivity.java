@@ -182,9 +182,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public void popProgress(String target) {
-        progressStack.remove(progressStack.indexOf(target));
-        if (progressDialog != null && progressStack.isEmpty()) {
-            progressDialog.cancel();
+        int targetIndex = progressStack.indexOf(target);
+        if (targetIndex > -1) {
+            progressStack.remove(targetIndex);
+            if (progressDialog != null && progressStack.isEmpty()) {
+                progressDialog.cancel();
+            }
         }
     }
 

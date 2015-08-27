@@ -18,8 +18,11 @@ public class PariyattiFeedItem extends FeedItem {
     }
 
     private String stripFooter(String description) {
-        Pattern regex = Pattern.compile("Pariyatti is a non-profit organization supported by purchases and contributions(.+)$", Pattern.DOTALL);
-        Matcher matcher = regex.matcher(description);
-        return matcher.replaceAll("");
+        Pattern footerRegex = Pattern.compile("Pariyatti is a non-profit organization supported by purchases and contributions(.+)$", Pattern.DOTALL);
+        Matcher footerMatcher = footerRegex.matcher(description);
+        description = footerMatcher.replaceAll("").trim();
+        description = description.replaceAll("^(<br\\s*/?>\\s*)+", "");
+        description = description.replaceAll("(<br\\s*/?>\\s*)+$", "");
+        return description;
     }
 }
