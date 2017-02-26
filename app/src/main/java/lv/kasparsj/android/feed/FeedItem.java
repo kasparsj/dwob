@@ -85,10 +85,10 @@ public class FeedItem implements Comparable<FeedItem>{
 	protected <T extends FeedItem> T copy(Class<T> clazz){
         try {
             T copy = clazz.newInstance();
-            copy.title = title;
-            copy.link = link;
-            copy.description = description;
-            copy.date = date;
+            copy.setTitle(title);
+			copy.setLink(link.toString());
+			copy.setDescription(description);
+			copy.setDate(date.toString());
             return copy;
         }
         catch (Exception e) {
