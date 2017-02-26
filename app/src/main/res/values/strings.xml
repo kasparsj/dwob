@@ -2,7 +2,8 @@
 <resources>
     <string name="app_name">Daily Words of Buddha</string>
     <string name="activity_error">Failed loading Daily Words of Buddha</string>
-    <string name="widget_name">Daily Words of Buddha</string>
+    <string name="widget_name">Small: Daily Words of Buddha</string>
+    <string name="widget_large_name">Large: Daily Words of Buddha</string>
     <string name="widget_loading">Loading Daily Words of Buddha&#8230;</string>
     <string name="widget_error">Failed loading Daily Words of Buddha</string>
     <string name="change_language">Change language</string>
@@ -14,7 +15,9 @@
     <string name="chinese">中文</string>
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_english.rss</string>
     <string name="help">Help</string>
-    <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select your preferred widget from the popup.</string>
+    <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select "Small/Large: Daily Words of Buddha" widget.</string>
+    <string name="whats_new">What\'s New</string>
+    <string name="whats_new_msg">Checkout our new "Large: Daily Words of Buddha" widget.</string>
     <string name="daily_words_url_en">https://host.pariyatti.org/dwob_ios/dwob_english.rss</string>
     <string name="daily_words_url_es">https://host.pariyatti.org/dwob_ios/dwob_spanish.rss</string>
     <string name="daily_words_url_pt">https://host.pariyatti.org/dwob_ios/dwob_portuguese.rss</string>

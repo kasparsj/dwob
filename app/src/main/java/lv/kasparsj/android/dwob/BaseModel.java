@@ -1,24 +1,22 @@
 package lv.kasparsj.android.dwob;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.Date;
 import java.util.List;
 
 import lv.kasparsj.android.feed.FeedItem;
+import lv.kasparsj.android.util.Objects;
 
 abstract public class BaseModel {
 
-    protected Context context;
     protected SharedPreferences settings;
 
     protected String description;
     protected long pubDate; // last time updated
 
-    public BaseModel(App applicationContext) {
-        context = applicationContext;
-        settings = applicationContext.getSharedPreferences();
+    public BaseModel() {
+        settings = App.applicationContext.getSharedPreferences();
         load();
     }
 
@@ -86,11 +84,13 @@ abstract public class BaseModel {
 
     abstract public void update();
 
+    abstract public void refresh();
+
     public void update(List<? extends FeedItem> feedItems) {
         FeedItem feedItem = feedItems.get(0);
         long date = feedItem.getDate().getTime();
         String description = feedItem.getDescription();
-        if (getPubDate() != date || getDescription() != description) {
+        if (getPubDate() != date || !Objects.equals(getDescription(), description)) {
             setDescription(description);
             setPubDate(date);
         }

@@ -1,14 +1,13 @@
 package lv.kasparsj.android.dwob;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 
 import lv.kasparsj.android.feed.FeedItem;
-import lv.kasparsj.android.util.OneLog;
+import lv.kasparsj.android.util.Objects;
 
 public class App extends Application {
 	
@@ -20,6 +19,7 @@ public class App extends Application {
 	private String daily_words_url;
 	private boolean loading = false;
 	private boolean helpOnStart;
+    private boolean whatsNewOnStart;
 
 	public void onCreate() {
         super.onCreate();
@@ -29,6 +29,7 @@ public class App extends Application {
         SharedPreferences settings = getSharedPreferences();
         setLanguage(settings.getString("language", DwobLanguage.EN));
 		helpOnStart = settings.getBoolean("helpOnStart", true);
+        whatsNewOnStart = settings.getBoolean("whatsNewOnStart", !helpOnStart);
 	}
 
     public String getLanguage() {
@@ -36,26 +37,28 @@ public class App extends Application {
     }
 
     public void setLanguage(String language) {
-    	boolean doUpdate = (this.language != null && this.language != language);
+    	boolean doUpdate = (this.language != null && !Objects.equals(this.language, language));
         this.language = language;
         FeedItem.DATE_PARSER = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", new Locale(language));
-        if (language.equals(DwobLanguage.ES)) {
-            setDailyWordsUrl(getString(R.string.daily_words_url_es));
-        }
-        else if (language.equals(DwobLanguage.PT)) {
-            setDailyWordsUrl(getString(R.string.daily_words_url_pt));
-        }
-        else if (language.equals(DwobLanguage.IT)) {
-            setDailyWordsUrl(getString(R.string.daily_words_url_it));
-        }
-        else if (language.equals(DwobLanguage.ZH)) {
-            setDailyWordsUrl(getString(R.string.daily_words_url_zh));
-        }
-        else if (language.equals(DwobLanguage.FR)) {
-            setDailyWordsUrl(getString(R.string.daily_words_url_fr));
-        }
-        else { // en
-            setDailyWordsUrl(getString(R.string.daily_words_url_en));
+        switch (language) {
+            case DwobLanguage.ES:
+                setDailyWordsUrl(getString(R.string.daily_words_url_es));
+                break;
+            case DwobLanguage.PT:
+                setDailyWordsUrl(getString(R.string.daily_words_url_pt));
+                break;
+            case DwobLanguage.IT:
+                setDailyWordsUrl(getString(R.string.daily_words_url_it));
+                break;
+            case DwobLanguage.ZH:
+                setDailyWordsUrl(getString(R.string.daily_words_url_zh));
+                break;
+            case DwobLanguage.FR:
+                setDailyWordsUrl(getString(R.string.daily_words_url_fr));
+                break;
+            default:  // en
+                setDailyWordsUrl(getString(R.string.daily_words_url_en));
+                break;
         }
         if (doUpdate) {
         	DailyWords.getInstance().update();
@@ -94,5 +97,17 @@ public class App extends Application {
 		SharedPreferences.Editor editor = getSharedPreferences().edit();
 		editor.putBoolean("helpOnStart", false);
 		editor.commit();
+        dismissWhatsNewOnStart();
 	}
+
+    public boolean showWhatsNewOnStart() {
+        return whatsNewOnStart;
+    }
+
+    public void dismissWhatsNewOnStart() {
+        helpOnStart = false;
+        SharedPreferences.Editor editor = getSharedPreferences().edit();
+        editor.putBoolean("whatsNewOnStart", false);
+        editor.commit();
+    }
 }

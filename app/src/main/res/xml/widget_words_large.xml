@@ -16,7 +16,7 @@
 
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:minWidth="@dimen/widget_min_width"
-    android:minHeight="@dimen/widget_min_height"
+    android:minHeight="@dimen/widget_large_min_height"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/widget_loading"
     />

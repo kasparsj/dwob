@@ -2,5 +2,8 @@
 
 <resources>
     <dimen name="widget_margin">8dp</dimen>
-    <dimen name="widget_padding">5dp</dimen>
+    <dimen name="widget_padding">0dp</dimen>
+    <dimen name="widget_min_width">294dp</dimen>
+    <dimen name="widget_min_height">72dp</dimen>
+    <dimen name="widget_large_min_height">146dp</dimen>
 </resources>

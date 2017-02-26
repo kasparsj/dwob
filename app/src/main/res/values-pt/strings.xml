@@ -4,6 +4,7 @@
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_portuguese.rss</string>
     <string name="activity_error">Falha carregar As Palavras Diárias do Buda</string>
     <string name="widget_name">As Palavras Diárias do Buda</string>
+    <string name="widget_large_name">Ampla: As Palavras Diárias do Buda</string>
     <string name="widget_loading">Carregar Palavras Diárias de Buda&#8230;</string>
     <string name="widget_error">Falha carregar As Palavras Diárias do Buda</string>
     <string name="change_language">Mudar o idioma</string>

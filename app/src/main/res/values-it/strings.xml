@@ -4,6 +4,7 @@
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_italian.rss</string>
     <string name="activity_error">Impossibile caricare Parole quotidiane del Buddha</string>
     <string name="widget_name">Parole quotidiane del Buddha</string>
+    <string name="widget_large_name">Grande: Parole quotidiane del Buddha</string>
     <string name="widget_loading">Caricamento in corso Parole quotidiane del Buddha&#8230;</string>
     <string name="widget_error">Impossibile caricare Parole quotidiane del Buddha</string>
     <string name="change_language">Cambia la lingua</string>

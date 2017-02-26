@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,13 +23,8 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Vector;
 
-import lv.kasparsj.android.util.OneLog;
+import lv.kasparsj.android.util.Strings;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
@@ -41,6 +35,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private ProgressDialog progressDialog;
     private ArrayList<String> progressStack = new ArrayList<String>();
 	private HelpDialog helpDialog;
+    private WhatsNewDialog whatsNewDialog;
 	private boolean recreateOptionsMenu = true;
 	
 	/** Called when the activity is first created. */
@@ -90,6 +85,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         if (app.showHelpOnStart()) {
         	showHelp();
         }
+        else if (app.showWhatsNewOnStart()) {
+            showWhatsNew();
+        }
     }
     
     public void onStop() {
@@ -100,6 +98,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         }
     	if (helpDialog != null) {
             helpDialog.cancel();
+        }
+        if (whatsNewDialog != null) {
+            whatsNewDialog.cancel();
         }
     }
     
@@ -158,6 +159,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             case R.id.help:
             	showHelp();
                 return true;
+            case R.id.whats_new:
+                showWhatsNew();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -166,9 +170,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     public void pushProgress(String target) {
         if (progressDialog != null) {
             boolean restoreHelp = false;
+            boolean restoreWhatsNew = false;
             if (helpDialog != null && helpDialog.isShowing()) {
-                helpDialog.cancel();
+                closeHelp();
                 restoreHelp = true;
+            }
+            else if (whatsNewDialog != null && whatsNewDialog.isShowing()) {
+                closeWhatsNew();
+                restoreWhatsNew = true;
             }
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage(getString(R.string.widget_loading));
@@ -176,6 +185,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             progressDialog.show();
             if (restoreHelp) {
                 showHelp();
+            }
+            else if (restoreWhatsNew) {
+                showWhatsNew();
             }
         }
         progressStack.add(target);
@@ -201,6 +213,18 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public void closeHelp() {
         helpDialog.cancel();
+    }
+
+    public void showWhatsNew() {
+        whatsNewDialog = new WhatsNewDialog(this);
+        whatsNewDialog.setTitle(getString(R.string.whats_new));
+        whatsNewDialog.setMessage(getString(R.string.whats_new_msg));
+        whatsNewDialog.setIcon(android.R.drawable.ic_menu_help);
+        whatsNewDialog.show();
+    }
+
+    public void closeWhatsNew() {
+        whatsNewDialog.cancel();
     }
 
     @Override
@@ -334,8 +358,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 }
             });
             String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
-            String htmlData = "<html>" + head + "<body>" + model.getHtml() + "</body></html>";
+            String htmlData = "<html>" + head + "<body>" + buildBodyHtml() + "</body></html>";
             descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
+        }
+
+        public String buildBodyHtml() {
+            return model.getHtml();
         }
     }
 
@@ -344,6 +372,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public DailyWordsFragment() {
             super(R.layout.fragment_dwob);
             model = DailyWords.getInstance();
+        }
+
+        @Override
+        public String buildBodyHtml() {
+            DailyWords dailyWords = (DailyWords) model;
+            return dailyWords.getHtml() + "<br><br>" +
+                    (!Strings.isEmpty(dailyWords.getSource()) ? dailyWords.getSource() + "<br><br>" : "") +
+                    (!Strings.isEmpty(dailyWords.getTranslator()) ? dailyWords.getTranslator() + "<br><br>" : "") +
+                    (!Strings.isEmpty(dailyWords.getListenLink()) ? "<a href='" + dailyWords.getListenLink() + "'>Listen to Pāli</a><br><br>" : "") +
+                    (!Strings.isEmpty(dailyWords.getBookLink()) ? "<a href='" + dailyWords.getBookLink() + "'>View Book<br><br>" : "") +
+                    (!Strings.isEmpty(dailyWords.getTipitakaLink()) ? "<a href='" + dailyWords.getTipitakaLink() + "'>View Pāli in Tipitaka</a>" : "");
         }
     }
 
@@ -372,8 +411,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     	@Override
     	public void dismiss() {
     		App app = (App) getContext().getApplicationContext();
-    		if (app.showHelpOnStart())
-    			app.dismissHelpOnStart();
+    		if (app.showHelpOnStart()) {
+                app.dismissHelpOnStart();
+            }
     		super.dismiss();
     	}
     	
@@ -382,5 +422,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     		dismiss();
     	    return super.dispatchTouchEvent(ev);
     	}
+    }
+
+    public static class WhatsNewDialog extends AlertDialog {
+
+        public WhatsNewDialog(Context context) {
+            super(context);
+        }
+
+        @Override
+        public void dismiss() {
+            App app = (App) getContext().getApplicationContext();
+            if (app.showWhatsNewOnStart()) {
+                app.dismissWhatsNewOnStart();
+            }
+            super.dismiss();
+        }
+
+        @Override
+        public boolean dispatchTouchEvent(MotionEvent ev) {
+            dismiss();
+            return super.dispatchTouchEvent(ev);
+        }
     }
 }

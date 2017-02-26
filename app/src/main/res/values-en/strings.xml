@@ -3,7 +3,8 @@
     <string name="app_name">Daily Words of Buddha</string>
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_english.rss</string>
     <string name="activity_error">Failed loading Daily Words of Buddha</string>
-    <string name="widget_name">Daily Words of Buddha</string>
+    <string name="widget_name">Small: Daily Words of Buddha</string>
+    <string name="widget_large_name">Large: Daily Words of Buddha</string>
     <string name="widget_loading">Loading Daily Words of Buddha&#8230;</string>
     <string name="widget_error">Failed loading Daily Words of Buddha</string>
     <string name="change_language">Change language</string>

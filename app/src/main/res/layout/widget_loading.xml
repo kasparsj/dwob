@@ -2,16 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:orientation="vertical"
     style="@style/WidgetBackground">
 
     <TextView  
         android:id="@+id/message"
         android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dip"
-        android:padding="10dip"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="@dimen/widget_margin"
+        android:padding="@dimen/widget_padding"
         android:gravity="center"
         android:text="@string/widget_loading"
         style="@style/Text.Loading" />

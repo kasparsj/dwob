@@ -4,6 +4,7 @@
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_chinese.rss</string>
     <string name="activity_error">「佛陀每日法語」載入失敗</string>
     <string name="widget_name">佛陀每日法語</string>
+    <string name="widget_large_name">佛陀每日法語</string>
     <string name="widget_loading">「佛陀每日法語」載入中&#8230;</string>
     <string name="widget_error">「佛陀每日法語」載入失敗</string>
     <string name="change_language">改變語言</string>

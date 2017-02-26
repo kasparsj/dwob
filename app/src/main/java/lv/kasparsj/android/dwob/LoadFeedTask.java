@@ -1,7 +1,6 @@
 package lv.kasparsj.android.dwob;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -17,14 +16,13 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	private Resources r;
     private BaseModel model;
     private SaxFeedParser feedParser;
-    private Class widgetClass;
 	
-	public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser, Class widgetClass) {
+	public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser, LoadFeedTaskListener loadFeedTaskListener) {
 		this.context = context;
 		this.r = context.getResources();
         this.model = model;
         this.feedParser = feedParser;
-        this.widgetClass = widgetClass;
+        this.loadFeedTaskListener = loadFeedTaskListener;
 	}
 
     public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser) {
@@ -38,10 +36,8 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 	
 	protected void onPostExecute(final Boolean success) {
         model.setLoading(false, success);
-        if (widgetClass != null) {
-            Intent broadcastIntent = new Intent(context, widgetClass);
-            broadcastIntent.setAction(r.getString(R.string.action_refresh));
-            context.sendBroadcast(broadcastIntent);
+        if (loadFeedTaskListener != null) {
+            loadFeedTaskListener.onFeedLoaded();
         }
 	}
 	
@@ -55,4 +51,9 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
             return false;
         }
 	}
+
+    private LoadFeedTaskListener loadFeedTaskListener;
+    public interface LoadFeedTaskListener {
+        public void onFeedLoaded();
+    }
 }

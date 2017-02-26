@@ -1,6 +1,6 @@
 package lv.kasparsj.android.dwob;
 
-public class DailyWordsWidget extends BaseDailyWordsWidget {
+public class LargeDailyWordsWidget extends BaseDailyWordsWidget {
 
     @Override
     protected float getDefaultTextSize(int numLines) {
@@ -9,11 +9,15 @@ public class DailyWordsWidget extends BaseDailyWordsWidget {
             case 2:
             case 3:
             case 4:
-                return 13;
+                return 20;
             case 5:
-                return 10;
+                return 18;
+            case 6:
+                return 16;
+            case 7:
+                return 15;
         }
-        return 8;
+        return 14;
     }
 
 }
