@@ -23,72 +23,73 @@ public class FeedItem implements Comparable<FeedItem>{
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title.trim();
+	public void setTitle(String value) {
+		this.title = value != null ? value.trim() : null;
 	}
 	// getters and setters omitted for brevity 
 	public URL getLink() {
 		return link;
 	}
 	
-	public void setLink(String link) {
-		try {
-			this.link = new URL(link);
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
+	public void setLink(String value) throws MalformedURLException {
+		link = value != null ? new URL(value) : null;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description.trim();
+	public void setDescription(String value) {
+		description = value != null ? value.trim() : null;
 	}
 
 	public Date getDate() {
-		return this.date;
+		return date;
 	}
 
-	public void setDate(String date) {
-        date = date.trim();
-		while (!date.endsWith("00")){
-			date += "0";
+	public void setDate(String value) {
+		if (value != null) {
+			value = value.trim();
+			while (!value.endsWith("00")){
+				value += "0";
+			}
+			try {
+				date = DATE_PARSER.parse(value);
+			}
+			catch (ParseException e) {
+				try {
+					String[] parts = value.split(" ");
+					String datepart = new SimpleDateFormat(DATE_FORMAT).format(new Date());
+					String timepart = parts[parts.length-2]+" "+parts[parts.length-1];
+					date = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_FORMAT).parse(datepart+" "+timepart);
+					Calendar cal = Calendar.getInstance();
+					if (date.after(cal.getTime())) {
+						long diff = date.getTime() - cal.getTimeInMillis();
+						int days = (int) Math.ceil(diff / DAY_IN_MILLIS);
+						cal.setTime(date);
+						cal.add(Calendar.DATE, -days);
+						date = cal.getTime();
+					}
+				}
+				catch (ParseException ex) {
+					Log.w(FeedItem.class.toString(), "could not parse date: "+value);
+					date = new Date();
+				}
+			}
+			Log.i("test", date.toString());
 		}
-        try {
-            this.date = DATE_PARSER.parse(date);
-        }
-        catch (ParseException e) {
-            try {
-                String[] parts = date.split(" ");
-                String datepart = new SimpleDateFormat(DATE_FORMAT).format(new Date());
-                String timepart = parts[parts.length-2]+" "+parts[parts.length-1];
-                this.date = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_FORMAT).parse(datepart+" "+timepart);
-                Calendar cal = Calendar.getInstance();
-                if (this.date.after(cal.getTime())) {
-                	long diff = this.date.getTime() - cal.getTimeInMillis();
-                	int days = (int) Math.ceil(diff / DAY_IN_MILLIS);
-                	cal.setTime(this.date);
-                	cal.add(Calendar.DATE, -days);
-                	this.date = cal.getTime();
-                }
-            }
-            catch (ParseException ex) {
-                Log.w(FeedItem.class.toString(), "could not parse date: "+date);
-                this.date = new Date();
-            }
-        }
-        Log.i("test", this.date.toString());
+		else {
+			date = null;
+		}
 	}
 	
 	protected <T extends FeedItem> T copy(Class<T> clazz){
         try {
             T copy = clazz.newInstance();
             copy.setTitle(title);
-			copy.setLink(link.toString());
-			copy.setDescription(description);
-			copy.setDate(date.toString());
+            copy.setLink(link.toString());
+            copy.setDescription(description);
+            copy.setDate(date.toString());
             return copy;
         }
         catch (Exception e) {

@@ -27,8 +27,7 @@ public class DailyWordsWidget extends AppWidgetProvider {
 	private PendingIntent createUpdateIntent(Context context) {
 		Resources r = context.getResources();
 	    Intent intent = new Intent(r.getString(R.string.action_update));
-	    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-	    return pendingIntent;
+		return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 	
 	@Override

@@ -100,7 +100,7 @@ public class DailyWords extends BaseModel {
         DailyWordsFeedItem feedItem = (DailyWordsFeedItem) feedItems.get(0);
         long date = feedItem.getDate().getTime();
         String translated = feedItem.getTranslated();
-        if (getPubDate() != date || getTranslated() != translated) {
+        if (getPubDate() != date || getTranslated().equals(translated)) {
             setTitle(feedItem.getDate().toLocaleString());
             setTranslated(translated);
             setPali(feedItem.getPali());

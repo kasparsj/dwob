@@ -1,5 +1,10 @@
 package lv.kasparsj.android.feed;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +65,12 @@ abstract public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
         });
         item.getChild(LINK).setEndTextElementListener(new EndTextElementListener(){
             public void end(String body) {
-                currentFeedItem.setLink(body);
+                try {
+                    currentFeedItem.setLink(body);
+                }
+                catch (MalformedURLException ignored) {
+
+                }
             }
         });
         item.getChild(DESCRIPTION).setEndTextElementListener(new EndTextElementListener(){
