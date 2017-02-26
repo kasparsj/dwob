@@ -3,8 +3,8 @@
     <string name="app_name">Palabras del Buda para cada día</string>
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_spanish.rss</string>
     <string name="activity_error">No se pudo cargar Palabras del Buda para cada día</string>
-    <string name="widget_name">Palabras del Buda para cada día</string>
-    <string name="widget_large_name">Grande: Palabras del Buda para cada día</string>
+    <string name="widget_name">Palabras del Buda para cada día (Pequeña)</string>
+    <string name="widget_large_name">Palabras del Buda para cada día (Grande)</string>
     <string name="widget_loading">Carga de Palabras del Buda para cada día&#8230;</string>
     <string name="widget_error">No se pudo cargar Palabras del Buda para cada día</string>
     <string name="change_language">Cambiar el idioma</string>

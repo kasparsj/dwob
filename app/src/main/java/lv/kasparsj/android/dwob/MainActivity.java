@@ -382,7 +382,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     (!Strings.isEmpty(dailyWords.getTranslator()) ? dailyWords.getTranslator() + "<br><br>" : "") +
                     (!Strings.isEmpty(dailyWords.getListenLink()) ? "<a href='" + dailyWords.getListenLink() + "'>Listen to Pāli</a><br><br>" : "") +
                     (!Strings.isEmpty(dailyWords.getBookLink()) ? "<a href='" + dailyWords.getBookLink() + "'>View Book<br><br>" : "") +
-                    (!Strings.isEmpty(dailyWords.getTipitakaLink()) ? "<a href='" + dailyWords.getTipitakaLink() + "'>View Pāli in Tipitaka</a>" : "");
+                    (!Strings.isEmpty(dailyWords.getTipitakaLink()) ? "<a href='" + dailyWords.getTipitakaLink() + "'>View Pāli in Tipitaka</a><br><br>" : "");
         }
     }
 
