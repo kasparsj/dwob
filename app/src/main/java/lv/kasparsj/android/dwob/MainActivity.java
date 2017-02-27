@@ -103,31 +103,39 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             whatsNewDialog.cancel();
         }
     }
-    
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-    	if (recreateOptionsMenu) { 
+    	if (recreateOptionsMenu) {
     		menu.clear();
 	        MenuInflater inflater = getMenuInflater();
 	        inflater.inflate(R.menu.menu, menu);
 	        MenuItem changeLang = menu.findItem(R.id.change_lang);
 	        SubMenu langMenu = changeLang.getSubMenu();
-	        if (app.getLanguage().equals(DwobLanguage.ES))
-	        	langMenu.findItem(R.id.spanish).setChecked(true);
-	        else if (app.getLanguage().equals(DwobLanguage.PT))
-	        	langMenu.findItem(R.id.portuguese).setChecked(true);
-	        else if (app.getLanguage().equals(DwobLanguage.IT))
-	        	langMenu.findItem(R.id.italian).setChecked(true);
-            else if (app.getLanguage().equals(DwobLanguage.ZH))
-                langMenu.findItem(R.id.chinese).setChecked(true);
-            else if (app.getLanguage().equals(DwobLanguage.FR))
-                langMenu.findItem(R.id.french).setChecked(true);
-	        else
-	        	langMenu.findItem(R.id.english).setChecked(true);
+            switch (app.getLanguage()) {
+                case DwobLanguage.ES:
+                    langMenu.findItem(R.id.spanish).setChecked(true);
+                    break;
+                case DwobLanguage.PT:
+                    langMenu.findItem(R.id.portuguese).setChecked(true);
+                    break;
+                case DwobLanguage.IT:
+                    langMenu.findItem(R.id.italian).setChecked(true);
+                    break;
+                case DwobLanguage.ZH:
+                    langMenu.findItem(R.id.chinese).setChecked(true);
+                    break;
+                case DwobLanguage.FR:
+                    langMenu.findItem(R.id.french).setChecked(true);
+                    break;
+                default:
+                    langMenu.findItem(R.id.english).setChecked(true);
+                    break;
+            }
     	}
         return super.onPrepareOptionsMenu(menu);
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -347,7 +355,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             descrView.getSettings().setDefaultTextEncodingName("utf-8");
             descrView.setWebViewClient(new WebViewClient() {
                 public boolean shouldOverrideUrlLoading(WebView view, String url)  {
-                    Intent intent = new Intent("android.intent.action.VIEW");
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
                     Uri data = Uri.parse(url);
                     if (url.endsWith(".mp3"))
                         intent.setDataAndType(data, "audio/mp3");

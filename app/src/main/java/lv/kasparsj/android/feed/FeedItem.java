@@ -30,6 +30,10 @@ public class FeedItem implements Comparable<FeedItem>{
 	public URL getLink() {
 		return link;
 	}
+
+	public void setLink(URL value) {
+		link = value;
+	}
 	
 	public void setLink(String value) throws MalformedURLException {
 		link = value != null ? new URL(value) : null;
@@ -45,6 +49,10 @@ public class FeedItem implements Comparable<FeedItem>{
 
 	public Date getDate() {
 		return date;
+	}
+
+	public void setDate(Date value) {
+		date = value;
 	}
 
 	public void setDate(String value) {
@@ -87,9 +95,9 @@ public class FeedItem implements Comparable<FeedItem>{
         try {
             T copy = clazz.newInstance();
             copy.setTitle(title);
-            copy.setLink(link.toString());
+            copy.setLink(link);
             copy.setDescription(description);
-            copy.setDate(date.toString());
+            copy.setDate(date);
             return copy;
         }
         catch (Exception e) {
@@ -103,19 +111,10 @@ public class FeedItem implements Comparable<FeedItem>{
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Title: ");
-		sb.append(title);
-		sb.append('\n');
-		sb.append("Date: ");
-		sb.append(this.getDate());
-		sb.append('\n');
-		sb.append("Link: ");
-		sb.append(link);
-		sb.append('\n');
-		sb.append("Description: ");
-		sb.append(description);
-		return sb.toString();
+		return "Title: " + title + '\n' +
+				"Date: " + this.getDate() + '\n' +
+				"Link: " + link + '\n' +
+				"Description: " + description;
 	}
 
 	@Override

@@ -38,10 +38,6 @@ public class DailyWords extends BaseModel {
         String ns = getSaveNS();
         setTitle(settings.getString(ns+"title", context.getString(R.string.app_name)));
         setTranslated(settings.getString(ns+"translated", ""));
-        setTranslated("No mother nor father nor\n" +
-                "any other kin can do\n" +
-                "greater good for oneself\n" +
-                "than a mind directed well.");
         setPali(settings.getString(ns+"pali", ""));
         setSource(settings.getString(ns+"source", ""));
         setTranslator(settings.getString(ns+"translator", ""));
