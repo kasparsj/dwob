@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.receiver.ScreenStateReceiver;
+import lv.kasparsj.android.util.Objects;
 
 public class AppService extends Service
 {
@@ -32,7 +33,7 @@ public class AppService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getAction().equals(getString(R.string.action_update))) {
+        if (Objects.equals(intent.getAction(), getString(R.string.action_update))) {
             if (screenStateReceiver.isScreenOff()) {
                 pendingUpdateReceiver.setIsPendingUpdate(true);
             }

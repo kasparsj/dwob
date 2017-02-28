@@ -6,14 +6,13 @@
     android:focusable="true"
     style="@style/WidgetBackground">
 
-    <TextView  
+    <ImageView
         android:id="@+id/words"
-        android:layout_width="fill_parent" 
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginTop="@dimen/widget_margin"
         android:gravity="center"
         android:padding="@dimen/widget_padding"
-        android:maxLines="8"
         style="@style/Text.Words" />
-    
+
 </RelativeLayout>

@@ -6,11 +6,16 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.os.Build;
+import android.os.Bundle;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import lv.kasparsj.android.dwob.model.DailyWords;
+import lv.kasparsj.android.widget.AutoFitTextView;
 
 public class DailyWordsWidget extends AppWidgetProvider {
 
@@ -32,15 +37,18 @@ public class DailyWordsWidget extends AppWidgetProvider {
             case 2:
             case 3:
             case 4:
-                return 20;
+                return 13;
             case 5:
-                return 18;
-            case 6:
-                return 16;
-            case 7:
-                return 15;
+                return 10;
         }
-        return 14;
+        return 8;
+    }
+
+    protected int getMaxLines() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            return 8;
+        }
+        return 6;
     }
 
     private int countTextViewLines(TextView textView, String[] lines, float lineWidth, float density) {
@@ -79,28 +87,43 @@ public class DailyWordsWidget extends AppWidgetProvider {
         if (translation.length() > 0) {
             text = translation.trim();
         }
-        // Detect numLines to display
-        String[] lines = text.split("\r\n|\r|\n");
-        if (lines.length > 6 && text.contains("\n\n")) {
-            String[] parts = text.split("\n\n");
-            text = parts[0].trim()+"...";
-            lines = text.split("\r\n|\r|\n");
-        }
-        // Measure text width, and alter numLines accordingly
-        TextView textView = new TextView(context);
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDefaultTextSize(lines.length));
-        float width = 80 * r.getDisplayMetrics().density * 4;
-        float padding = r.getDimension(R.dimen.widget_padding);
-        float margin = r.getDimension(R.dimen.widget_margin);
-        float lineWidth = (width - padding*2 - margin*2);
-        while (lines.length < countTextViewLines(textView, lines, lineWidth, r.getDisplayMetrics().density)) {
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (textView.getTextSize()-.5f));
-        }
         // Build an update that holds the updated widget contents
         RemoteViews updateViews;
         updateViews = new RemoteViews(context.getPackageName(), R.layout.widget_words);
-        updateViews.setTextViewText(R.id.words, text);
-        updateViews.setFloat(R.id.words, "setTextSize", textView.getTextSize());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            Bundle options = manager.getAppWidgetOptions(appWidgetId);
+            int width = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+            int height = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT);
+            AutoFitTextView autoFitTextView = new AutoFitTextView(context);
+            autoFitTextView.measure(width, height);
+            autoFitTextView.layout(0, 0, width, height);
+            autoFitTextView.setMaxLines(getMaxLines());
+            autoFitTextView.setText(text);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            autoFitTextView.draw(new Canvas(bitmap));
+            updateViews.setImageViewBitmap(R.id.words, bitmap);
+        }
+        else {
+            // Detect numLines to display
+            String[] lines = text.split("\r\n|\r|\n");
+            if (lines.length > getMaxLines() && text.contains("\n\n")) {
+                String[] parts = text.split("\n\n");
+                text = parts[0].trim()+"...";
+                lines = text.split("\r\n|\r|\n");
+            }
+            // Measure text width, and alter numLines accordingly
+            TextView textView = new TextView(context);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDefaultTextSize(lines.length));
+            float width = 80 * r.getDisplayMetrics().density * 4;
+            float padding = r.getDimension(R.dimen.widget_padding);
+            float margin = r.getDimension(R.dimen.widget_margin);
+            float lineWidth = (width - padding*2 - margin*2);
+            while (lines.length < countTextViewLines(textView, lines, lineWidth, r.getDisplayMetrics().density)) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (textView.getTextSize()-.5f));
+            }
+            updateViews.setTextViewText(R.id.words, text);
+            updateViews.setFloat(R.id.words, "setTextSize", textView.getTextSize());
+        }
         // setOnClickPendingIntent
         Intent defineIntent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, defineIntent, 0);
