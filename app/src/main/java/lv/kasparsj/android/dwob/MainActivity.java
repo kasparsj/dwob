@@ -24,6 +24,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import lv.kasparsj.android.dwob.model.BaseModel;
+import lv.kasparsj.android.dwob.model.DailyWords;
+import lv.kasparsj.android.dwob.model.DhammaVerses;
+import lv.kasparsj.android.dwob.model.DwobLanguage;
+import lv.kasparsj.android.dwob.model.PaliWord;
 import lv.kasparsj.android.util.Strings;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {

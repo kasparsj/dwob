@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.feed;
 
 import lv.kasparsj.android.feed.FeedItem;
 

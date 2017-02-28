@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.feed;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

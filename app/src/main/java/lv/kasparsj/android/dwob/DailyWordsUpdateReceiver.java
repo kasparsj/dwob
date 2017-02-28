@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.util.Objects;
 
 public class DailyWordsUpdateReceiver extends BroadcastReceiver {

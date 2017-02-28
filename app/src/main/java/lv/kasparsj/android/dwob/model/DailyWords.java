@@ -1,14 +1,19 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.model;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 
 import java.util.List;
 
+import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.feed.DailyWordsFeedItem;
+import lv.kasparsj.android.dwob.feed.DailyWordsFeedParser;
+import lv.kasparsj.android.dwob.DailyWordsWidget;
+import lv.kasparsj.android.dwob.LargeDailyWordsWidget;
+import lv.kasparsj.android.dwob.feed.LoadFeedTask;
+import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.feed.FeedItem;
+import lv.kasparsj.android.feed.SaxFeedParser;
 import lv.kasparsj.android.util.Objects;
 
 public class DailyWords extends BaseModel {
@@ -48,7 +53,7 @@ public class DailyWords extends BaseModel {
         setTipitakaLink(settings.getString(ns+"tipitakaLink", ""));
         pubDate = settings.getLong(ns+"pubDate", 0);
         if (translated.length() > 0) {
-            refresh();
+            updateWidgets(DailyWordsWidget.class, LargeDailyWordsWidget.class);
         }
     }
 
@@ -145,37 +150,19 @@ public class DailyWords extends BaseModel {
     @Override
     public void update() {
         App app = App.applicationContext;
-        update(app.getDailyWordsUrl());
+        String feedUrl = app.getDailyWordsUrl();
+        update(new DailyWordsFeedParser(feedUrl));
     }
 
     @Override
-    public void refresh() {
-        Context context = App.applicationContext;
-        // todo: implement saving widget state (enabled or disabled) in SharedPreferences
-        // todo: broadcast intent only if it's enabled
-        Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        ComponentName componentName = new ComponentName(context, DailyWordsWidget.class);
-        intent.setComponent(componentName);
-        int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        context.sendBroadcast(intent);
-
-        intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        componentName = new ComponentName(context, LargeDailyWordsWidget.class);
-        intent.setComponent(componentName);
-        ids = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName);
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        context.sendBroadcast(intent);
-    }
-
-    private void update(String feedUrl) {
-        Context context = App.applicationContext;
-        new LoadFeedTask(this, new DailyWordsFeedParser(feedUrl), new LoadFeedTask.LoadFeedTaskListener() {
+    protected void update(final SaxFeedParser feedParser) {
+        new LoadFeedTask(this, feedParser) {
             @Override
-            public void onFeedLoaded() {
-                refresh();
+            protected void onPostExecute(final Boolean success) {
+                setLoading(false, success);
+                updateWidgets(DailyWordsWidget.class, LargeDailyWordsWidget.class);
             }
-        }).execute();
+        }.execute();
     }
 
     @Override

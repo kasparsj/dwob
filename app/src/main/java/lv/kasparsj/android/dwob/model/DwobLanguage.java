@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.model;
 
 public class DwobLanguage {
     public static final String EN = "en";

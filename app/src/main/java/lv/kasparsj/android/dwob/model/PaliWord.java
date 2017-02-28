@@ -1,6 +1,7 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.model;
 
-import android.content.Context;
+import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.feed.PaliWordFeedParser;
 
 public class PaliWord extends BaseModel {
 
@@ -25,16 +26,7 @@ public class PaliWord extends BaseModel {
     @Override
     public void update() {
         App app = App.applicationContext;
-        update(app.getPaliWordUrl());
-    }
-
-    @Override
-    public void refresh() {
-
-    }
-
-    private void update(String feedUrl) {
-        Context context = App.applicationContext;
-        new LoadFeedTask(this, new PaliWordFeedParser(feedUrl)).execute();
+        String feedUrl = app.getPaliWordUrl();
+        update(new PaliWordFeedParser(feedUrl));
     }
 }

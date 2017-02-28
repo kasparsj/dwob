@@ -6,6 +6,8 @@ import java.util.Locale;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import lv.kasparsj.android.dwob.model.DailyWords;
+import lv.kasparsj.android.dwob.model.DwobLanguage;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.util.Objects;
 import lv.kasparsj.android.util.OneLog;

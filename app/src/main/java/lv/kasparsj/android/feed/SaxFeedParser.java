@@ -1,9 +1,5 @@
 package lv.kasparsj.android.feed;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +11,6 @@ import android.sax.RootElement;
 import android.util.Xml;
 
 import org.xml.sax.ContentHandler;
-
-import lv.kasparsj.android.dwob.DailyWordsFeedItem;
 
 abstract public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
 

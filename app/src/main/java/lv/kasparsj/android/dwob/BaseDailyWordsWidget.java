@@ -11,6 +11,7 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import lv.kasparsj.android.appwidget.ScreenAwareWidget;
+import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.receiver.ScreenStateReceiver;
 
 public abstract class BaseDailyWordsWidget extends ScreenAwareWidget {
