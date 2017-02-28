@@ -116,6 +116,11 @@ public class DailyWordsWidget extends AppWidgetProvider
         autoFitTextView.setMaxLines(getMaxLines());
         autoFitTextView.setText(text);
         autoFitTextView.layout(0, 0, widgetSize.x, widgetSize.y);
+        TextView textView = new TextView(context);
+        textView.setText(text);
+        textView.setTextSize(autoFitTextView.getTextSize());
+        autoFitTextView.setTextSize(adjustTextSize(context, textView, widgetSize.x));
+        autoFitTextView.resizeText();
         Bitmap bitmap = Bitmap.createBitmap(widgetSize.x, autoFitTextView.getTextHeight(), Bitmap.Config.ARGB_8888);
         autoFitTextView.draw(new Canvas(bitmap));
         remoteViews.setCharSequence(R.id.words, "setContentDescription", text);
@@ -129,20 +134,25 @@ public class DailyWordsWidget extends AppWidgetProvider
         if (lines.length > getMaxLines() && text.contains("\n\n")) {
             String[] parts = text.split("\n\n");
             text = parts[0].trim()+"...";
-            lines = text.split("\r\n|\r|\n");
         }
-        // Measure text width, and alter numLines accordingly
         TextView textView = new TextView(context);
+        textView.setText(text);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getDefaultTextSize(lines.length));
-        float width = 80 * r.getDisplayMetrics().density * 4;
+        float widgetWidth = 80 * r.getDisplayMetrics().density * 4;
+        remoteViews.setTextViewText(R.id.words, text);
+        remoteViews.setFloat(R.id.words, "setTextSize", adjustTextSize(context, textView, widgetWidth));
+    }
+
+    protected float adjustTextSize(Context context, TextView textView, float widgetWidth) {
+        Resources r = context.getResources();
         float padding = r.getDimension(R.dimen.widget_padding);
         float margin = r.getDimension(R.dimen.widget_margin);
-        float lineWidth = (width - padding*2 - margin*2);
+        float lineWidth = (widgetWidth - padding * 2 - margin * 2);
+        String[] lines = textView.getText().toString().split("\r\n|\r|\n");
         while (lines.length < countTextViewLines(textView, lines, lineWidth, r.getDisplayMetrics().density)) {
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (textView.getTextSize()-.5f));
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, (textView.getTextSize() - .5f));
         }
-        remoteViews.setTextViewText(R.id.words, text);
-        remoteViews.setFloat(R.id.words, "setTextSize", textView.getTextSize());
+        return textView.getTextSize();
     }
 
     protected String getText(Context context) {
