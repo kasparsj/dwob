@@ -9,7 +9,6 @@ import lv.kasparsj.android.dwob.App;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedItem;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedParser;
 import lv.kasparsj.android.dwob.DailyWordsWidget;
-import lv.kasparsj.android.dwob.LargeDailyWordsWidget;
 import lv.kasparsj.android.dwob.feed.LoadFeedTask;
 import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.feed.FeedItem;
@@ -53,7 +52,7 @@ public class DailyWords extends BaseModel {
         setTipitakaLink(settings.getString(ns+"tipitakaLink", ""));
         pubDate = settings.getLong(ns+"pubDate", 0);
         if (translated.length() > 0) {
-            updateWidgets(DailyWordsWidget.class, LargeDailyWordsWidget.class);
+            updateWidgets(DailyWordsWidget.class);
         }
     }
 
@@ -160,7 +159,7 @@ public class DailyWords extends BaseModel {
             @Override
             protected void onPostExecute(final Boolean success) {
                 setLoading(false, success);
-                updateWidgets(DailyWordsWidget.class, LargeDailyWordsWidget.class);
+                updateWidgets(DailyWordsWidget.class);
             }
         }.execute();
     }

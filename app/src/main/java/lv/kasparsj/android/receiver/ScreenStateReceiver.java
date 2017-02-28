@@ -7,10 +7,13 @@ import android.util.Log;
 
 public class ScreenStateReceiver extends BroadcastReceiver {
 	
-	public static boolean screenOff = false;
+	private boolean screenOff = false;
+
+	public boolean isScreenOff() {
+		return screenOff;
+	}
 	
 	public void onReceive(Context context, Intent intent) {
-		Log.i("test", "ScreenStateReceiver::onReceive ("+intent.getAction()+")");
 		screenOff = !intent.getAction().equals(Intent.ACTION_SCREEN_ON);
 	}
 }

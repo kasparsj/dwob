@@ -10,13 +10,21 @@ import android.util.Log;
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.util.Objects;
 
-public class DailyWordsUpdateReceiver extends BroadcastReceiver {
+public class PendingUpdateReceiver extends BroadcastReceiver {
 	
-	public static boolean pendingUpdate = false;
+	private boolean pendingUpdate = false;
+
+	public boolean getIsPendingUpdate() {
+		return pendingUpdate;
+	}
+
+	public void setIsPendingUpdate(boolean value) {
+		pendingUpdate = value;
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("test", "DailyWordsUpdateReceiver::onReceive ("+intent.getAction()+")");
+		Log.i("test", "PendingUpdateReceiver::onReceive ("+intent.getAction()+")");
 		DailyWords dailyWords = DailyWords.getInstance();
 		if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION) && intent.getExtras() != null) {
     		NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);

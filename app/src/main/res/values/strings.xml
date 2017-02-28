@@ -2,7 +2,8 @@
 <resources>
     <string name="app_name">Daily Words of Buddha</string>
     <string name="activity_error">Failed loading Daily Words of Buddha</string>
-    <string name="widget_name">Daily Words of Buddha (Small)</string>
+    <string name="widget_name">Daily Words of Buddha</string>
+    <string name="widget_small_name">Daily Words of Buddha (Small)</string>
     <string name="widget_large_name">Daily Words of Buddha (Large)</string>
     <string name="widget_loading">Loading Daily Words of Buddha&#8230;</string>
     <string name="widget_error">Failed loading Daily Words of Buddha</string>
@@ -36,6 +37,7 @@
 	<string name="source_pattern_it"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Guarda il Pali su Tipitaka.org</a>]]></string>
     <string name="source_pattern_zh"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Tipitaka.org 巴利原文</a>]]></string>
     <string name="source_pattern_fr"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Voir la version pāli sur Tipitaka.org</a>]]></string>
+    <string name="action_update">lv.kasparsj.android.dwob.UPDATE</string>
     <string name="tab_dwob">Daily Words of Buddha</string>
     <string name="tab_pali">Pali Word a Day</string>
     <string name="tab_goenka">Dhamma Verses of S.N. Goenka</string>

@@ -3,7 +3,8 @@
     <string name="app_name">Les paroles du Bouddha au quotidien</string>
     <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_french.rss</string>
     <string name="activity_error">Échec chargement Les paroles du Bouddha au quotidien</string>
-    <string name="widget_name">Les paroles du Bouddha au quotidien (Petit)</string>
+    <string name="widget_name">Les paroles du Bouddha au quotidien</string>
+    <string name="widget_small_name">Les paroles du Bouddha au quotidien (Petit)</string>
     <string name="widget_large_name">Les paroles du Bouddha au quotidien (Grand)</string>
     <string name="widget_loading">Chargement Les paroles du Bouddha au quotidien&#8230;</string>
     <string name="widget_error">Échec chargement Les paroles du Bouddha au quotidien</string>

@@ -16,6 +16,8 @@
 
     <application android:icon="@drawable/app_icon" android:label="@string/app_name" android:name=".App"
         android:allowBackup="true">
+
+        <service android:name=".AppService" />
         
         <activity android:name=".MainActivity"
                   android:label="@string/app_name"
@@ -31,27 +33,10 @@
         <receiver android:name=".DailyWordsWidget" android:label="@string/widget_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-               	<action android:name="lv.kasparsj.android.dwob.UPDATE" />
-               	<action android:name="lv.kasparsj.android.dwob.REFRESH" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
         </receiver>
 
-        <receiver android:name=".LargeDailyWordsWidget" android:label="@string/widget_large_name">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="lv.kasparsj.android.dwob.UPDATE" />
-                <action android:name="lv.kasparsj.android.dwob.REFRESH" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words_large" />
-        </receiver>
-        
-        <receiver android:name=".DailyWordsUpdateReceiver">
-		   <intent-filter>
-		      <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-		   </intent-filter>
-		</receiver>
-        
     </application>
        
 </manifest>
