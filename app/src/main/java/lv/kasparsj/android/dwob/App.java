@@ -8,9 +8,16 @@ import android.content.SharedPreferences;
 
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.util.Objects;
+import lv.kasparsj.android.util.OneLog;
 
 public class App extends Application {
-	
+
+    public static final String PACKAGE;
+    static {
+        PACKAGE = App.class.getPackage().getName();
+        OneLog.TAG = PACKAGE;
+    }
+
 	public static final String PREFS_NAME = "DwobPrefsFile";
     public static final int DAY_IN_MILLIS = 24*60*60*1000;
     public static App applicationContext;

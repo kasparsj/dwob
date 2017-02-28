@@ -1,5 +1,7 @@
 package lv.kasparsj.android.dwob;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -151,21 +153,27 @@ public class DailyWords extends BaseModel {
         Context context = App.applicationContext;
         // todo: implement saving widget state (enabled or disabled) in SharedPreferences
         // todo: broadcast intent only if it's enabled
-        Intent broadcastIntent = new Intent(context, DailyWordsWidget.class);
-        broadcastIntent.setAction(context.getString(R.string.action_refresh));
-        context.sendBroadcast(broadcastIntent);
+        Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        ComponentName componentName = new ComponentName(context, DailyWordsWidget.class);
+        intent.setComponent(componentName);
+        int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        context.sendBroadcast(intent);
 
-        broadcastIntent = new Intent(context, LargeDailyWordsWidget.class);
-        broadcastIntent.setAction(context.getString(R.string.action_refresh));
-        context.sendBroadcast(broadcastIntent);
+        intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        componentName = new ComponentName(context, LargeDailyWordsWidget.class);
+        intent.setComponent(componentName);
+        ids = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName);
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        context.sendBroadcast(intent);
     }
 
     private void update(String feedUrl) {
         Context context = App.applicationContext;
-        new LoadFeedTask(context, this, new DailyWordsFeedParser(feedUrl), new LoadFeedTask.LoadFeedTaskListener() {
+        new LoadFeedTask(this, new DailyWordsFeedParser(feedUrl), new LoadFeedTask.LoadFeedTaskListener() {
             @Override
             public void onFeedLoaded() {
-            refresh();
+                refresh();
             }
         }).execute();
     }

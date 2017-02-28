@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,11 +11,6 @@ public class ScreenStateReceiver extends BroadcastReceiver {
 	
 	public void onReceive(Context context, Intent intent) {
 		Log.i("test", "ScreenStateReceiver::onReceive ("+intent.getAction()+")");
-		if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-			screenOff = false;
-		}
-		else {
-			screenOff = true;
-		}
+		screenOff = !intent.getAction().equals(Intent.ACTION_SCREEN_ON);
 	}
 }

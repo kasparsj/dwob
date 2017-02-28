@@ -35,6 +35,6 @@ public class DhammaVerses extends BaseModel {
 
     private void update(String feedUrl) {
         Context context = App.applicationContext;
-        new LoadFeedTask(context, this, new DhammaVersesFeedParser(feedUrl)).execute();
+        new LoadFeedTask(this, new DhammaVersesFeedParser(feedUrl)).execute();
     }
 }

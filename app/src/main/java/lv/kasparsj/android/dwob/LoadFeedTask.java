@@ -1,9 +1,6 @@
 package lv.kasparsj.android.dwob;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.util.List;
 
@@ -12,21 +9,17 @@ import lv.kasparsj.android.util.OneLog;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 
-	private Context context;
-	private Resources r;
     private BaseModel model;
     private SaxFeedParser feedParser;
 	
-	public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser, LoadFeedTaskListener loadFeedTaskListener) {
-		this.context = context;
-		this.r = context.getResources();
+	public LoadFeedTask(BaseModel model, SaxFeedParser feedParser, LoadFeedTaskListener loadFeedTaskListener) {
         this.model = model;
         this.feedParser = feedParser;
         this.loadFeedTaskListener = loadFeedTaskListener;
 	}
 
-    public LoadFeedTask(Context context, BaseModel model, SaxFeedParser feedParser) {
-        this(context, model, feedParser, null);
+    public LoadFeedTask(BaseModel model, SaxFeedParser feedParser) {
+        this(model, feedParser, null);
     }
 	
 	protected void onPreExecute() {
@@ -47,7 +40,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean> {
 			model.update(feedItems);
         	return true;
         } catch (RuntimeException e) {
-            Log.e(r.getString(R.string.app_name), e.getMessage(), e);
+            OneLog.e(e.getMessage(), e);
             return false;
         }
 	}

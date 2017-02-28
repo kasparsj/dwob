@@ -35,6 +35,6 @@ public class PaliWord extends BaseModel {
 
     private void update(String feedUrl) {
         Context context = App.applicationContext;
-        new LoadFeedTask(context, this, new PaliWordFeedParser(feedUrl)).execute();
+        new LoadFeedTask(this, new PaliWordFeedParser(feedUrl)).execute();
     }
 }

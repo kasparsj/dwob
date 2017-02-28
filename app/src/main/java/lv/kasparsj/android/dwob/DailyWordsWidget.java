@@ -15,5 +15,4 @@ public class DailyWordsWidget extends BaseDailyWordsWidget {
         }
         return 8;
     }
-
 }

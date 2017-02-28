@@ -7,6 +7,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import lv.kasparsj.android.util.Objects;
+
 public class DailyWordsUpdateReceiver extends BroadcastReceiver {
 	
 	public static boolean pendingUpdate = false;
@@ -15,7 +17,7 @@ public class DailyWordsUpdateReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		Log.i("test", "DailyWordsUpdateReceiver::onReceive ("+intent.getAction()+")");
 		DailyWords dailyWords = DailyWords.getInstance();
-		if (intent.getAction() == ConnectivityManager.CONNECTIVITY_ACTION && intent.getExtras() != null) {
+		if (Objects.equals(intent.getAction(), ConnectivityManager.CONNECTIVITY_ACTION) && intent.getExtras() != null) {
     		NetworkInfo ni = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
     		if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
     			pendingUpdate = dailyWords.isOutdated();
