@@ -26,13 +26,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
+
         <!-- Broadcast Receiver that will process AppWidget updates -->
-        <receiver android:name=".DailyWordsWidget" android:label="@string/widget_name">
+        <receiver android:name=".DailyWordsWidget" android:label="@string/widget_small_name">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words" />
+        </receiver>
+
+        <receiver android:name=".DailyWordsLargeWidget" android:label="@string/widget_large_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/widget_words_large" />
         </receiver>
 
     </application>
