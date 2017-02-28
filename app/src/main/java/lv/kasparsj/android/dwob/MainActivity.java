@@ -357,11 +357,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 public boolean shouldOverrideUrlLoading(WebView view, String url)  {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     Uri data = Uri.parse(url);
-                    if (url.endsWith(".mp3"))
+                    Context context = view.getContext();
+                    if (url.endsWith(".mp3")) {
                         intent.setDataAndType(data, "audio/mp3");
-                    else
+                    }
+                    else {
                         intent.setData(data);
-                    view.getContext().startActivity(intent);
+                    }
+                    context.startActivity(intent);
                     return true;
                 }
             });

@@ -19,7 +19,6 @@
         
         <activity android:name=".MainActivity"
                   android:label="@string/app_name"
-                  android:noHistory="true"
                   android:configChanges="orientation"
                   android:theme="@style/Theme.AppCompat" >
             <intent-filter>
