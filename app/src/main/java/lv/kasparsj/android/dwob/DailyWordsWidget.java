@@ -9,17 +9,18 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.widget.FrameLayout;
+import android.view.Gravity;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.util.Objects;
-import lv.kasparsj.android.widget.AutoFitTextView;
+import lv.kasparsj.android.widget.AutoResizeTextView;
 
 public class DailyWordsWidget extends AppWidgetProvider
 {
@@ -93,11 +94,10 @@ public class DailyWordsWidget extends AppWidgetProvider
         }
     }
 
-    protected RemoteViews createUpdateViews(Context context, Point size) {
+    protected RemoteViews createUpdateViews(Context context, Point widgetSize) {
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget_words);
-        if (size != null) {
-            Bitmap bitmap = renderTextView(context, size);
-            remoteViews.setImageViewBitmap(R.id.words, bitmap);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && widgetSize != null) {
+            updateImageView(context, remoteViews, widgetSize);
         }
         else {
             updateTextView(context, remoteViews);
@@ -107,18 +107,19 @@ public class DailyWordsWidget extends AppWidgetProvider
         return remoteViews;
     }
 
-    protected Bitmap renderTextView(Context context, Point size) {
-        AutoFitTextView autoFitTextView = new AutoFitTextView(context);
-        autoFitTextView.measure(size.x, size.y);
-        autoFitTextView.layout(0, 0, size.x, size.y);
-        autoFitTextView.setLayoutParams(new FrameLayout.LayoutParams(size.x, size.y));
+    protected void updateImageView(Context context, RemoteViews remoteViews, Point widgetSize) {
+        String text = getText(context);
+        AutoResizeTextView autoFitTextView = new AutoResizeTextView(context);
+        autoFitTextView.setMinTextSize(8);
+        autoFitTextView.setGravity(Gravity.CENTER);
+        autoFitTextView.setTextColor(Color.BLACK);
         autoFitTextView.setMaxLines(getMaxLines());
-        autoFitTextView.setTextSize(500);
-        autoFitTextView.enableSizeCache(false);
-        autoFitTextView.setText(getText(context));
-        Bitmap bitmap = Bitmap.createBitmap(size.x, size.y, Bitmap.Config.ARGB_8888);
+        autoFitTextView.setText(text);
+        autoFitTextView.layout(0, 0, widgetSize.x, widgetSize.y);
+        Bitmap bitmap = Bitmap.createBitmap(widgetSize.x, autoFitTextView.getTextHeight(), Bitmap.Config.ARGB_8888);
         autoFitTextView.draw(new Canvas(bitmap));
-        return bitmap;
+        remoteViews.setCharSequence(R.id.words, "setContentDescription", text);
+        remoteViews.setImageViewBitmap(R.id.words, bitmap);
     }
 
     protected void updateTextView(Context context, RemoteViews remoteViews) {
