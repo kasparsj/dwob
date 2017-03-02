@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -36,7 +37,12 @@ public class DailyWordsWidget extends AppWidgetProvider
     @Override
     public void onDisabled(Context context) {
         super.onDisabled(context);
-        context.stopService(new Intent(context, AppService.class));
+        Class otherWidgetClass = getClass().equals(DailyWordsWidget.class) ? DailyWordsLargeWidget.class : DailyWordsWidget.class;
+        ComponentName componentName = new ComponentName(context, otherWidgetClass);
+        int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName);
+        if (ids.length == 0) {
+            context.stopService(new Intent(context, AppService.class));
+        }
     }
 
     protected float getDefaultTextSize(int numLines) {
