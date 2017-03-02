@@ -18,7 +18,7 @@
     <string name="help">Help</string>
     <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select Widgets and then Daily Words of Buddha.</string>
     <string name="whats_new">What\'s New</string>
-    <string name="whats_new_msg">The app has been expanded to include also Pāli Word a Day and Dhamma Verses of S.N. Goenka. The widget is now available in Small and Large sizes.</string>
+    <string name="whats_new_msg">The app has been expanded to include also Pāli Word a Day and Dhamma Verses of S.N. Goenka. The widget is now available in Small and Large sizes and updates automatically.</string>
     <string name="daily_words_url_en">https://host.pariyatti.org/dwob_ios/dwob_english.rss</string>
     <string name="daily_words_url_es">https://host.pariyatti.org/dwob_ios/dwob_spanish.rss</string>
     <string name="daily_words_url_pt">https://host.pariyatti.org/dwob_ios/dwob_portuguese.rss</string>
