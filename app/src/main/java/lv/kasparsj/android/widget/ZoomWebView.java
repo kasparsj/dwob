@@ -57,6 +57,10 @@ public class ZoomWebView extends WebView
         return getClass().getName() + "." + persistKey;
     }
 
+    public float getZoomLimit() {
+        return zoomLimit;
+    }
+
     public void setZoomLimit(float zoomLimit) {
         this.zoomLimit = zoomLimit;
     }
