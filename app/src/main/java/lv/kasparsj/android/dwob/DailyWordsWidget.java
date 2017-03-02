@@ -53,10 +53,15 @@ public class DailyWordsWidget extends AppWidgetProvider
     }
 
     protected int getMaxLines() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            return 8;
-        }
         return 6;
+    }
+
+    protected int getMaxLines(Context context, Point widgetSize) {
+        int largeMinHeight = (int) (context.getResources().getDimension(R.dimen.widget_large_min_height) / context.getResources().getDisplayMetrics().density);
+        if (widgetSize.y < largeMinHeight) {
+            return 6;
+        }
+        return 8;
     }
 
     private int countTextViewLines(TextView textView, String[] lines, float lineWidth, float density) {
@@ -113,7 +118,7 @@ public class DailyWordsWidget extends AppWidgetProvider
         autoFitTextView.setMinTextSize(8);
         autoFitTextView.setGravity(Gravity.CENTER);
         autoFitTextView.setTextColor(Color.BLACK);
-        autoFitTextView.setMaxLines(getMaxLines());
+        autoFitTextView.setMaxLines(getMaxLines(context, widgetSize));
         autoFitTextView.setText(text);
         autoFitTextView.layout(0, 0, widgetSize.x, widgetSize.y);
         TextView textView = new TextView(context);

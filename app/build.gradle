@@ -22,22 +22,4 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-
-    productFlavors {
-        v7 {
-            minSdkVersion 7
-            versionNameSuffix '-v7'
-            versionCode 1
-        }
-        v16 {
-            minSdkVersion 16
-            versionNameSuffix '-v16'
-            versionCode 2
-        }
-    }
-
-    applicationVariants.all { variant ->
-        def apiVersion = variant.productFlavors.get(0).versionCode
-        variant.mergedFlavor.versionCode = apiVersion * 1000000 + defaultConfig.versionCode
-    }
 }
