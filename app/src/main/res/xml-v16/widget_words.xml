@@ -6,5 +6,5 @@
     android:minResizeHeight="@dimen/widget_min_height"
     android:updatePeriodMillis="@integer/widget_update_period_millis"
     android:initialLayout="@layout/widget_loading"
-    android:resizeMode="vertical"
+    android:resizeMode="horizontal|vertical"
     />
