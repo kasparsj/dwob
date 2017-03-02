@@ -30,6 +30,7 @@ import lv.kasparsj.android.dwob.model.DhammaVerses;
 import lv.kasparsj.android.dwob.model.DwobLanguage;
 import lv.kasparsj.android.dwob.model.PaliWord;
 import lv.kasparsj.android.util.Strings;
+import lv.kasparsj.android.widget.ZoomWebView;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
@@ -342,7 +343,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
                     else {
                         if (!model.isLoaded()) {
-                            WebView descrView = (WebView) getView().findViewById(R.id.description);
+                            ZoomWebView descrView = (ZoomWebView) getView().findViewById(R.id.description);
                             descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
                         }
                         CharSequence text = getString(R.string.widget_error);
@@ -354,9 +355,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public void updateView() {
-            WebView descrView = (WebView) getView().findViewById(R.id.description);
-            descrView.getSettings().setBuiltInZoomControls(true);
-            descrView.getSettings().setSupportZoom(true);
+            ZoomWebView descrView = (ZoomWebView) getView().findViewById(R.id.description);
+            descrView.persistTo(app.getSharedPreferences(), getClass().getSimpleName());
             descrView.getSettings().setDefaultTextEncodingName("utf-8");
             descrView.setWebViewClient(new WebViewClient() {
                 public boolean shouldOverrideUrlLoading(WebView view, String url)  {
@@ -373,9 +373,14 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return true;
                 }
             });
-            String head = "<head><style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style></head>";
-            String htmlData = "<html>" + head + "<body>" + buildBodyHtml() + "</body></html>";
+            String htmlData = "<html>" + buildHeadHtml() + "<body>" + buildBodyHtml() + "</body></html>";
             descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
+        }
+
+        public String buildHeadHtml() {
+            return "<head>" +
+                    "<style>@font-face {font-family: 'myface';src: url('Tahoma.ttf');}body {font-family: 'myface';}</style>" +
+                    "</head>";
         }
 
         public String buildBodyHtml() {
