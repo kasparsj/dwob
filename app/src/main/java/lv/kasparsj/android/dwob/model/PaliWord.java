@@ -1,6 +1,6 @@
 package lv.kasparsj.android.dwob.model;
 
-import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.app.App;
 import lv.kasparsj.android.dwob.feed.PaliWordFeedParser;
 
 public class PaliWord extends BaseModel {

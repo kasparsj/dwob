@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 import java.util.List;
 
-import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.app.App;
 import lv.kasparsj.android.dwob.DailyWordsLargeWidget;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedItem;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedParser;

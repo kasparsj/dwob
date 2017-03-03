@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.app;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

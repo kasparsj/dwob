@@ -19,6 +19,8 @@ import android.view.Gravity;
 import android.widget.RemoteViews;
 import android.widget.TextView;
 
+import lv.kasparsj.android.dwob.app.AppService;
+import lv.kasparsj.android.dwob.app.MainActivity;
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.util.Objects;
 import lv.kasparsj.android.widget.AutoResizeTextView;

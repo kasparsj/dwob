@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.app;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.receiver.ScreenStateReceiver;
 import lv.kasparsj.android.util.Objects;

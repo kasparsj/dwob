@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.app;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -6,6 +6,7 @@ import java.util.Locale;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.dwob.model.DwobLanguage;
 import lv.kasparsj.android.feed.FeedItem;

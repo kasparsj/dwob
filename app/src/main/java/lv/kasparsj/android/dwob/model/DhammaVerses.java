@@ -1,6 +1,6 @@
 package lv.kasparsj.android.dwob.model;
 
-import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.app.App;
 import lv.kasparsj.android.dwob.feed.DhammaVersesFeedParser;
 
 public class DhammaVerses extends BaseModel {

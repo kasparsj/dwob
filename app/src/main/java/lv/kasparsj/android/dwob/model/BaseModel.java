@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import java.util.Date;
 import java.util.List;
 
-import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.app.App;
 import lv.kasparsj.android.dwob.feed.LoadFeedTask;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.feed.SaxFeedParser;

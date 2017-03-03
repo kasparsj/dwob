@@ -1,4 +1,4 @@
-package lv.kasparsj.android.dwob;
+package lv.kasparsj.android.dwob.app;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
