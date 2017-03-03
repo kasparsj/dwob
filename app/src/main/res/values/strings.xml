@@ -43,4 +43,6 @@
     <string name="tab_goenka">Dhamma Verses of S.N. Goenka</string>
     <string name="pali_word_url">http://feeds.pariyatti.org/pwad?format=xml</string>
     <string name="dhamma_verses_url">http://feeds.pariyatti.org/dohas?format=xml</string>
+    <string name="zoom_in">+</string>
+    <string name="zoom_out">-</string>
 </resources>

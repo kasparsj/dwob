@@ -12,9 +12,10 @@ import android.webkit.WebView;
 
 public class ZoomWebView extends WebView
 {
-    private float zoomLimit = 3.0f;
-    private float scaleFactor = 1.f;
-    private int defaultZoom;
+    private float minZoom = 1.0f;
+    private float maxZoom = 3.0f;
+    private float currentZoom = 1.f;
+    private int defaultTextZoom;
     private ScaleGestureDetector scaleDetector;
     private SharedPreferences sharedPreferences;
     private String persistKey;
@@ -40,7 +41,7 @@ public class ZoomWebView extends WebView
 
     private void initialize() {
         if (isSupported()) {
-            defaultZoom = getSettings().getTextZoom();
+            defaultTextZoom = getSettings().getTextZoom();
             scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
         }
     }
@@ -48,36 +49,53 @@ public class ZoomWebView extends WebView
     public void persistTo(SharedPreferences sharedPreferences, String persistKey) {
         this.sharedPreferences = sharedPreferences;
         this.persistKey = persistKey;
-        float zoom = sharedPreferences.getFloat(getSaveKey(), getZoom());
-        scaleFactor = zoom / defaultZoom;
-        setZoom(zoom);
+        if (isSupported()) {
+            float textZoom = sharedPreferences.getFloat(getSaveKey(), defaultTextZoom);
+            setCurrentZoom(textZoom / defaultTextZoom);
+        }
     }
 
     private String getSaveKey() {
         return getClass().getName() + "." + persistKey;
     }
 
-    public float getZoomLimit() {
-        return zoomLimit;
+    public float getMinZoom() {
+        return minZoom;
     }
 
-    public void setZoomLimit(float zoomLimit) {
-        this.zoomLimit = zoomLimit;
-    }
-
-    public float getZoom() {
-        if (isSupported()) {
-            return getSettings().getTextZoom();
+    public void setMinZoom(float value) {
+        if (value <= 0) {
+            throw new RuntimeException("minZoom must be greater than 0");
         }
-        return scaleFactor;
+        minZoom = value;
     }
 
-    public void setZoom(float zoom) {
+    public float getMaxZoom() {
+        return maxZoom;
+    }
+
+    public void setMaxZoom(float value) {
+        if (value < minZoom) {
+            throw new RuntimeException("maxZoom must be greater than or equal to minZoom");
+        }
+        maxZoom = value;
+    }
+
+    public float getCurrentZoom() {
+        return currentZoom;
+    }
+
+    public void setCurrentZoom(float value) {
+        if (value <= 0) {
+            throw new RuntimeException("zoom must be greater than 0");
+        }
+        currentZoom = Math.max(minZoom, Math.min(value, maxZoom));
         if (isSupported()) {
-            getSettings().setTextZoom((int) zoom);
+            int textZoom = (int) (defaultTextZoom * currentZoom);
+            getSettings().setTextZoom(textZoom);
             if (sharedPreferences != null) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putFloat(getSaveKey(), zoom);
+                editor.putFloat(getSaveKey(), textZoom);
                 editor.commit();
             }
         }
@@ -96,9 +114,8 @@ public class ZoomWebView extends WebView
     private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            scaleFactor *= detector.getScaleFactor();
-            scaleFactor = Math.max(1.0f, Math.min(scaleFactor, zoomLimit));
-            setZoom(defaultZoom * scaleFactor);
+            currentZoom *= detector.getScaleFactor();
+            setCurrentZoom(currentZoom);
             return true;
         }
     }

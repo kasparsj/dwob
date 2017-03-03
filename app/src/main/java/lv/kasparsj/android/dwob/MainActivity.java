@@ -1,5 +1,6 @@
 package lv.kasparsj.android.dwob;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -7,19 +8,24 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -306,13 +312,25 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     abstract public static class BaseFragment extends AppFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-
+        ZoomWebView descrView;
+        protected Button zoomIn;
+        protected Button zoomOut;
         protected BaseModel model;
+        protected Handler handler = new Handler();
 
-        public BaseFragment(int layout_id) {
-            super(layout_id);
+        public BaseFragment(int layoutId) {
+            super(layoutId);
         }
 
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View view = super.onCreateView(inflater, container, savedInstanceState);
+            descrView = (ZoomWebView) view.findViewById(R.id.description);
+            return view;
+        }
+
+        @Override
         public void onResume() {
             super.onResume();
 
@@ -324,13 +342,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
         }
 
+        @Override
         public void onPause() {
             super.onPause();
 
             SharedPreferences prefs = app.getSharedPreferences();
             prefs.unregisterOnSharedPreferenceChangeListener(this);
+
+            hideZoom(0);
         }
 
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+            zoomIn = (Button) activity.findViewById(R.id.zoom_in);
+            zoomOut = (Button) activity.findViewById(R.id.zoom_out);
+        }
+
+        @Override
         public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
             if (key.equals(model.getNSKey("loading"))) {
                 if (prefs.getBoolean(model.getNSKey("loading"), false)) {
@@ -343,7 +372,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     }
                     else {
                         if (!model.isLoaded()) {
-                            ZoomWebView descrView = (ZoomWebView) getView().findViewById(R.id.description);
                             descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
                         }
                         CharSequence text = getString(R.string.widget_error);
@@ -355,7 +383,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
         @Override
         public void updateView() {
-            ZoomWebView descrView = (ZoomWebView) getView().findViewById(R.id.description);
             descrView.persistTo(app.getSharedPreferences(), getClass().getSimpleName());
             descrView.getSettings().setDefaultTextEncodingName("utf-8");
             descrView.setWebViewClient(new WebViewClient() {
@@ -373,6 +400,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     return true;
                 }
             });
+            descrView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    zoomIn.setVisibility(View.VISIBLE);
+                    zoomOut.setVisibility(View.VISIBLE);
+                    zoomIn.setOnClickListener(getZoomClickListener(0.25f));
+                    zoomOut.setOnClickListener(getZoomClickListener(-0.25f));
+                    hideZoom(3000);
+                    return false;
+                }
+            });
             String htmlData = "<html>" + buildHeadHtml() + "<body>" + buildBodyHtml() + "</body></html>";
             descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
         }
@@ -386,6 +424,34 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public String buildBodyHtml() {
             return model.getHtml();
         }
+
+        private View.OnClickListener getZoomClickListener(final float delta) {
+            return new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    descrView.setCurrentZoom(descrView.getCurrentZoom() + delta);
+                    hideZoom(3000);
+                }
+            };
+        }
+
+        private void hideZoom(int delay) {
+            handler.removeCallbacks(hideZoomRunnable);
+            if (delay > 0) {
+                handler.postDelayed(hideZoomRunnable, 5000);
+            }
+            else {
+                handler.post(hideZoomRunnable);
+            }
+        }
+
+        private Runnable hideZoomRunnable = new Runnable() {
+            @Override
+            public void run() {
+                zoomIn.setVisibility(View.GONE);
+                zoomOut.setVisibility(View.GONE);
+            }
+        };
     }
 
     public static class DailyWordsFragment extends BaseFragment {
