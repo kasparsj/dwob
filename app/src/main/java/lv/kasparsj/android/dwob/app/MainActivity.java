@@ -172,7 +172,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public void pushProgress(String target) {
-        if (progressDialog != null) {
+        if (progressDialog == null) {
             boolean restoreHelp = false;
             boolean restoreWhatsNew = false;
             if (helpDialog != null && helpDialog.isShowing()) {
@@ -203,6 +203,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             progressStack.remove(targetIndex);
             if (progressDialog != null && progressStack.isEmpty()) {
                 progressDialog.cancel();
+                progressDialog = null;
             }
         }
     }
