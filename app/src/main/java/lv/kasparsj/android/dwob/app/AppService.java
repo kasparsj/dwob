@@ -34,12 +34,14 @@ public class AppService extends Service
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (Objects.equals(intent.getAction(), getString(R.string.action_update))) {
-            if (screenStateReceiver.isScreenOff()) {
-                pendingUpdateReceiver.setIsPendingUpdate(true);
-            }
-            else {
-                DailyWords.getInstance().update();
+        if (intent != null) {
+            if (Objects.equals(intent.getAction(), getString(R.string.action_update))) {
+                if (screenStateReceiver.isScreenOff()) {
+                    pendingUpdateReceiver.setIsPendingUpdate(true);
+                }
+                else {
+                    DailyWords.getInstance().update();
+                }
             }
         }
         return super.onStartCommand(intent, flags, startId);
