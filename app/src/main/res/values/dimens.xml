@@ -6,4 +6,7 @@
     <dimen name="widget_min_width">294dp</dimen>
     <dimen name="widget_min_height">72dp</dimen>
     <dimen name="widget_large_min_height">146dp</dimen>
+    <dimen name="zoom_text_size">30sp</dimen>
+    <dimen name="zoom_padding">5dp</dimen>
+    <dimen name="zoom_min_size">50dp</dimen>
 </resources>

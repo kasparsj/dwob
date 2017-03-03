@@ -19,12 +19,20 @@
 
         <Button android:id="@+id/zoom_in"
             android:text="@string/zoom_in"
+            android:textSize="@dimen/zoom_text_size"
+            android:padding="@dimen/zoom_padding"
+            android:minWidth="@dimen/zoom_min_size"
+            android:minHeight="@dimen/zoom_min_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"/>
 
         <Button android:id="@+id/zoom_out"
             android:text="@string/zoom_out"
+            android:textSize="@dimen/zoom_text_size"
+            android:padding="@dimen/zoom_padding"
+            android:minWidth="@dimen/zoom_min_size"
+            android:minHeight="@dimen/zoom_min_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone"/>
