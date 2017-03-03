@@ -413,7 +413,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             touchDown.equals((int) event.getX(), (int) event.getY()) &&
                             ZoomWebView.isTextZoomSupported() &&
                             zoomIn != null && zoomOut != null) {
-                        handler.postDelayed(showZoomRunnable, 500);
+                        showZoom();
                     }
                     return false;
                 }
@@ -440,6 +440,11 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                     hideZoom(3000);
                 }
             };
+        }
+
+        private void showZoom() {
+            handler.removeCallbacks(showZoomRunnable);
+            handler.postDelayed(showZoomRunnable, 500);
         }
 
         private void hideZoom(int delay) {
