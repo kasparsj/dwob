@@ -35,12 +35,12 @@ public class ZoomWebView extends WebView
         initialize();
     }
 
-    public static boolean isSupported() {
+    public static boolean isTextZoomSupported() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH;
     }
 
     private void initialize() {
-        if (isSupported()) {
+        if (isTextZoomSupported()) {
             defaultTextZoom = getSettings().getTextZoom();
             scaleDetector = new ScaleGestureDetector(getContext(), new ScaleListener());
         }
@@ -49,7 +49,7 @@ public class ZoomWebView extends WebView
     public void persistTo(SharedPreferences sharedPreferences, String persistKey) {
         this.sharedPreferences = sharedPreferences;
         this.persistKey = persistKey;
-        if (isSupported()) {
+        if (isTextZoomSupported()) {
             float textZoom = sharedPreferences.getFloat(getSaveKey(), defaultTextZoom);
             setCurrentZoom(textZoom / defaultTextZoom);
         }
@@ -90,7 +90,7 @@ public class ZoomWebView extends WebView
             throw new RuntimeException("zoom must be greater than 0");
         }
         currentZoom = Math.max(minZoom, Math.min(value, maxZoom));
-        if (isSupported()) {
+        if (isTextZoomSupported()) {
             int textZoom = (int) (defaultTextZoom * currentZoom);
             getSettings().setTextZoom(textZoom);
             if (sharedPreferences != null) {
@@ -104,7 +104,7 @@ public class ZoomWebView extends WebView
     @Override
     public boolean onTouchEvent(@NonNull MotionEvent ev) {
         super.onTouchEvent(ev);
-        if (isSupported()) {
+        if (isTextZoomSupported()) {
             scaleDetector.onTouchEvent(ev);
         }
         return true;

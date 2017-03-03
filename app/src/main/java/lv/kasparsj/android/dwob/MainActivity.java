@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -385,8 +386,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         public void updateView() {
             descrView.persistTo(app.getSharedPreferences(), getClass().getSimpleName());
             descrView.getSettings().setDefaultTextEncodingName("utf-8");
+            final Point touchDown = new Point();
             descrView.setWebViewClient(new WebViewClient() {
                 public boolean shouldOverrideUrlLoading(WebView view, String url)  {
+                    handler.removeCallbacks(showZoomRunnable);
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     Uri data = Uri.parse(url);
                     Context context = view.getContext();
@@ -402,12 +405,16 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             });
             descrView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    zoomIn.setVisibility(View.VISIBLE);
-                    zoomOut.setVisibility(View.VISIBLE);
-                    zoomIn.setOnClickListener(getZoomClickListener(0.25f));
-                    zoomOut.setOnClickListener(getZoomClickListener(-0.25f));
-                    hideZoom(3000);
+                public boolean onTouch(View view, MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        touchDown.set((int) event.getX(), (int) event.getY());
+                    }
+                    else if (event.getAction() == MotionEvent.ACTION_UP &&
+                            touchDown.equals((int) event.getX(), (int) event.getY()) &&
+                            ZoomWebView.isTextZoomSupported() &&
+                            zoomIn != null && zoomOut != null) {
+                        handler.postDelayed(showZoomRunnable, 500);
+                    }
                     return false;
                 }
             });
@@ -438,12 +445,23 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         private void hideZoom(int delay) {
             handler.removeCallbacks(hideZoomRunnable);
             if (delay > 0) {
-                handler.postDelayed(hideZoomRunnable, 5000);
+                handler.postDelayed(hideZoomRunnable, delay);
             }
             else {
                 handler.post(hideZoomRunnable);
             }
         }
+
+        private Runnable showZoomRunnable = new Runnable() {
+            @Override
+            public void run() {
+                zoomIn.setVisibility(View.VISIBLE);
+                zoomOut.setVisibility(View.VISIBLE);
+                zoomIn.setOnClickListener(getZoomClickListener(0.25f));
+                zoomOut.setOnClickListener(getZoomClickListener(-0.25f));
+                hideZoom(3000);
+            }
+        };
 
         private Runnable hideZoomRunnable = new Runnable() {
             @Override
