@@ -2,6 +2,7 @@ package lv.kasparsj.android.dwob.app;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 
 import net.hockeyapp.android.CrashManager;
 
@@ -24,7 +26,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     ViewPager viewPager;
     AppFragmentsPagerAdapter appFragmentsPagerAdapter;
-
+    private int currentFragment;
     private ProgressDialog progressDialog;
     private ArrayList<String> progressStack = new ArrayList<String>();
     private DailyWords dailyWords;
@@ -73,6 +75,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 // We can also use ActionBar.Tab#select() to do this if we have a reference to the
                 // Tab.
                 actionBar.setSelectedNavigationItem(position);
+                currentFragment = position;
+                findViewById(R.id.zoom_in).setVisibility(View.GONE);
+                findViewById(R.id.zoom_out).setVisibility(View.GONE);
             }
         };
         viewPager.addOnPageChangeListener(onPageChangeListener);
@@ -270,5 +275,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
 
+    }
+
+    public void onZoomIn(View view) {
+        ((BaseFragment) appFragmentsPagerAdapter.getFragment(currentFragment)).zoomIn();
+    }
+
+    public void onZoomOut(View view) {
+        ((BaseFragment) appFragmentsPagerAdapter.getFragment(currentFragment)).zoomOut();
     }
 }

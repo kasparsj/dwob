@@ -4,37 +4,54 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.ViewGroup;
+
+import java.util.HashMap;
 
 import lv.kasparsj.android.app.AppFragment;
 import lv.kasparsj.android.dwob.R;
 
 public class AppFragmentsPagerAdapter extends FragmentPagerAdapter {
 
-    private Context context;
-    private AppFragment dailyWordsFragment;
-    private AppFragment paliWordFragment;
-    private AppFragment dhammaVersesFragment;
+    private final Context context;
+    private final FragmentManager fragmentManager;
+    private HashMap<Integer, String> fragmentTags;
 
     public AppFragmentsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         this.context = context;
+        this.fragmentManager = fm;
+        fragmentTags = new HashMap<Integer, String>();
     }
 
     @Override
-    public Fragment getItem(int i) {
-        switch (i) {
+    public Fragment getItem(int position) {
+        Class fragmentClass;
+        switch (position) {
             case 0:
-                dailyWordsFragment = new DailyWordsFragment();
-                return dailyWordsFragment;
+                fragmentClass = DailyWordsFragment.class;
+                break;
             case 1:
-                paliWordFragment = new PaliWordFragment();
-                return paliWordFragment;
+                fragmentClass = PaliWordFragment.class;
+                break;
             case 2:
-                dhammaVersesFragment = new DhammaVersesFragment();
-                return dhammaVersesFragment;
+                fragmentClass = DhammaVersesFragment.class;
+                break;
             default:
                 throw new RuntimeException("Invalid tab requested");
         }
+        return Fragment.instantiate(context, fragmentClass.getName(), null);
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Object obj = super.instantiateItem(container, position);
+        if (obj instanceof Fragment) {
+            Fragment f = (Fragment) obj;
+            String tag = f.getTag();
+            fragmentTags.put(position, tag);
+        }
+        return obj;
     }
 
     @Override
@@ -54,5 +71,12 @@ public class AppFragmentsPagerAdapter extends FragmentPagerAdapter {
             default:
                 throw new RuntimeException("Invalid tab requested");
         }
+    }
+
+    public Fragment getFragment(int position) {
+        String tag = fragmentTags.get(position);
+        if (tag == null)
+            return null;
+        return fragmentManager.findFragmentByTag(tag);
     }
 }

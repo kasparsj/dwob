@@ -25,7 +25,8 @@
             android:minHeight="@dimen/zoom_min_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:onClick="onZoomIn"/>
 
         <Button android:id="@+id/zoom_out"
             android:text="@string/zoom_out"
@@ -35,7 +36,8 @@
             android:minHeight="@dimen/zoom_min_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:onClick="onZoomOut"/>
 
     </LinearLayout>
 

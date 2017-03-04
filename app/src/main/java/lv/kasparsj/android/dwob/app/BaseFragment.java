@@ -75,13 +75,6 @@ abstract public class BaseFragment extends AppFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        hideZoom(0);
-    }
-
-    @Override
     public void updateView() {
         descrView.persistTo(model.getSettings().getSharedPreferences(), getClass().getSimpleName());
         descrView.getSettings().setDefaultTextEncodingName("utf-8");
@@ -136,14 +129,14 @@ abstract public class BaseFragment extends AppFragment {
         return model.getHtml();
     }
 
-    private View.OnClickListener getZoomClickListener(final float delta) {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                descrView.setCurrentZoom(descrView.getCurrentZoom() + delta);
-                hideZoom(3000);
-            }
-        };
+    public void zoomIn() {
+        descrView.setCurrentZoom(descrView.getCurrentZoom() + 0.25f);
+        hideZoom(3000);
+    }
+
+    public void zoomOut() {
+        descrView.setCurrentZoom(descrView.getCurrentZoom() - 0.25f);
+        hideZoom(3000);
     }
 
     private void showZoom() {
@@ -152,6 +145,7 @@ abstract public class BaseFragment extends AppFragment {
     }
 
     private void hideZoom(int delay) {
+        handler.removeCallbacks(showZoomRunnable);
         handler.removeCallbacks(hideZoomRunnable);
         if (delay > 0) {
             handler.postDelayed(hideZoomRunnable, delay);
@@ -166,9 +160,6 @@ abstract public class BaseFragment extends AppFragment {
         public void run() {
             zoomIn.setVisibility(View.VISIBLE);
             zoomOut.setVisibility(View.VISIBLE);
-            zoomIn.setOnClickListener(getZoomClickListener(0.25f));
-            zoomOut.setOnClickListener(getZoomClickListener(-0.25f));
-            hideZoom(3000);
         }
     };
 
