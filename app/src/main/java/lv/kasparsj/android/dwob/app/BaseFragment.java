@@ -63,7 +63,7 @@ abstract public class BaseFragment extends AppFragment {
                     mainActivity.popProgress(this.getClass().getName());
                     if (!success) {
                         CharSequence text = getString(R.string.widget_error);
-                        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
+                        Toast.makeText(mainActivity, text, Toast.LENGTH_LONG).show();
                     }
                 }
             }

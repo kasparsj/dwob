@@ -103,18 +103,11 @@
       <excludeFolder url="file://$MODULE_DIR$/build/reports" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
-    <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
+    <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="support-v4-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-compat-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-media-compat-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-core-ui-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-vector-drawable-25.2.0" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-22.2.1" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="HockeySDK-4.0.0" level="project" />
-    <orderEntry type="library" exported="" name="support-core-utils-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="support-fragment-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="animated-vector-drawable-25.2.0" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-22.2.1" level="project" />
   </component>
 </module>
