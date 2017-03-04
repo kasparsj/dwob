@@ -1,44 +1,54 @@
 package lv.kasparsj.android.dwob.app;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.SubMenu;
+
+import net.hockeyapp.android.CrashManager;
 
 import java.util.ArrayList;
 
-import lv.kasparsj.android.app.AppFragment;
 import lv.kasparsj.android.dwob.R;
-import lv.kasparsj.android.dwob.model.DwobLanguage;
+import lv.kasparsj.android.dwob.model.DailyWords;
+import lv.kasparsj.android.dwob.model.DhammaVerses;
+import lv.kasparsj.android.dwob.model.Languages;
+import lv.kasparsj.android.dwob.model.PaliWord;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     ViewPager viewPager;
     AppFragmentsPagerAdapter appFragmentsPagerAdapter;
 
-	private App app;
     private ProgressDialog progressDialog;
     private ArrayList<String> progressStack = new ArrayList<String>();
+    private DailyWords dailyWords;
+    private PaliWord paliWord;
+    private DhammaVerses dhammaVerses;
 	private HelpDialog helpDialog;
     private WhatsNewDialog whatsNewDialog;
 	private boolean recreateOptionsMenu = true;
+    private ViewPager.SimpleOnPageChangeListener onPageChangeListener;
 	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CrashManager.execute(getApplicationContext(), null);
+
         setContentView(R.layout.activity_main);
+
+        dailyWords = new DailyWords(this);
+        if (dailyWords.isLoaded()) {
+            dailyWords.updateWidgets();
+        }
+        paliWord = new PaliWord(this);
+        dhammaVerses = new DhammaVerses(this);
 
         appFragmentsPagerAdapter = new AppFragmentsPagerAdapter(this, getSupportFragmentManager());
 
@@ -56,7 +66,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // user swipes between sections.
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(appFragmentsPagerAdapter);
-        viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        onPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 // When swiping between different app sections, select the corresponding tab.
@@ -64,7 +74,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                 // Tab.
                 actionBar.setSelectedNavigationItem(position);
             }
-        });
+        };
+        viewPager.addOnPageChangeListener(onPageChangeListener);
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < appFragmentsPagerAdapter.getCount(); i++) {
@@ -77,17 +88,31 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
-        app = (App) getApplication();
-        if (app.showHelpOnStart()) {
+        if (dailyWords.showHelpOnStart()) {
         	showHelp();
         }
-        else if (app.showWhatsNewOnStart()) {
+        else if (dailyWords.showWhatsNewOnStart()) {
             showWhatsNew();
         }
     }
-    
+
+    public DailyWords getDailyWords() {
+        return dailyWords;
+    }
+
+    public PaliWord getPaliWord() {
+        return paliWord;
+    }
+
+    public DhammaVerses getDhammaVerses() {
+        return dhammaVerses;
+    }
+
+    @Override
     public void onStop() {
     	super.onStop();
+
+        viewPager.removeOnPageChangeListener(onPageChangeListener);
 
         if (progressDialog != null) {
             progressDialog.cancel();
@@ -108,20 +133,20 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 	        inflater.inflate(R.menu.menu, menu);
 	        MenuItem changeLang = menu.findItem(R.id.change_lang);
 	        SubMenu langMenu = changeLang.getSubMenu();
-            switch (app.getLanguage()) {
-                case DwobLanguage.ES:
+            switch (dailyWords.getLanguage()) {
+                case Languages.ES:
                     langMenu.findItem(R.id.spanish).setChecked(true);
                     break;
-                case DwobLanguage.PT:
+                case Languages.PT:
                     langMenu.findItem(R.id.portuguese).setChecked(true);
                     break;
-                case DwobLanguage.IT:
+                case Languages.IT:
                     langMenu.findItem(R.id.italian).setChecked(true);
                     break;
-                case DwobLanguage.ZH:
+                case Languages.ZH:
                     langMenu.findItem(R.id.chinese).setChecked(true);
                     break;
-                case DwobLanguage.FR:
+                case Languages.FR:
                     langMenu.findItem(R.id.french).setChecked(true);
                     break;
                 default:
@@ -137,27 +162,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.english:
-                app.setLanguage(DwobLanguage.EN);
+                dailyWords.setLanguage(Languages.EN);
                 recreateOptionsMenu = true;
                 return true;
             case R.id.spanish:
-                app.setLanguage(DwobLanguage.ES);
+                dailyWords.setLanguage(Languages.ES);
             	recreateOptionsMenu = true;
             	return true;
             case R.id.portuguese:
-                app.setLanguage(DwobLanguage.PT);
+                dailyWords.setLanguage(Languages.PT);
             	recreateOptionsMenu = true;
             	return true;
             case R.id.italian:
-            	app.setLanguage(DwobLanguage.IT);
+                dailyWords.setLanguage(Languages.IT);
             	recreateOptionsMenu = true;
             	return true;
             case R.id.chinese:
-                app.setLanguage(DwobLanguage.ZH);
+                dailyWords.setLanguage(Languages.ZH);
                 recreateOptionsMenu = true;
                 return true;
             case R.id.french:
-                app.setLanguage(DwobLanguage.FR);
+                dailyWords.setLanguage(Languages.FR);
                 recreateOptionsMenu = true;
                 return true;
             case R.id.help:
@@ -245,98 +270,5 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     @Override
     public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
 
-    }
-
-    public static class AppFragmentsPagerAdapter extends FragmentPagerAdapter {
-
-        private Context context;
-        private AppFragment dailyWordsFragment;
-        private AppFragment paliWordFragment;
-        private AppFragment dhammaVersesFragment;
-
-        public AppFragmentsPagerAdapter(Context context, FragmentManager fm) {
-            super(fm);
-            this.context = context;
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-                case 0:
-                    dailyWordsFragment = new DailyWordsFragment();
-                    return dailyWordsFragment;
-                case 1:
-                    paliWordFragment = new PaliWordFragment();
-                    return paliWordFragment;
-                case 2:
-                    dhammaVersesFragment = new DhammaVersesFragment();
-                    return dhammaVersesFragment;
-                default:
-                    throw new RuntimeException("Invalid tab requested");
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return context.getResources().getString(R.string.tab_dwob);
-                case 1:
-                    return context.getResources().getString(R.string.tab_pali);
-                case 2:
-                    return context.getResources().getString(R.string.tab_goenka);
-                default:
-                    throw new RuntimeException("Invalid tab requested");
-            }
-        }
-    }
-
-    public static class HelpDialog extends AlertDialog {
-    	
-    	public HelpDialog(Context context) {
-    		super(context);
-    	}
-    	
-    	@Override
-    	public void dismiss() {
-    		App app = (App) getContext().getApplicationContext();
-    		if (app.showHelpOnStart()) {
-                app.dismissHelpOnStart();
-            }
-    		super.dismiss();
-    	}
-    	
-    	@Override
-    	public boolean dispatchTouchEvent(MotionEvent ev) {
-    		dismiss();
-    	    return super.dispatchTouchEvent(ev);
-    	}
-    }
-
-    public static class WhatsNewDialog extends AlertDialog {
-
-        public WhatsNewDialog(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void dismiss() {
-            App app = (App) getContext().getApplicationContext();
-            if (app.showWhatsNewOnStart()) {
-                app.dismissWhatsNewOnStart();
-            }
-            super.dismiss();
-        }
-
-        @Override
-        public boolean dispatchTouchEvent(MotionEvent ev) {
-            dismiss();
-            return super.dispatchTouchEvent(ev);
-        }
     }
 }

@@ -1,11 +1,9 @@
 package lv.kasparsj.android.dwob.model;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.util.List;
 
-import lv.kasparsj.android.dwob.app.App;
 import lv.kasparsj.android.dwob.DailyWordsLargeWidget;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedItem;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedParser;
@@ -18,7 +16,8 @@ import lv.kasparsj.android.util.Objects;
 
 public class DailyWords extends BaseModel {
 
-    private static DailyWords instance = null;
+    private boolean helpOnStart;
+    private boolean whatsNewOnStart;
 
     private String title;
     private String translated;
@@ -29,36 +28,48 @@ public class DailyWords extends BaseModel {
     private String bookLink;
     private String tipitakaLink;
 
-    private DailyWords() {
-        super();
-    }
-
-    public static DailyWords getInstance() {
-        if (instance == null) {
-            instance = new DailyWords();
-        }
-        return instance;
+    public DailyWords(Context context) {
+        super(context);
     }
 
     protected void load() {
-        Context context = App.applicationContext;
-        String ns = getSaveNS();
-        setTitle(settings.getString(ns+"title", context.getString(R.string.app_name)));
-        setTranslated(settings.getString(ns+"translated", ""));
-        setPali(settings.getString(ns+"pali", ""));
-        setSource(settings.getString(ns+"source", ""));
-        setTranslator(settings.getString(ns+"translator", ""));
-        setListenLink(settings.getString(ns+"listenLink", ""));
-        setBookLink(settings.getString(ns+"bookLink", ""));
-        setTipitakaLink(settings.getString(ns+"tipitakaLink", ""));
-        pubDate = settings.getLong(ns+"pubDate", 0);
-        if (translated.length() > 0) {
-            updateWidgets(DailyWordsWidget.class, DailyWordsLargeWidget.class);
-        }
+        helpOnStart = settings.getBoolean("helpOnStart", true);
+        whatsNewOnStart = settings.getBoolean("whatsNewOnStart", !helpOnStart);
+        setLanguage(settings.getString("language", Languages.EN));
+        setTitle(settings.getString("title", context.getString(R.string.app_name)));
+        setTranslated(settings.getString("translated", ""));
+        setPali(settings.getString("pali", ""));
+        setSource(settings.getString("source", ""));
+        setTranslator(settings.getString("translator", ""));
+        setListenLink(settings.getString("listenLink", ""));
+        setBookLink(settings.getString("bookLink", ""));
+        setTipitakaLink(settings.getString("tipitakaLink", ""));
+        pubDate = settings.getLong("pubDate", 0);
+    }
+
+    public boolean showHelpOnStart() {
+        return helpOnStart;
+    }
+
+    public void dismissHelpOnStart() {
+        helpOnStart = false;
+        settings.putBoolean("helpOnStart", false);
+        settings.commit();
+        dismissWhatsNewOnStart();
+    }
+
+    public boolean showWhatsNewOnStart() {
+        return whatsNewOnStart;
+    }
+
+    public void dismissWhatsNewOnStart() {
+        whatsNewOnStart = false;
+        settings.putBoolean("whatsNewOnStart", false);
+        settings.commit();
     }
 
     @Override
-    protected String getSaveNS() {
+    protected String getSettingsNs() {
         return "";
     }
 
@@ -130,39 +141,23 @@ public class DailyWords extends BaseModel {
         tipitakaLink = value;
     }
 
-    protected void save(boolean isLoading) {
-        String ns = getSaveNS();
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(ns+"title", title);
-        editor.putString(ns+"translated", translated);
-        editor.putString(ns+"pali", pali);
-        editor.putLong(ns+"pubDate", pubDate);
-        editor.putString(ns+"source", source);
-        editor.putString(ns+"translator", translator);
-        editor.putString(ns+"listenLink", listenLink);
-        editor.putString(ns+"bookLink", bookLink);
-        editor.putString(ns+"tipitakaLink", tipitakaLink);
-        editor.putBoolean(ns+"loading", isLoading);
-        editor.putBoolean(ns+"success", true);
-        editor.commit();
+    protected void save() {
+        settings.putString("title", title);
+        settings.putString("translated", translated);
+        settings.putString("pali", pali);
+        settings.putLong("pubDate", pubDate);
+        settings.putString("source", source);
+        settings.putString("translator", translator);
+        settings.putString("listenLink", listenLink);
+        settings.putString("bookLink", bookLink);
+        settings.putString("tipitakaLink", tipitakaLink);
+        settings.putBoolean("success", true);
+        settings.commit();
     }
 
     @Override
     public void update() {
-        App app = App.applicationContext;
-        String feedUrl = app.getDailyWordsUrl();
-        update(new DailyWordsFeedParser(feedUrl));
-    }
-
-    @Override
-    protected void update(final SaxFeedParser feedParser) {
-        new LoadFeedTask(this, feedParser) {
-            @Override
-            protected void onPostExecute(final Boolean success) {
-                setLoading(false, success);
-                updateWidgets(DailyWordsWidget.class, DailyWordsLargeWidget.class);
-            }
-        }.execute();
+        update(new DailyWordsFeedParser());
     }
 
     @Override
@@ -182,11 +177,35 @@ public class DailyWords extends BaseModel {
             setBookLink(feedItem.getBookLink());
             setTipitakaLink(feedItem.getTipitakaLink());
             setPubDate(date);
+            save();
         }
     }
 
     @Override
+    public void updateWidgets() {
+        updateWidgets(DailyWordsWidget.class, DailyWordsLargeWidget.class);
+    }
+
+    @Override
     public boolean isLoaded() {
-        return title.length() > 0;
+        return translated.length() > 0;
+    }
+
+    @Override
+    public String getFeedUrl() {
+        switch (language) {
+            case Languages.ES:
+                return context.getString(R.string.daily_words_url_es);
+            case Languages.PT:
+                return context.getString(R.string.daily_words_url_pt);
+            case Languages.IT:
+                return context.getString(R.string.daily_words_url_it);
+            case Languages.ZH:
+                return context.getString(R.string.daily_words_url_zh);
+            case Languages.FR:
+                return context.getString(R.string.daily_words_url_fr);
+            default:  // en
+                return context.getString(R.string.daily_words_url_en);
+        }
     }
 }

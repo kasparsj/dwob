@@ -1,6 +1,8 @@
 package lv.kasparsj.android.feed;
 
+import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +18,13 @@ abstract public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
 
     protected List<T> feedItems;
     protected T currentFeedItem;
+    protected SimpleDateFormat dateFormat;
 
-	public SaxFeedParser(String feedUrl) {
-        super(feedUrl);
+    public void setDateFormat(SimpleDateFormat dateFormat) {
+        this.dateFormat = dateFormat;
     }
 
-    public List<T> parse(Class itemClass) {
+    public List<T> parse(InputStream inputStream, Class itemClass) {
         feedItems = new ArrayList<T>();
         try {
             currentFeedItem = (T) itemClass.newInstance();
@@ -30,14 +33,14 @@ abstract public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
             throw new RuntimeException(e);
         }
         try {
-            Xml.parse(this.getInputStream(), Xml.Encoding.UTF_8, getContentHandler());
+            Xml.parse(inputStream, Xml.Encoding.UTF_8, getContentHandler());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return feedItems;
     }
 
-    abstract public List<T> parse();
+    abstract public List<T> parse(InputStream inputStream);
 
     protected ContentHandler getContentHandler() {
         RootElement root = new RootElement(RSS);
@@ -74,7 +77,7 @@ abstract public class SaxFeedParser<T extends FeedItem> extends BaseFeedParser {
         });
         item.getChild(PUB_DATE).setEndTextElementListener(new EndTextElementListener(){
             public void end(String body) {
-                currentFeedItem.setDate(body);
+                currentFeedItem.setDate(body, dateFormat);
             }
         });
     }

@@ -1,5 +1,8 @@
 package lv.kasparsj.android.dwob.app;
 
+import android.os.Bundle;
+import android.widget.Button;
+
 import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.util.Strings;
@@ -8,7 +11,12 @@ public class DailyWordsFragment extends BaseFragment {
 
     public DailyWordsFragment() {
         super(R.layout.fragment_dwob);
-        model = DailyWords.getInstance();
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        model = mainActivity.getDailyWords();
     }
 
     @Override

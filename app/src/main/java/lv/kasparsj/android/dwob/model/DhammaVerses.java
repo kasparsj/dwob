@@ -1,32 +1,29 @@
 package lv.kasparsj.android.dwob.model;
 
-import lv.kasparsj.android.dwob.app.App;
+import android.content.Context;
+
+import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.feed.DhammaVersesFeedParser;
 
 public class DhammaVerses extends BaseModel {
 
-    private static DhammaVerses instance;
-
-    private DhammaVerses() {
-        super();
-    }
-
-    public static DhammaVerses getInstance() {
-        if (instance == null) {
-            instance = new DhammaVerses();
-        }
-        return instance;
+    public DhammaVerses(Context context) {
+        super(context);
     }
 
     @Override
-    protected String getSaveNS() {
+    protected String getSettingsNs() {
         return "dhammaVerses.";
     }
 
     @Override
     public void update() {
-        App app = App.applicationContext;
-        String feedUrl = app.getDhammaVersesUrl();
-        update(new DhammaVersesFeedParser(feedUrl));
+        update(new DhammaVersesFeedParser());
+    }
+
+    @Override
+    public String getFeedUrl() {
+        return context.getString(R.string.dhamma_verses_url);
     }
 }

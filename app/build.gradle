@@ -1,19 +1,21 @@
 apply plugin: 'android'
 
 dependencies {
-    compile 'com.android.support:support-v4:21.0.3'
-    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.2.0'
+    compile 'net.hockeyapp.android:HockeySDK:4.0.0'
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        minSdkVersion 7
-        targetSdkVersion 21
-        versionCode 2000020
-        versionName '2.1.7'
+        minSdkVersion 9
+        targetSdkVersion 25
+        versionCode 2000021
+        versionName '2.2'
+        manifestPlaceholders = [HOCKEYAPP_APP_ID: "bdbfea02d4dc45f99cf30dd6fe907f46"]
     }
 
     buildTypes {

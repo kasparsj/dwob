@@ -1,6 +1,6 @@
 package lv.kasparsj.android.dwob.model;
 
-public class DwobLanguage {
+public class Languages {
     public static final String EN = "en";
     public static final String ES = "es";
     public static final String PT = "pt";

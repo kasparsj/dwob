@@ -10,7 +10,6 @@ import java.util.Date;
 import android.util.Log;
 
 public class FeedItem implements Comparable<FeedItem>{
-	public static SimpleDateFormat DATE_PARSER;
 	private static final int DAY_IN_MILLIS = 24*60*60*1000;
     private static String DATE_FORMAT = "dd/MM/yyyy";
     private static String TIME_FORMAT = "HH:mm:ss Z";
@@ -55,14 +54,17 @@ public class FeedItem implements Comparable<FeedItem>{
 		date = value;
 	}
 
-	public void setDate(String value) {
+	public void setDate(String value, SimpleDateFormat dateParser) {
 		if (value != null) {
 			value = value.trim();
 			while (!value.endsWith("00")){
 				value += "0";
 			}
 			try {
-				date = DATE_PARSER.parse(value);
+				if (dateParser == null) {
+					dateParser = new SimpleDateFormat(DATE_FORMAT +" "+ TIME_FORMAT);
+				}
+				date = dateParser.parse(value);
 			}
 			catch (ParseException e) {
 				try {
@@ -84,7 +86,6 @@ public class FeedItem implements Comparable<FeedItem>{
 					date = new Date();
 				}
 			}
-			Log.i("test", date.toString());
 		}
 		else {
 			date = null;

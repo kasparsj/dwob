@@ -4,33 +4,63 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+
+import net.hockeyapp.android.CrashManager;
 
 import java.util.Date;
 import java.util.List;
 
-import lv.kasparsj.android.dwob.app.App;
+import lv.kasparsj.android.content.PrivatePreferences;
 import lv.kasparsj.android.dwob.feed.LoadFeedTask;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.feed.SaxFeedParser;
 import lv.kasparsj.android.util.Objects;
 
-abstract public class BaseModel {
+abstract public class BaseModel implements FeedModel {
 
-    protected SharedPreferences settings;
+    public static final int DAY_IN_MILLIS = 24*60*60*1000;
 
+    protected Context context;
+    protected BaseModelListener listener;
+    protected PrivatePreferences settings;
+    protected String language;
     protected String description;
     protected long pubDate; // last time updated
 
-    public BaseModel() {
-        settings = App.applicationContext.getSharedPreferences();
+    public BaseModel(Context context) {
+        this.context = context;
+        settings = new PrivatePreferences(context, getSettingsNs());
         load();
     }
 
+    public void setListener(BaseModelListener listener) {
+        this.listener = listener;
+    }
+
+    public PrivatePreferences getSettings() {
+        return settings;
+    }
+
     protected void load() {
-        String ns = getSaveNS();
-        description = settings.getString(ns + "description", "");
-        pubDate = settings.getLong(ns+"pubDate", 0);
+        setLanguage(settings.getString("language", Languages.EN));
+        description = settings.getString("description");
+        pubDate = settings.getLong("pubDate");
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String value) {
+        if (!Objects.equals(language, value)) {
+            boolean doUpdate = language != null;
+            language = value;
+            settings.putString("language", value);
+            settings.commit();
+            if (doUpdate) {
+                update();
+            }
+        }
     }
 
     public String getDescription() {
@@ -54,59 +84,56 @@ abstract public class BaseModel {
     }
 
     public boolean isOutdated() {
-        return new Date().getTime() - pubDate >= App.DAY_IN_MILLIS;
+        return new Date().getTime() - pubDate >= DAY_IN_MILLIS;
     }
 
-    public void setLoading(boolean isLoading) {
-        String ns = getSaveNS();
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(ns+"loading", isLoading);
-        editor.commit();
+    public void setIsLoading(boolean isLoading) {
+        setIsLoading(isLoading, false);
     }
 
-    abstract protected String getSaveNS();
-
-    public String getNSKey(String key) {
-        return getSaveNS()+key;
-    }
-
-    public void setLoading(boolean isLoading, boolean success) {
-        if (success) {
-            save(isLoading);
+    public void setIsLoading(boolean isLoading, boolean success) {
+        if (listener != null) {
+            listener.onLoading(isLoading, success);
         }
-        else {
-            setLoading(isLoading);
+        if (success || !isLoaded()) {
+            updateWidgets();
+        }
+        if (!success) {
+            CrashManager.execute(context.getApplicationContext(), null);
         }
     }
 
-    protected void save(boolean isLoading) {
-        String ns = getSaveNS();
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString(ns+"description", description);
-        editor.putLong(ns + "pubDate", pubDate);
-        editor.putBoolean(ns + "loading", isLoading);
-        editor.putBoolean(ns+"success", true);
-        editor.commit();
+    abstract protected String getSettingsNs();
+
+    protected void save() {
+        settings.putString("description", description);
+        settings.putLong("pubDate", pubDate);
+        settings.putBoolean("success", true);
+        settings.commit();
     }
 
     abstract public void update();
 
     protected void update(final SaxFeedParser feedParser) {
-        new LoadFeedTask(this, feedParser).execute();
+        new LoadFeedTask(getFeedUrl(), this, feedParser).execute();
     }
 
     public void update(List<? extends FeedItem> feedItems) {
         FeedItem feedItem = feedItems.get(0);
-        long date = feedItem.getDate().getTime();
+        long date = (feedItem.getDate() != null ? feedItem.getDate() : new Date()).getTime();
         String description = feedItem.getDescription();
         if (getPubDate() != date || !Objects.equals(getDescription(), description)) {
             setDescription(description);
             setPubDate(date);
+            save();
         }
     }
 
+    public void updateWidgets() {
+
+    }
+
     protected void updateWidgets(Class... widgetClasses) {
-        Context context = App.applicationContext;
         for (Class widgetClass : widgetClasses) {
             ComponentName componentName = new ComponentName(context, widgetClass);
             int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(componentName);
@@ -120,6 +147,12 @@ abstract public class BaseModel {
     }
 
     public boolean isLoaded() {
-        return description.length() > 0;
+        return description != null && description.length() > 0;
+    }
+
+    abstract public String getFeedUrl();
+
+    public interface BaseModelListener {
+        public void onLoading(boolean isLoading, boolean success);
     }
 }

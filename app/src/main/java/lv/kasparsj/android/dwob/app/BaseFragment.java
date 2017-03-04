@@ -2,7 +2,6 @@ package lv.kasparsj.android.dwob.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,9 +20,8 @@ import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.model.BaseModel;
 import lv.kasparsj.android.widget.ZoomWebView;
 
-abstract public class BaseFragment extends AppFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+abstract public class BaseFragment extends AppFragment {
     ZoomWebView descrView;
-    protected App app;
     protected MainActivity mainActivity;
     protected Button zoomIn;
     protected Button zoomOut;
@@ -43,11 +41,33 @@ abstract public class BaseFragment extends AppFragment implements SharedPreferen
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mainActivity = (MainActivity) getActivity();
+        zoomIn = (Button) getActivity().findViewById(R.id.zoom_in);
+        zoomOut = (Button) getActivity().findViewById(R.id.zoom_out);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
-        SharedPreferences prefs = app.getSharedPreferences();
-        prefs.registerOnSharedPreferenceChangeListener(this);
+        model.setListener(new BaseModel.BaseModelListener() {
+            @Override
+            public void onLoading(boolean isLoading, boolean success) {
+                if (isLoading) {
+                    mainActivity.pushProgress(this.getClass().getName());
+                }
+                else {
+                    updateView();
+                    mainActivity.popProgress(this.getClass().getName());
+                    if (!success) {
+                        CharSequence text = getString(R.string.widget_error);
+                        Toast.makeText(getContext(), text, Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
 
         if (model.isOutdated()) {
             model.update();
@@ -58,50 +78,12 @@ abstract public class BaseFragment extends AppFragment implements SharedPreferen
     public void onPause() {
         super.onPause();
 
-        SharedPreferences prefs = app.getSharedPreferences();
-        prefs.unregisterOnSharedPreferenceChangeListener(this);
-
         hideZoom(0);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mainActivity = (MainActivity) getActivity();
-        app = (App) mainActivity.getApplication();
-        zoomIn = (Button) getActivity().findViewById(R.id.zoom_in);
-        zoomOut = (Button) getActivity().findViewById(R.id.zoom_out);
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-        if (key.equals(model.getNSKey("loading"))) {
-            if (prefs.getBoolean(model.getNSKey("loading"), false)) {
-                if (mainActivity != null) {
-                    mainActivity.pushProgress(this.getClass().getName());
-                }
-            }
-            else {
-                if (mainActivity != null) {
-                    mainActivity.popProgress(this.getClass().getName());
-                }
-                if (prefs.getBoolean(model.getNSKey("success"), false)) {
-                    updateView();
-                }
-                else {
-                    if (!model.isLoaded()) {
-                        descrView.loadDataWithBaseURL(null, getString(R.string.activity_error), "text/html", "UTF-8", null);
-                    }
-                    CharSequence text = getString(R.string.widget_error);
-                    Toast.makeText(app, text, Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-
-    @Override
     public void updateView() {
-        descrView.persistTo(app.getSharedPreferences(), getClass().getSimpleName());
+        descrView.persistTo(model.getSettings().getSharedPreferences(), getClass().getSimpleName());
         descrView.getSettings().setDefaultTextEncodingName("utf-8");
         final Point touchDown = new Point();
         descrView.setWebViewClient(new WebViewClient() {
@@ -135,8 +117,13 @@ abstract public class BaseFragment extends AppFragment implements SharedPreferen
                 return false;
             }
         });
-        String htmlData = "<html>" + buildHeadHtml() + "<body>" + buildBodyHtml() + "</body></html>";
-        descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
+        if (model.isLoaded()) {
+            String htmlData = "<html>" + buildHeadHtml() + "<body>" + buildBodyHtml() + "</body></html>";
+            descrView.loadDataWithBaseURL("file:///android_asset/", htmlData, "text/html", "UTF-8", null);
+        }
+        else {
+            descrView.loadDataWithBaseURL("file:///android_asset/", getString(R.string.activity_error), "text/html", "UTF-8", null);
+        }
     }
 
     public String buildHeadHtml() {

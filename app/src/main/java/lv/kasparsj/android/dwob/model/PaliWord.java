@@ -1,32 +1,29 @@
 package lv.kasparsj.android.dwob.model;
 
-import lv.kasparsj.android.dwob.app.App;
+import android.content.Context;
+
+import lv.kasparsj.android.dwob.App;
+import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.feed.PaliWordFeedParser;
 
 public class PaliWord extends BaseModel {
 
-    private static PaliWord instance;
-
-    private PaliWord() {
-        super();
-    }
-
-    public static PaliWord getInstance() {
-        if (instance == null) {
-            instance = new PaliWord();
-        }
-        return instance;
+    public PaliWord(Context context) {
+        super(context);
     }
 
     @Override
-    protected String getSaveNS() {
+    protected String getSettingsNs() {
         return "paliWord.";
     }
 
     @Override
     public void update() {
-        App app = App.applicationContext;
-        String feedUrl = app.getPaliWordUrl();
-        update(new PaliWordFeedParser(feedUrl));
+        update(new PaliWordFeedParser());
+    }
+
+    @Override
+    public String getFeedUrl() {
+        return context.getString(R.string.pali_word_url);
     }
 }

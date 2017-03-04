@@ -84,26 +84,23 @@ public class DailyWordsWidget extends AppWidgetProvider
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] appWidgetIds) {
-        DailyWords dailyWords = DailyWords.getInstance();
+        DailyWords dailyWords = new DailyWords(context);
         Resources r = context.getResources();
-        String translation = dailyWords.getTranslated();
         if (dailyWords.isOutdated()) {
             Intent intent = new Intent(context, AppService.class);
             intent.setAction(r.getString(R.string.action_update));
             context.startService(intent);
         }
-        else if (translation.length() > 0) {
-            for (int appWidgetId : appWidgetIds) {
-                Point size = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    size = getWidgetSize(manager, appWidgetId);
-                    if (size.x <= 0 || size.y <= 0) {
-                        continue;
-                    }
+        for (int appWidgetId : appWidgetIds) {
+            Point size = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                size = getWidgetSize(manager, appWidgetId);
+                if (size.x <= 0 || size.y <= 0) {
+                    continue;
                 }
-                RemoteViews updateViews = createUpdateViews(context, size);
-                manager.updateAppWidget(appWidgetId, updateViews);
             }
+            RemoteViews updateViews = createUpdateViews(context, size);
+            manager.updateAppWidget(appWidgetId, updateViews);
         }
     }
 
@@ -169,7 +166,7 @@ public class DailyWordsWidget extends AppWidgetProvider
     }
 
     protected String getText(Context context) {
-        DailyWords dailyWords = DailyWords.getInstance();
+        DailyWords dailyWords = new DailyWords(context);
         String translation = dailyWords.getTranslated();
         if (translation.length() > 0) {
             return translation.trim();

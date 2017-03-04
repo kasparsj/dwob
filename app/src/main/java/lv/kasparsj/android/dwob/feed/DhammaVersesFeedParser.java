@@ -1,17 +1,14 @@
 package lv.kasparsj.android.dwob.feed;
 
+import java.io.InputStream;
 import java.util.List;
 
 import lv.kasparsj.android.feed.SaxFeedParser;
 
 public class DhammaVersesFeedParser extends SaxFeedParser<PariyattiFeedItem> {
 
-    public DhammaVersesFeedParser(String url) {
-        super(url);
-    }
-
     @Override
-    public List<PariyattiFeedItem> parse() {
-        return parse(PariyattiFeedItem.class);
+    public List<PariyattiFeedItem> parse(InputStream inputStream) {
+        return parse(inputStream, PariyattiFeedItem.class);
     }
 }
