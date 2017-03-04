@@ -278,10 +278,10 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     }
 
     public void onZoomIn(View view) {
-        ((BaseFragment) appFragmentsPagerAdapter.getFragment(currentFragment)).zoomIn();
+        ((BaseFragment) appFragmentsPagerAdapter.getFragment(currentFragment)).zoom(0.25f);
     }
 
     public void onZoomOut(View view) {
-        ((BaseFragment) appFragmentsPagerAdapter.getFragment(currentFragment)).zoomOut();
+        ((BaseFragment) appFragmentsPagerAdapter.getFragment(currentFragment)).zoom(-0.25f);
     }
 }

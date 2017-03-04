@@ -129,13 +129,8 @@ abstract public class BaseFragment extends AppFragment {
         return model.getHtml();
     }
 
-    public void zoomIn() {
-        descrView.setCurrentZoom(descrView.getCurrentZoom() + 0.25f);
-        hideZoom(3000);
-    }
-
-    public void zoomOut() {
-        descrView.setCurrentZoom(descrView.getCurrentZoom() - 0.25f);
+    public void zoom(float delta) {
+        descrView.setCurrentZoom(descrView.getCurrentZoom() + delta);
         hideZoom(3000);
     }
 
