@@ -6,3 +6,4 @@ app/build
 .idea
 *.apk
 my-release-key.keystore
+local.properties
