@@ -14,7 +14,7 @@ import lv.kasparsj.android.content.NetworkStateReceiver;
 import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.model.DailyWords;
 import lv.kasparsj.android.content.ScreenStateReceiver;
-import lv.kasparsj.android.util.Objects;
+import lv.kasparsj.util.Objects;
 
 public class AppService extends Service
 {

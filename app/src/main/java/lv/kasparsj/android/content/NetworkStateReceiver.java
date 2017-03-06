@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
 
-import lv.kasparsj.android.dwob.model.DailyWords;
-import lv.kasparsj.android.util.Objects;
+import lv.kasparsj.util.Objects;
 
 public class NetworkStateReceiver extends BroadcastReceiver {
 

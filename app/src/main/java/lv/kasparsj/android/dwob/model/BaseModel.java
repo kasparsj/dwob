@@ -14,7 +14,7 @@ import lv.kasparsj.android.content.PrivatePreferences;
 import lv.kasparsj.android.dwob.feed.LoadFeedTask;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.feed.SaxFeedParser;
-import lv.kasparsj.android.util.Objects;
+import lv.kasparsj.util.Objects;
 
 abstract public class BaseModel implements FeedModel {
 

@@ -1,4 +1,4 @@
-package lv.kasparsj.android.util;
+package lv.kasparsj.util;
 
 import android.util.Base64;
 

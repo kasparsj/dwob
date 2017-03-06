@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import lv.kasparsj.android.util.Objects;
+import lv.kasparsj.util.Objects;
 
 public class ScreenStateReceiver extends BroadcastReceiver {
 

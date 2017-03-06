@@ -1,4 +1,4 @@
-package lv.kasparsj.android.util;
+package lv.kasparsj.util;
 
 public class Objects {
     public static boolean equals(Object a, Object b) {

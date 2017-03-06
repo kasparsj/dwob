@@ -1,11 +1,10 @@
 package lv.kasparsj.android.dwob.app;
 
 import android.os.Bundle;
-import android.widget.Button;
 
 import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.dwob.model.DailyWords;
-import lv.kasparsj.android.util.Strings;
+import lv.kasparsj.util.Strings;
 
 public class DailyWordsFragment extends BaseFragment {
 

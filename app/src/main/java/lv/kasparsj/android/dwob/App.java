@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.utils.Util;
 
-import lv.kasparsj.android.util.OneLog;
+import lv.kasparsj.util.OneLog;
 
 public class App extends Application {
 

@@ -8,11 +8,9 @@ import lv.kasparsj.android.dwob.DailyWordsLargeWidget;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedItem;
 import lv.kasparsj.android.dwob.feed.DailyWordsFeedParser;
 import lv.kasparsj.android.dwob.DailyWordsWidget;
-import lv.kasparsj.android.dwob.feed.LoadFeedTask;
 import lv.kasparsj.android.dwob.R;
 import lv.kasparsj.android.feed.FeedItem;
-import lv.kasparsj.android.feed.SaxFeedParser;
-import lv.kasparsj.android.util.Objects;
+import lv.kasparsj.util.Objects;
 
 public class DailyWords extends BaseModel {
 
