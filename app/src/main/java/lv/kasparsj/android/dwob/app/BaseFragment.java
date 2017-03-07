@@ -62,6 +62,7 @@ abstract public class BaseFragment extends AppFragment {
                     updateView();
                     mainActivity.popProgress(this.getClass().getName());
                     if (!success) {
+                        // todo: show correct name
                         CharSequence text = getString(R.string.widget_error);
                         Toast.makeText(mainActivity, text, Toast.LENGTH_LONG).show();
                     }
@@ -72,6 +73,12 @@ abstract public class BaseFragment extends AppFragment {
         if (model.isOutdated()) {
             model.update();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        model.setListener(null);
     }
 
     @Override
