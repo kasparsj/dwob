@@ -10,6 +10,7 @@ import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import lv.kasparsj.android.dwob.model.FeedModel;
 import lv.kasparsj.android.feed.FeedItem;
@@ -20,8 +21,6 @@ import okhttp3.Response;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
 {
-    static final int TIMEOUT = 10000;
-
     protected String feedUrl;
     protected FeedModel model;
     protected SaxFeedParser feedParser;
@@ -66,7 +65,11 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
     }
 
     private InputStream getInputStream() throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
         Request request = new Request.Builder().url(feedUrl)
                 .addHeader("Content-Type", "application/rss+xml")
                 .build();
