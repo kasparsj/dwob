@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">佛陀每日法語</string>
-    <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_chinese.rss</string>
     <string name="activity_error">「佛陀每日法語」載入失敗</string>
     <string name="widget_name">佛陀每日法語</string>
     <string name="widget_small_name">佛陀每日法語</string>

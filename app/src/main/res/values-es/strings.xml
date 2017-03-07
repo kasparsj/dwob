@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Palabras del Buda para cada día</string>
-    <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_spanish.rss</string>
     <string name="activity_error">No se pudo cargar Palabras del Buda para cada día</string>
     <string name="widget_name">Palabras del Buda para cada día</string>
     <string name="widget_small_name">Palabras del Buda para cada día (Pequeña)</string>

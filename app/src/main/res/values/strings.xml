@@ -14,7 +14,6 @@
     <string name="italian">Italiano</string>
     <string name="portuguese">Português</string>
     <string name="chinese">中文</string>
-    <string name="feed_url">http://host.pariyatti.org/dwob_ios/dwob_english.rss</string>
     <string name="help">Help</string>
     <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select Widgets and then Daily Words of Buddha.</string>
     <string name="whats_new">What\'s New</string>
