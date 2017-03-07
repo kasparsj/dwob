@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 dependencies {
     compile 'com.android.support:support-v4:22.2.1'
@@ -12,15 +12,23 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 def hockeyAppId = properties.getProperty('hockeyapp.id') ?: "set hockeyapp.id in local.properties"
 
 android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     compileSdkVersion 22
     buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 2000022
-        versionName '2.2.1'
+        versionCode 2000023
+        versionName '2.2.2'
         manifestPlaceholders = [HOCKEYAPP_APP_ID: hockeyAppId]
+        jackOptions {
+            enabled true
+        }
     }
 
     buildTypes {

@@ -120,7 +120,7 @@ public class DailyWords extends BaseModel {
     }
 
     public void setListenLink(String value) {
-        listenLink = value != null ? value.toLowerCase().replaceAll("^\\s*(listen)|(escuchar)|(ascolta)|(聆聽)|(ecouter)|(ouça):\\s*", "") : null;
+        listenLink = value != null ? value.toLowerCase().replaceAll("^(.*)((http|https)://)", "$2") : null;
     }
 
     public String getBookLink() {
