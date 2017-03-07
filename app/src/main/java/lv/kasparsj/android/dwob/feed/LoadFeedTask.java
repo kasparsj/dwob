@@ -75,14 +75,6 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
         URLConnection connection = url.openConnection();
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(30000);
-        if (connection instanceof HttpsURLConnection) {
-            try {
-                ((HttpsURLConnection) connection).setHostnameVerifier(new SSLUtils.TrustAllHostnameVerifier());
-                ((HttpsURLConnection) connection).setSSLSocketFactory(SSLUtils.getTrustAllSocketFactory());
-            } catch (NoSuchAlgorithmException|KeyManagementException e) {
-                throw new RuntimeException(e);
-            }
-        }
         return connection.getInputStream();
     }
 }
