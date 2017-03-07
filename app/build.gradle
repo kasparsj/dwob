@@ -17,8 +17,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 2000024
-        versionName '2.2.3'
+        versionCode 2000025
+        versionName '2.2.4'
         manifestPlaceholders = [HOCKEYAPP_APP_ID: hockeyAppId]
     }
 
