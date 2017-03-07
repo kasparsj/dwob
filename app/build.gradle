@@ -4,6 +4,7 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'net.hockeyapp.android:HockeySDK:4.0.0'
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 }
 
 Properties properties = new Properties()
@@ -17,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 2000021
-        versionName '2.2'
+        versionCode 2000022
+        versionName '2.2.1'
         manifestPlaceholders = [HOCKEYAPP_APP_ID: hockeyAppId]
     }
 

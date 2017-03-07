@@ -18,6 +18,9 @@ import javax.net.ssl.SSLException;
 import lv.kasparsj.android.dwob.model.FeedModel;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.feed.SaxFeedParser;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
 {
@@ -49,6 +52,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
         try {
             inputStream = getInputStream();
         } catch (IOException|RuntimeException e) {
+            ExceptionHandler.saveException(e, null, null);
             return false;
         }
         try {
@@ -57,7 +61,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
             model.update(feedItems);
             return true;
         } catch (RuntimeException e) {
-            if (e.getCause() instanceof SocketTimeoutException || e.getCause() instanceof SSLException) {
+            if (e.getCause() instanceof SocketTimeoutException) {
                 return false;
             }
             ExceptionHandler.saveException(e, null, null);
@@ -66,10 +70,11 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
     }
 
     private InputStream getInputStream() throws IOException {
-        URL url = new URL(feedUrl);
-        URLConnection connection = url.openConnection();
-        connection.setConnectTimeout(TIMEOUT);
-        connection.setReadTimeout(TIMEOUT);
-        return connection.getInputStream();
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(feedUrl)
+                .addHeader("Content-Type", "application/rss+xml")
+                .build();
+        Response response = client.newCall(request).execute();
+        return response.body().byteStream();
     }
 }
