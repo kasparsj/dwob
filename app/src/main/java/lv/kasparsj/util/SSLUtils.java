@@ -20,29 +20,13 @@ import javax.net.ssl.X509TrustManager;
 
 public class SSLUtils
 {
-    // Create a trust manager that does not validate certificate chains
-    public final static TrustManager[] trustAllCerts = new TrustManager[] {
-            new X509TrustManager() {
-                @Override
-                public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                @Override
-                public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                @Override
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return new java.security.cert.X509Certificate[]{};
-                }
-            }
-    };
-
     public static SSLSocketFactory getTrustAllSocketFactory() throws NoSuchAlgorithmException, KeyManagementException {
-        // Install the all-trusting trust manager
+        return getTrustAllSocketFactory(new TrustAllManager());
+    }
+
+    public static SSLSocketFactory getTrustAllSocketFactory(TrustManager trustManager) throws NoSuchAlgorithmException, KeyManagementException {
         final SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-        // Create an ssl socket factory with our all-trusting manager
+        sslContext.init(null, new TrustManager[] { trustManager }, new java.security.SecureRandom());
         return sslContext.getSocketFactory();
     }
 
@@ -84,6 +68,21 @@ public class SSLUtils
             catch (IOException ignored) {
 
             }
+        }
+    }
+
+    public static class TrustAllManager implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+        }
+
+        @Override
+        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return new java.security.cert.X509Certificate[]{};
         }
     }
 
