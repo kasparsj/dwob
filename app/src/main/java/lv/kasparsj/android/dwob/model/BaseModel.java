@@ -115,7 +115,7 @@ abstract public class BaseModel implements FeedModel {
     abstract public void update();
 
     protected void update(final SaxFeedParser feedParser) {
-        new LoadFeedTask(getFeedUrl(), this, feedParser).execute();
+        new LoadFeedTask(context, getFeedUrl(), this, feedParser).execute();
     }
 
     public void update(List<? extends FeedItem> feedItems) {

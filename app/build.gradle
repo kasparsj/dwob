@@ -4,7 +4,6 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'net.hockeyapp.android:HockeySDK:4.0.0'
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 }
 
 Properties properties = new Properties()
@@ -12,23 +11,15 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 def hockeyAppId = properties.getProperty('hockeyapp.id') ?: "set hockeyapp.id in local.properties"
 
 android {
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
     compileSdkVersion 22
     buildToolsVersion '25.0.2'
 
     defaultConfig {
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 2000023
-        versionName '2.2.2'
+        versionCode 2000024
+        versionName '2.2.3'
         manifestPlaceholders = [HOCKEYAPP_APP_ID: hockeyAppId]
-        jackOptions {
-            enabled true
-        }
     }
 
     buildTypes {
