@@ -10,18 +10,13 @@ import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 
-import javax.net.ssl.HttpsURLConnection;
-
 import lv.kasparsj.android.dwob.model.FeedModel;
 import lv.kasparsj.android.feed.FeedItem;
 import lv.kasparsj.android.feed.SaxFeedParser;
-import lv.kasparsj.util.SSLUtils;
 
 public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
 {
@@ -52,8 +47,7 @@ public class LoadFeedTask extends AsyncTask<String, Void, Boolean>
         InputStream inputStream;
         try {
             inputStream = getInputStream();
-        } catch (IOException|RuntimeException e) {
-            ExceptionHandler.saveException(e, null, null);
+        } catch (Exception e) {
             return false;
         }
         try {

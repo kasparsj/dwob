@@ -18,18 +18,12 @@
     <string name="help_msg">To install the widget: once you install this app, tap and hold on the home screen, then select Widgets and then Daily Words of Buddha.</string>
     <string name="whats_new">What\'s New</string>
     <string name="whats_new_msg">The app has been expanded to include also Pāli Word a Day and Dhamma Verses of S.N. Goenka. The widget is now available in Small and Large sizes and updates automatically. Tablet support has been enhanced.</string>
-    <!--<string name="daily_words_url_en">https://host.pariyatti.org/dwob_ios/dwob_english.rss</string>-->
-    <!--<string name="daily_words_url_es">https://host.pariyatti.org/dwob_ios/dwob_spanish.rss</string>-->
-    <!--<string name="daily_words_url_pt">https://host.pariyatti.org/dwob_ios/dwob_portuguese.rss</string>-->
-    <!--<string name="daily_words_url_it">https://host.pariyatti.org/dwob_ios/dwob_italian.rss</string>-->
-    <!--<string name="daily_words_url_zh">https://host.pariyatti.org/dwob_ios/dwob_chinese.rss</string>-->
-    <!--<string name="daily_words_url_fr">https://host.pariyatti.org/dwob_ios/dwob_french.rss</string>-->
-    <string name="daily_words_url_en">http://kaspars.co/dwob/dwob_english.rss</string>
-    <string name="daily_words_url_es">http://kaspars.co/dwob/dwob_spanish.rss</string>
-    <string name="daily_words_url_pt">http://kaspars.co/dwob/dwob_portuguese.rss</string>
-    <string name="daily_words_url_it">http://kaspars.co/dwob/dwob_italian.rss</string>
-    <string name="daily_words_url_zh">http://kaspars.co/dwob/dwob_chinese.rss</string>
-    <string name="daily_words_url_fr">http://kaspars.co/dwob/dwob_french.rss</string>
+    <string name="daily_words_url_en">http://rss.pariyatti.org/dwob_english.rss</string>
+    <string name="daily_words_url_es">http://rss.pariyatti.org/dwob_spanish.rss</string>
+    <string name="daily_words_url_pt">http://rss.pariyatti.org/dwob_portuguese.rss</string>
+    <string name="daily_words_url_it">http://rss.pariyatti.org/dwob_italian.rss</string>
+    <string name="daily_words_url_zh">http://rss.pariyatti.org/dwob_chinese.rss</string>
+    <string name="daily_words_url_fr">http://rss.pariyatti.org/dwob_french.rss</string>
 	<string name="audio_pattern_en"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Listen</a>]]></string>
 	<string name="audio_pattern_es"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Escuchar</a>]]></string>
 	<string name="audio_pattern_pt"><![CDATA[<a[^>]* href=\"([^\"]+)\"[^>]*>Ouça</a>]]></string>
